@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import Image from "next/image";
-import { motion, useScroll, useTransform, useSpring } from "framer-motion"; 
+import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 import SiteContainer from "@/components/layout/site-container";
 
 export default function ServicesIntroSection() {
@@ -8,99 +8,106 @@ export default function ServicesIntroSection() {
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start end", "start start"] 
+    offset: ["start end", "start start"]
   });
 
   const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 100, damping: 20, mass: 0.5
+    stiffness: 100,
+    damping: 20,
+    mass: 0.5
   });
 
-  // 1. FASTER COLUMNS (Preserved as requested)
   const col1Y = useTransform(smoothProgress, [0, 0.4], ["100%", "0%"]);
   const col2Y = useTransform(smoothProgress, [0.1, 0.5], ["100%", "0%"]);
   const col3Y = useTransform(smoothProgress, [0.2, 0.6], ["100%", "0%"]);
 
-  // 2. SEQUENTIAL CONTENT
   const content1Opacity = useTransform(smoothProgress, [0.3, 0.5], [0, 1]);
   const content1Y = useTransform(smoothProgress, [0.3, 0.5], [30, 0]);
-  
+
   const content2Opacity = useTransform(smoothProgress, [0.5, 0.7], [0, 1]);
   const content2Y = useTransform(smoothProgress, [0.5, 0.7], [30, 0]);
-  
+
   const content3Opacity = useTransform(smoothProgress, [0.7, 0.9], [0, 1]);
   const content3Y = useTransform(smoothProgress, [0.7, 0.9], [30, 0]);
 
-  // 3. NEW: PARALLAX IMAGE ANIMATION
-  // This makes the 3D ring slide up slowly *inside* the blue container as you scroll
   const ringImageY = useTransform(smoothProgress, [0.5, 0.95], [120, 0]);
 
   return (
-    <section 
-      ref={containerRef} 
-      // Maintained h-[100vh] and removed shadow for perfect color blending and scroll snapping
+    <section
+      ref={containerRef}
       className="relative z-30 isolate w-full max-w-full h-[100vh] flex flex-col justify-center overflow-hidden"
     >
-      {/* LAYER 1: The White Columns */}
+      {/* Columns */}
       <div className="absolute inset-0 flex w-full h-full pointer-events-none">
         <motion.div style={{ y: col1Y }} className="w-1/3 h-full bg-white" />
         <motion.div style={{ y: col2Y }} className="w-1/3 h-full bg-white" />
         <motion.div style={{ y: col3Y }} className="w-1/3 h-full bg-white" />
       </div>
 
-      {/* LAYER 2: Content */}
+      {/* Content */}
       <SiteContainer className="relative flex flex-col justify-center py-6 lg:py-10 h-full max-h-[950px]">
-        
+
+        {/* Heading 2 */}
         <motion.div style={{ opacity: content1Opacity, y: content1Y }} className="w-full max-w-[1100px]">
-          <p className="text-[20px] sm:text-[28px] md:text-[36px] lg:text-[44px] xl:text-[48px] font-light leading-[1.15] tracking-tight text-[#01030B]">
-            With a passionate team driving <span className="text-[#2666d2] font-normal">innovation</span>, Spherehead 
-            delivers cutting-edge <span className="text-[#2666d2] font-normal">digital services</span> that help brands grow, 
-            adapt, and stand out in <span className="text-[#2666d2] font-normal">today’s competitive</span> landscape.
+          <p className="heading-2 !text-[#01030B]">
+            With a passionate team driving{" "}
+            <span style={{ color: "#0D54CA" }}>innovation</span>, Spherehead
+            delivers cutting-edge{" "}
+            <span style={{ color: "#0D54CA" }}>digital services</span> that help
+            brands grow, adapt, and stand out in{" "}
+            <span style={{ color: "#0D54CA" }}>today’s competitive</span> landscape.
           </p>
         </motion.div>
 
-        <motion.div style={{ opacity: content2Opacity, y: content2Y }} className="w-full h-[1px] bg-gray-200 my-5 lg:my-8" />
+        <motion.div
+          style={{ opacity: content2Opacity, y: content2Y }}
+          className="w-full h-[1px] bg-gray-200 my-5 lg:my-8"
+        />
 
-        {/* Adjusted the grid gap to match the spacious layout of the video */}
         <div className="grid grid-cols-1 lg:grid-cols-[3.5fr_6.5fr] gap-8 lg:gap-16 items-center w-full">
-          
-          {/* FIX: Removed the small max-w restrictions. It now fills the column. 
-              Added overflow-hidden so the sliding ring doesn't spill out of the square. */}
-          <motion.div 
-            style={{ opacity: content2Opacity, y: content2Y }} 
+
+          {/* Image */}
+          <motion.div
+            style={{ opacity: content2Opacity, y: content2Y }}
             className="relative w-full aspect-square max-w-[280px] lg:max-w-none mx-auto lg:mx-0 overflow-hidden"
           >
-            
-            {/* THE HOLE PUNCH (Reveals the deep blue background underneath) */}
             <div className="absolute inset-0 bg-black [mix-blend-mode:destination-out]" />
-            
-            {/* THE INNER IMAGE ANIMATION 
-                Using the new ringImageY transform to slide it up from the bottom */}
+
             <motion.div style={{ y: ringImageY }} className="absolute inset-0 z-10">
-              <Image 
-                src="https://res.cloudinary.com/dku9in8sb/image/upload/v1776313260/Services_y83dyy.png" 
+              <Image
+                src="https://res.cloudinary.com/dku9in8sb/image/upload/v1776313260/Services_y83dyy.png"
                 alt="Abstract 3D rings"
                 fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                className="object-cover scale-105" // slight scale-up ensures it fills the box nicely during movement
+                className="object-cover scale-105"
               />
             </motion.div>
-
           </motion.div>
 
-          <motion.div style={{ opacity: content3Opacity, y: content3Y }} className="flex flex-col gap-4 lg:gap-6 w-full">
-            <p className="text-[17px] sm:text-[20px] md:text-[22px] lg:text-[24px] font-medium leading-[1.4] text-[#01030B]">
-              We focus on creating meaningful digital experiences that connect your business with real growth, 
-              because that’s where true transformation begins and lasting success is achieved.
+          {/* Right Content */}
+          <motion.div
+            style={{ opacity: content3Opacity, y: content3Y }}
+            className="flex flex-col gap-4 lg:gap-6 w-full"
+          >
+            {/* Heading 3 */}
+            <p className="heading-3" style={{ color: "#01030B" }}>
+              We focus on creating meaningful digital experiences that connect your
+              business with real growth, because that’s where true transformation
+              begins and lasting success is achieved.
             </p>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-8 text-[#888888] mt-2 lg:mt-4">
-              <p className="font-light leading-[1.6] text-[13px] sm:text-[14px] lg:text-[15px]">
-                Our approach begins by understanding what makes your business unique—your vision, your goals, 
-                and your competitive edge. We explore how your digital presence can better serve your audience.
+
+            {/* Body Small */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-8 mt-2 lg:mt-4">
+              <p className="body-small" style={{ color: "#8A8B8F", lineHeight: "1.6" }}>
+                Our approach begins by understanding what makes your business
+                unique—your vision, your goals, and your competitive edge. We
+                explore how your digital presence can better serve your audience.
               </p>
-              <p className="font-light leading-[1.6] text-[13px] sm:text-[14px] lg:text-[15px]">
-                The real impact happens when strategy and execution come together. We shape solutions that 
-                enhance performance, improve efficiency, and elevate your brand experience.
+
+              <p className="body-small" style={{ color: "#8A8B8F", lineHeight: "1.6" }}>
+                The real impact happens when strategy and execution come together.
+                We shape solutions that enhance performance, improve efficiency,
+                and elevate your brand experience.
               </p>
             </div>
           </motion.div>

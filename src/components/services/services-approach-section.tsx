@@ -81,15 +81,33 @@ export default function ServicesApproachSection() {
   const panel1 = approaches.slice(0, 3);
   const panel2 = approaches.slice(3, 6);
 
+  const renderCard = (item: any, idx: number) => (
+    <div 
+      key={item.num} 
+      className={`flex flex-col gap-4 ${
+        idx === 0 ? 'md:pr-8 lg:pr-12 md:border-r border-white/20' : 
+        idx === 1 ? 'md:px-8 lg:px-12 md:border-r border-white/20' : 
+        'md:pl-8 lg:pl-12'
+      }`}
+    >
+      <span className="text-[48px] lg:text-[64px] font-light text-white/90 leading-none mb-2">
+        {item.num}
+      </span>
+      <h3 className="body-large whitespace-pre-line text-white leading-snug">
+        {item.title}
+      </h3>
+      <p className="body-small text-white/70 leading-[1.75] mt-4 max-w-[340px]">
+        {item.desc}
+      </p>
+    </div>
+  );
+
   return (
     <section 
       ref={sectionRef} 
       className="relative z-10 w-full h-[100vh] bg-transparent text-white flex flex-col justify-center overflow-hidden"
     >
-      {/* CRITICAL FIX: The Overlapping White Bar
-        This sits at the absolute top of the section and mimics the bottom 
-        of the previous section to create the stacked card effect. 
-      */}
+      {/* Top overlap bar mimicking the bottom of the previous section */}
       <div className="absolute top-0 left-0 w-full h-[30px] md:h-[90px] bg-white rounded-b-[12px] z-30" />
 
       <SiteContainer className="flex flex-col gap-12 lg:gap-16">
@@ -103,12 +121,12 @@ export default function ServicesApproachSection() {
         >
           <div className="flex items-center gap-4 mb-6">
             <RotatingDots />
-            <span className="text-[14px] md:text-[15px] tracking-[0.1em] text-white/90 uppercase font-bold">
+            <span className="body-small tracking-[0.1em] text-white/90 uppercase font-bold">
               Strategic Approach
             </span>
           </div>
           
-          <h2 className="text-[36px] md:text-[48px] lg:text-[56px] font-light leading-[1.2] max-w-[900px]">
+          <h2 className="heading-2 max-w-[900px]">
             Powering Business Transformation through Precision Engineering
           </h2>
         </motion.div>
@@ -128,38 +146,12 @@ export default function ServicesApproachSection() {
             
             {/* PANEL 1 */}
             <div className="w-1/2 shrink-0 grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-0">
-              {panel1.map((item, idx) => (
-                <div 
-                  key={item.num} 
-                  className={`flex flex-col gap-4 ${
-                    idx === 0 ? 'md:pr-8 lg:pr-12 md:border-r border-white/20' : 
-                    idx === 1 ? 'md:px-8 lg:px-12 md:border-r border-white/20' : 
-                    'md:pl-8 lg:pl-12'
-                  }`}
-                >
-                  <span className="text-[48px] lg:text-[64px] font-light text-white/90 leading-none mb-2">{item.num}</span>
-                  <h3 className="text-[22px] lg:text-[26px] font-normal leading-[1.3] whitespace-pre-line">{item.title}</h3>
-                  <p className="text-[14px] lg:text-[15px] text-white/70 leading-[1.7] mt-4 max-w-[320px]">{item.desc}</p>
-                </div>
-              ))}
+              {panel1.map(renderCard)}
             </div>
 
             {/* PANEL 2 */}
             <div className="w-1/2 shrink-0 grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-0">
-              {panel2.map((item, idx) => (
-                <div 
-                  key={item.num} 
-                  className={`flex flex-col gap-4 ${
-                    idx === 0 ? 'md:pr-8 lg:pr-12 md:border-r border-white/20' : 
-                    idx === 1 ? 'md:px-8 lg:px-12 md:border-r border-white/20' : 
-                    'md:pl-8 lg:pl-12'
-                  }`}
-                >
-                  <span className="text-[48px] lg:text-[64px] font-light text-white/90 leading-none mb-2">{item.num}</span>
-                  <h3 className="text-[22px] lg:text-[26px] font-normal leading-[1.3] whitespace-pre-line">{item.title}</h3>
-                  <p className="text-[14px] lg:text-[15px] text-white/70 leading-[1.7] mt-4 max-w-[320px]">{item.desc}</p>
-                </div>
-              ))}
+              {panel2.map(renderCard)}
             </div>
 
           </motion.div>

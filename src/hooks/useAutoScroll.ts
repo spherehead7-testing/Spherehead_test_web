@@ -6,22 +6,25 @@ export default function useAutoScroll() {
   const lastRestingYRef = useRef(0);
 
   useEffect(() => {
-    // Lock the initial position to an exact boundary
-    lastRestingYRef.current = Math.round(window.scrollY / window.innerHeight) * window.innerHeight;
+    // Initialize to nearest full-screen section
+    lastRestingYRef.current =
+      Math.round(window.scrollY / window.innerHeight) * window.innerHeight;
 
     const animateScroll = (targetY: number) => {
       if (isAutoScrollingRef.current) return;
-      
+
       const startY = window.scrollY;
       const distance = targetY - startY;
 
+      // Skip tiny movements
       if (Math.abs(distance) < 5) {
         lastRestingYRef.current = targetY;
         return;
       }
 
       isAutoScrollingRef.current = true;
-      const duration = 400; 
+
+      const duration = 400;
       const startTime = performance.now();
       const easeOut = (t: number) => 1 - Math.pow(1 - t, 4);
 
@@ -32,74 +35,75 @@ export default function useAutoScroll() {
         if (progress < 1) {
           requestAnimationFrame(step);
         } else {
+          // Ensure exact alignment to section
           window.scrollTo(0, targetY);
-          // Only update the resting point to exact, perfect multiples of vh
-          lastRestingYRef.current = targetY; 
-          setTimeout(() => { isAutoScrollingRef.current = false; }, 300);
+          lastRestingYRef.current = targetY;
+
+          // Small delay before allowing next scroll
+          setTimeout(() => {
+            isAutoScrollingRef.current = false;
+          }, 300);
         }
       };
+
       requestAnimationFrame(step);
     };
 
     const handleScroll = () => {
       if (isAutoScrollingRef.current) return;
 
-      if (scrollStopTimerRef.current) clearTimeout(scrollStopTimerRef.current);
+      if (scrollStopTimerRef.current) {
+        clearTimeout(scrollStopTimerRef.current);
+      }
 
+      // Detect scroll stop
       scrollStopTimerRef.current = setTimeout(() => {
         const currentY = window.scrollY;
         const vh = window.innerHeight;
         const maxScroll = document.documentElement.scrollHeight - vh;
 
-        // How many strict 100vh sections exist before the List Section?
-        // Hero (0), Intro (1), Approach (2) => List starts at exactly 3 * vh
-        const FREE_SCROLL_START_VH = 3 * vh; 
-        
-        // --- RULE 1: THE FREE SCROLL ZONE ---
-        // If we are deep inside the List Section / Tech Stack
-        if (currentY >= FREE_SCROLL_START_VH + 5) {
-            
-            // CRITICAL FIX: Lock the resting Y to exactly the top of the List section.
-            // This guarantees that when you scroll back UP, it calculates the distance 
-            // relative to the exact 300vh boundary, not a fractional offset.
-            lastRestingYRef.current = FREE_SCROLL_START_VH;
-            
-            // Snap to the absolute bottom of the page if they reach the footer
-            if (currentY > maxScroll - (vh * 0.5)) {
-                animateScroll(maxScroll);
-            }
-            return; 
+        const FREE_SCROLL_START_Y = 3 * vh;
+
+        // Allow free scrolling after section 3
+        if (currentY >= FREE_SCROLL_START_Y + 5) {
+          // Lock reference point to section boundary
+          lastRestingYRef.current = FREE_SCROLL_START_Y;
+
+          // Snap to bottom if near footer
+          if (currentY > maxScroll - vh * 0.5) {
+            animateScroll(maxScroll);
+          }
+          return;
         }
 
-        // --- RULE 2: STRICT INDEX-BASED SNAPPING ---
         const distanceScrolled = currentY - lastRestingYRef.current;
-        
-        // Figure out which exact section index we are currently resting on (0, 1, 2, or 3)
+
+        // Current section index (0 → 3)
         const currentIndex = Math.round(lastRestingYRef.current / vh);
         let targetIndex = currentIndex;
 
-        // If swiped down intentionally
+        // Detect scroll direction
         if (distanceScrolled > 20) {
-            targetIndex = currentIndex + 1;
-        } 
-        // If swiped up intentionally
-        else if (distanceScrolled < -20) {
-            targetIndex = currentIndex - 1;
+          targetIndex = currentIndex + 1;
+        } else if (distanceScrolled < -20) {
+          targetIndex = currentIndex - 1;
         }
 
-        // Never snap below section 0 or above section 3 (The List Section)
+        // Clamp between sections 0 and 3
         targetIndex = Math.max(0, Math.min(targetIndex, 3));
-        
-        // Animate exactly to a perfect multiple of vh (0, 100vh, 200vh, or 300vh)
-        animateScroll(targetIndex * vh);
 
-      }, 60); 
+        // Snap to exact section
+        animateScroll(targetIndex * vh);
+      }, 60);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
+
     return () => {
       window.removeEventListener("scroll", handleScroll);
-      if (scrollStopTimerRef.current) clearTimeout(scrollStopTimerRef.current);
+      if (scrollStopTimerRef.current) {
+        clearTimeout(scrollStopTimerRef.current);
+      }
     };
   }, []);
 }

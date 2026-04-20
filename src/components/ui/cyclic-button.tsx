@@ -9,7 +9,11 @@ interface CyclicButtonProps {
   className?: string;
 }
 
-export default function CyclicButton({ onClick, children, className = "" }: CyclicButtonProps) {
+export default function CyclicButton({
+  onClick,
+  children,
+  className = "",
+}: CyclicButtonProps) {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -27,61 +31,58 @@ export default function CyclicButton({ onClick, children, className = "" }: Cycl
           initial: { rotate: 0 },
           hover: {
             rotate: 360,
-            transition: { duration: 2.5, repeat: Infinity, ease: "linear" }
-          }
+            transition: { duration: 2.5, repeat: Infinity, ease: "linear" },
+          },
         }}
       >
         {/* Light Blue Circle (Moves Top-Left) */}
         <motion.div
-          className="absolute w-3 h-3 rounded-full"
+          className="absolute w-4 h-4 rounded-full"
           style={{ backgroundColor: "#92D9FF" }}
           variants={{
             initial: { x: 0, y: 0, opacity: 0, scale: 0.5 },
-            hover: { x: -6, y: -7, opacity: 1, scale: 1 }
+            // Increased distance and perfectly angled (-6, -10.4)
+            hover: { x: -6, y: -10.4, opacity: 1, scale: 1 },
           }}
           transition={{ duration: 0.3, ease: "easeOut" }}
         />
-        
+
         {/* Orange Circle (Moves Bottom-Left) */}
         <motion.div
-          className="absolute w-3 h-3 rounded-full"
+          className="absolute w-4 h-4 rounded-full"
           style={{ backgroundColor: "#FD7624" }}
           variants={{
             initial: { x: 0, y: 0, opacity: 0, scale: 0.5 },
-            hover: { x: -6, y: 7, opacity: 1, scale: 1 }
+            // Increased distance and perfectly angled (-6, 10.4)
+            hover: { x: -6, y: 10.4, opacity: 1, scale: 1 },
           }}
           transition={{ duration: 0.3, ease: "easeOut" }}
         />
 
         {/* White Circle (Center base, moves Right) */}
         <motion.div
-          className="absolute z-10 w-3 h-3 rounded-full"
+          className="absolute z-10 w-4 h-4 rounded-full"
           style={{ backgroundColor: "#FFFFFF" }}
           variants={{
             initial: { x: 0, y: 0 },
-            hover: { x: 8, y: 0 }
+            // Matched distance to create an equidistant triangle (12)
+            hover: { x: 12, y: 0 },
           }}
           transition={{ duration: 0.3, ease: "easeOut" }}
         />
       </motion.div>
-      
+
       {/* TEXT SLIDE ANIMATION */}
-      <div className="relative overflow-hidden h-[28px] md:h-[30px]">
+      <div className="relative overflow-hidden h-[28px]">
         <motion.div
           className="flex flex-col"
           animate={isHovered ? { y: "-50%" } : { y: "0%" }}
           transition={{ duration: 0.45, ease: "easeInOut" }}
         >
-          <span 
-            className="flex items-center h-[28px] md:h-[30px] text-[18px] md:text-[20px] tracking-wide" 
-            style={{ fontFamily: "var(--font-inter-tight)" }}
-          >
+          <span className="flex items-center h-[28px] inter-tight-button">
             {children}
           </span>
-          <span 
-            className="flex items-center h-[28px] md:h-[30px] text-[18px] md:text-[20px] tracking-wide" 
-            style={{ fontFamily: "var(--font-inter-tight)" }}
-          >
+          <span className="flex items-center h-[28px] inter-tight-button">
             {children}
           </span>
         </motion.div>
