@@ -1,7 +1,6 @@
 @import "tailwindcss";
 
 :root {
-
   --c1: #06142e;
   --c2: #0a2f76;
   --c3: #184aa3;
@@ -72,7 +71,6 @@ select {
   letter-spacing: 0px;
 }
 
-
 .heading-4 {
   font-family: var(--font-inter-tight), Arial, Helvetica, sans-serif;
   font-weight: 300;
@@ -94,8 +92,6 @@ select {
   font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
   font-size: 14px;
   font-weight: 400;
-  /* line-height: 42px;
-  letter-spacing: 0.02em;  */
   text-transform: none;
 }
 
@@ -103,8 +99,6 @@ select {
   font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
   font-size: 12px;
   font-weight: 200;
-  /* line-height: 42px;
-  letter-spacing: 0.02em;  */
   text-transform: none;
 }
 
@@ -119,9 +113,17 @@ select {
 .inter-tight {
   font-family: var(--font-inter-tight), Arial, Helvetica, sans-serif;
   font-size: 15px;
-  font-weight: regular;
+  font-weight: 500;
   line-height: 18px;
   letter-spacing: 1.2px;
+}
+
+.inter-tight-button {
+  font-family: var(--font-inter-tight), Arial, Helvetica, sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 28px;
+  letter-spacing: 0.02em;
 }
 
 .body-medium {
@@ -129,63 +131,10 @@ select {
   font-size: 24px;
   font-weight: 400;
   line-height: 42px;
-  letter-spacing: 2%;
+  letter-spacing: 0.02em;
 }
-
-/* end of the typography */
 
 /* GLOBAL WEBSITE BACKGROUND */
-
-@import "tailwindcss";
-
-:root {
-
-
-  --c1: #06142e;
-  --c2: #0a2f76;
-  --c3: #184aa3;
-  --c4: #2666d2;
-  --c5: #a6c4fa;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-html,
-body,
-#__next {
-  min-height: 100%;
-}
-
-body {
-  min-height: 100vh;
-  margin: 0;
-  background: var(--c1);
-  color: var(--foreground);
-  font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-button,
-input,
-textarea,
-select {
-  font: inherit;
-}
-
-
-
-/* GLOBAL WEBSITE BACKGROUND */
-
 .site-background-root {
   position: relative;
   min-height: 100vh;
@@ -198,7 +147,6 @@ select {
   inset: 0;
   z-index: 0;
   pointer-events: none;
-
   background: linear-gradient(90deg,
       #06142e 0%,
       #0a2f76 45%,
@@ -255,7 +203,6 @@ select {
 }
 
 /*about us stat cards*/
-
 .about-stat-item {
   display: flex;
   flex-direction: column;
@@ -279,7 +226,6 @@ select {
   color: #e8e8e8;
 }
 
-
 /*landing - service white card content*/
 .service-whitecard-number {
   margin: 0 0 34px 0;
@@ -287,9 +233,7 @@ select {
   font-size: 44px;
   font-weight: 400;
   line-height: 1;
-
   background: linear-gradient(100deg,
-
       #0a2f76 0%,
       #184aa3 10%,
       #2666d2 20%,
