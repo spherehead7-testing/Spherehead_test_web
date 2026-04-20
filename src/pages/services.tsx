@@ -14,21 +14,13 @@ export default function ServicesPage() {
         <title>Digital Services | Spherehead Technologies</title>
       </Head>
 
-      <div className="site-background-root relative w-full min-h-screen">
-        <div className="site-background-content flex flex-col relative z-0">
-          
-          {/* CRITICAL FIX 1: Freeze the Hero Section behind the rest of the page! */}
-          <div className="sticky top-0 w-full h-[100vh] -z-10">
-            <ServicesHeroSection />
-          </div>
-          
-          {/* The rest of the page now slides UP over the frozen Hero gradient */}
-          <div className="w-full flex flex-col relative z-10">
-            <ServicesIntroSection />
-            <ServicesApproachSection />
-            <ServicesListSection />
-          </div>
-
+      <div className="site-background-root">
+        <div className="site-background-fixed" />
+        <div className="site-background-content flex flex-col">
+          <ServicesHeroSection />
+          <ServicesIntroSection />
+          <ServicesApproachSection />
+          <ServicesListSection />
         </div>
       </div>
     </>

@@ -44,7 +44,6 @@ export default function ServicesIntroSection() {
         <motion.div style={{ y: col3Y }} className="w-1/3 h-full bg-white" />
       </div>
 
-      {/* Content */}
       <SiteContainer className="relative flex flex-col justify-center py-6 lg:py-10 h-full max-h-[950px]">
 
         {/* Heading 2 */}
@@ -71,15 +70,13 @@ export default function ServicesIntroSection() {
             style={{ opacity: content2Opacity, y: content2Y }}
             className="relative w-full aspect-square max-w-[280px] lg:max-w-none mx-auto lg:mx-0 overflow-hidden"
           >
-            <div className="absolute inset-0 bg-black [mix-blend-mode:destination-out]" />
-
             <motion.div style={{ y: ringImageY }} className="absolute inset-0 z-10">
               <Image
                 src="https://res.cloudinary.com/dku9in8sb/image/upload/v1776313260/Services_y83dyy.png"
                 alt="Abstract 3D rings"
                 fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                className="object-cover scale-105"
+                className="object-cover site-background-fixed scale-105"
               />
             </motion.div>
           </motion.div>
