@@ -68,7 +68,8 @@ export default function ServicesIntroSection() {
           {/* Image */}
           <motion.div
             style={{ opacity: content2Opacity, y: content2Y }}
-            className="relative w-full aspect-square max-w-[280px] lg:max-w-none mx-auto lg:mx-0 overflow-hidden"
+            // 1. ADD bg-animated-gradient to this outer wrapper
+            className="relative w-full aspect-square max-w-[280px] lg:max-w-none mx-auto lg:mx-0 overflow-hidden bg-animated-gradient"
           >
             <motion.div style={{ y: ringImageY }} className="absolute inset-0 z-10">
               <Image
@@ -76,7 +77,8 @@ export default function ServicesIntroSection() {
                 alt="Abstract 3D rings"
                 fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                className="object-cover site-background-fixed scale-105"
+                // 2. REMOVE site-background-fixed from here
+                className="object-cover scale-105"
               />
             </motion.div>
           </motion.div>

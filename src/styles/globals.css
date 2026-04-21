@@ -5,7 +5,7 @@
   --c2: #0a2f76;
   --c3: #184aa3;
   --c4: #2666d2;
-  --c5: #a6c4fa;
+  /* Removed --c5: #a6c4fa; */
 }
 
 html {
@@ -21,11 +21,17 @@ body,
 body {
   min-height: 100vh;
   margin: 0;
-  background: var(--c1);
+  
+  /* Light color squished into the first 15% to make a thin band */
+  background: linear-gradient(90deg, #2666D2 0%, #184AA3 15%, #0A2F76 50%, #06142E 100%);
+  background-size: 200% 200%; 
+  
+  /* Adding 'alternate' so the thin light band smoothly bounces back and forth */
+  animation: animated-gradient-flow 10s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+  
   color: var(--foreground);
   font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
 }
-
 * {
   box-sizing: border-box;
 }
@@ -40,6 +46,33 @@ input,
 textarea,
 select {
   font: inherit;
+}
+
+/* Background Animation Keyframes */
+@keyframes animated-gradient-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Accessibility for background animation */
+@media (prefers-reduced-motion: reduce) {
+  body {
+    animation: none;
+  }
+}
+
+/* Reusable utility for boxes that need the animated background */
+.bg-animated-gradient {
+  background: linear-gradient(90deg, #2666D2 0%, #184AA3 15%, #0A2F76 50%, #06142E 100%);
+  background-size: 200% 200%; 
+  animation: animated-gradient-flow 10s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
 }
 
 /* typography */
@@ -134,7 +167,7 @@ select {
   letter-spacing: 0.02em;
 }
 
-/* GLOBAL WEBSITE BACKGROUND */
+/* GLOBAL WEBSITE BACKGROUND UTILITIES */
 .site-background-root {
   position: relative;
   min-height: 100vh;
@@ -142,43 +175,10 @@ select {
   overflow-x: hidden;
 }
 
-.site-background-fixed {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background: linear-gradient(90deg,
-      #06142e 0%,
-      #0a2f76 45%,
-      #184aa3 65%,
-      #2666d2 90%,
-      #a6c4fa 100%);
-  background-repeat: no-repeat;
-  background-size: 132% 100%;
-  background-position: 8% 50%;
-  animation: siteGradientDrift 20s ease-in-out infinite alternate;
-}
-
 .site-background-content {
   position: relative;
   z-index: 1;
   min-height: 100vh;
-}
-
-@keyframes siteGradientDrift {
-  0% {
-    background-position: 8% 50%;
-  }
-
-  100% {
-    background-position: 16% 50%;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .site-background-fixed {
-    animation: none;
-  }
 }
 
 /* white large right arrow spin */
@@ -233,12 +233,12 @@ select {
   font-size: 44px;
   font-weight: 400;
   line-height: 1;
-  background: linear-gradient(100deg,
+    background: linear-gradient(100deg,
       #0a2f76 0%,
       #184aa3 10%,
       #2666d2 20%,
       #a6c4fa 30%);
-  -webkit-background-clip: text;
+        -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;

@@ -15,7 +15,6 @@ export default function ServicesPage() {
       </Head>
 
       <div className="site-background-root">
-        <div className="site-background-fixed" />
         <div className="site-background-content flex flex-col">
           <ServicesHeroSection />
           <ServicesIntroSection />
