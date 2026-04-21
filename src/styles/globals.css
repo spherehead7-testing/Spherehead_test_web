@@ -252,3 +252,19 @@ select {
   line-height: 1;
   color: #ffffff;
 }
+
+/* src/styles/globals.css */
+
+@keyframes scrollMarquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: scrollMarquee 40s linear infinite;
+}
+
+/* Optional: Pause on hover */
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
