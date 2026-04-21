@@ -40,7 +40,7 @@ export default function TestimonialsSection() {
             </div>
 
             {/* Heading */}
-            <h2 className="text-[40px] leading-tight font-semibold mb-12">
+            <h2 className="text-[40px] leading-tight mb-12">
               Building Lasting Relationships <br />
               Through Results Our Clients Value
             </h2>
@@ -51,7 +51,7 @@ export default function TestimonialsSection() {
               <img
                 src="https://res.cloudinary.com/dku9in8sb/image/upload/v1776396932/About-Us-CEO_yuirce.webp" // replace with your image
                 alt="person"
-                className="w-[260px] h-[320px] object-cover rounded-lg"
+                className="w-[340px] h-[400px] object-cover rounded-lg"
               />
 
               {/* Text */}

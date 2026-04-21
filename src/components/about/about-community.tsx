@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, useSpring, useTransform, useMotionValue } from "framer-motion";
+import RotatingDots from "../ui/rotating-dots";
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
@@ -35,29 +36,6 @@ const initiatives = [
       "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800&q=80",
   },
 ];
-
-// ─── RotatingDots ─────────────────────────────────────────────────────────────
-
-function RotatingDots() {
-  return (
-    <div className="relative w-6 h-6 flex-shrink-0">
-      <span
-        className="absolute top-0 left-0 w-2.5 h-2.5 rounded-full bg-blue-400"
-        style={{ animation: "rotateDot 3s linear infinite" }}
-      />
-      <span
-        className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-red-500"
-        style={{ animation: "rotateDot 3s linear infinite reverse" }}
-      />
-      <style>{`
-        @keyframes rotateDot {
-          from { transform: rotate(0deg) translate(4px); }
-          to   { transform: rotate(360deg) translate(4px); }
-        }
-      `}</style>
-    </div>
-  );
-}
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
@@ -169,7 +147,7 @@ export default function OutGreaterCommunity() {
           </div>
           <h1
             className="text-white font-semibold leading-[1.2] max-w-[820px]"
-            style={{ fontSize: "clamp(26px, 3.2vw, 44px)" }}
+            style={{ fontSize: "clamp(26px, 3.2vw, 34px)" }}
           >
             Beyond business, we strive to make a difference
             <br />

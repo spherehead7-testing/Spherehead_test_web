@@ -6,7 +6,7 @@ import AboutFounder from "@/components/about/about-founder";
 import CoreValues from "@/components/about/about-core-values";
 import CommunitySection from "@/components/about/about-community";
 import TestimonialsSection from "@/components/about/about-testimonial";
-import ContactSection from "@/components/about/about-contact";
+import Footer from "@/components/layout/footer";
 
 export default function AboutPage() {
   return (
@@ -17,7 +17,7 @@ export default function AboutPage() {
       <CoreValues />
       <CommunitySection />
       <TestimonialsSection />
-      <ContactSection />
+      <Footer />
     </>
   );
 }
