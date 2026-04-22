@@ -1,15 +1,13 @@
 import React from "react";
-import PortfolioHeroSection from "@/components/portfolio/portfolio-hero-section"; 
+import PortfolioHeroSection from "@/components/portfolio/portfolio-hero-section";
 import WorkShowcaseSection from "@/components/portfolio/WorkShowcaseSection";
 
 export default function PortfolioPage() {
   return (
-    <>
-      {/* Hero section renders first */}
+    <div className="relative w-full h-[100svh] overflow-hidden">
       <PortfolioHeroSection />
-      
-      {/* Work Showcase renders directly below it in the scroll flow */}
+
       <WorkShowcaseSection />
-    </>
+    </div>
   );
 }
