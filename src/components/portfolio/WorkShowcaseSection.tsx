@@ -7,15 +7,14 @@ import { ProjectListItemHeader, ProjectDetailView } from "./AccordionComponents"
 import { projects } from "./data";
 import RotatingDots from "@/components/ui/rotating-dots";
 import useCurtainRevealScroll from "@/hooks/useCurtainRevealScroll";
+import Footer from "@/components/layout/footer";
 
 export default function WorkShowcaseSection() {
   const [isVisible, setIsVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const showcaseRef = useRef<HTMLDivElement>(null);
 
-  const [expandedProjectId, setExpandedProjectId] = useState<string | null>(
-    projects.length > 0 ? projects[0].id : null,
-  );
+  const [expandedProjectId, setExpandedProjectId] = useState<string | null>(null);
 
   const showShowcase = () => {
     if (isAnimating || isVisible) return;
@@ -136,6 +135,9 @@ export default function WorkShowcaseSection() {
                   })}
                 </div>
               </section>
+
+              {/* DROP THE FOOTER RIGHT HERE! */}
+              <Footer />
             </div>
           </motion.div>
         )}
