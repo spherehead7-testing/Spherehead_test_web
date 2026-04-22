@@ -23,7 +23,7 @@ export const ProjectListItemHeader: React.FC<ProjectListItemHeaderProps> = ({
       onClick={onClick}
       className="w-full py-6 lg:py-8 bg-white cursor-pointer group hover:bg-[#F6F6F6] transition-colors border-b border-[#E5E5E5]"
     >
-      <SiteContainer className="flex items-start justify-between gap-6">
+      <SiteContainer className="flex items-center justify-between gap-6">
         <h3
           className={`heading-3 transition-colors flex-shrink-0 ${
             isExpanded
@@ -49,7 +49,8 @@ export const ProjectListItemHeader: React.FC<ProjectListItemHeaderProps> = ({
 
 // ─────────────────────────────────────────────────────────────
 // ProjectDetailView
-// Matches reference: laptop left | tablet+desc center | services right
+// Height is fixed to fill the remaining viewport after the header,
+// so collapsed items below are always visible without scrolling.
 // ─────────────────────────────────────────────────────────────
 interface ProjectDetailViewProps {
   project: Project;
@@ -65,11 +66,7 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
     visible: {
       x: 0,
       opacity: 1,
-      transition: {
-        duration: 0.7,
-        delay: 0.25,
-        ease: [0.25, 0.46, 0.45, 0.94],
-      },
+      transition: { duration: 0.7, delay: 0.25, ease: [0.25, 0.46, 0.45, 0.94] },
     },
   };
 
@@ -92,14 +89,24 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
   };
 
   return (
-    <div className="w-full" style={{ backgroundColor: project.bgColor }}>
-      <SiteContainer className="py-10 lg:py-16">
-        {/* ── Title row ── */}
-        <div className="flex items-start justify-between gap-6 pb-6 lg:pb-10 border-b border-white/10">
+    <div
+      style={{
+        backgroundColor: project.bgColor,
+        // Fixed to 62vh — tall enough to show content, short enough
+        // so 2-3 collapsed items remain visible below
+        height: "62vh",
+        overflow: "hidden",
+      }}
+      className="w-full"
+    >
+      <SiteContainer className="h-full flex flex-col py-6 lg:py-8">
+        
+        {/* ── Title + Close row ── */}
+        <div className="flex items-center justify-between gap-6 pb-4 border-b border-white/10 flex-shrink-0">
           <motion.h2
             className="text-white font-light tracking-tight"
-            style={{ fontSize: "clamp(2.5rem, 6vw, 5rem)", lineHeight: 1.05 }}
-            initial={{ opacity: 0, y: 16 }}
+            style={{ fontSize: "clamp(2rem, 5vw, 4rem)", lineHeight: 1.05 }}
+            initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
           >
@@ -108,17 +115,18 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
 
           <button
             onClick={onClose}
-            className="inter-tight text-white/70 text-sm tracking-[0.15em] hover:text-white transition-colors pt-2 flex-shrink-0"
+            className="inter-tight text-white/70 text-sm tracking-[0.15em] hover:text-white transition-colors flex-shrink-0"
           >
             CLOSE
           </button>
         </div>
 
-        {/* ── DESKTOP: 3-column grid ── */}
-        <div className="hidden lg:grid grid-cols-12 gap-8 xl:gap-12 mt-10 lg:mt-12 items-start">
-          {/* COL 1 — Laptop image (slides in from left) */}
+        {/* ── DESKTOP: 3-column grid fills remaining height ── */}
+        <div className="hidden lg:grid grid-cols-12 gap-8 xl:gap-10 flex-1 mt-6 min-h-0">
+          
+          {/* COL 1 — Laptop (Bottom Aligned) */}
           <motion.div
-            className="col-span-4"
+            className="col-span-4 h-full flex items-end pb-2"
             variants={laptopVariants}
             initial="hidden"
             animate="visible"
@@ -126,15 +134,15 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
             <Image
               src={project.expandedContent.laptopImage}
               alt={`${project.title} laptop`}
-              width={560}
-              height={380}
-              className="w-full h-auto object-contain"
+              width={520}
+              height={340}
+              className="w-full h-auto object-contain max-h-[42vh]"
             />
           </motion.div>
 
-          {/* COL 2 — Tablet image + description (fades up) */}
+          {/* COL 2 — Tablet (Small, Bottom Aligned, No Description) */}
           <motion.div
-            className="col-span-5 flex flex-col items-start gap-6 self-end"
+            className="col-span-5 h-full flex flex-col items-start justify-end pb-2 min-h-0"
             variants={fadeUp}
             initial="hidden"
             animate="visible"
@@ -144,12 +152,12 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
               alt={`${project.title} tablet`}
               width={240}
               height={180}
-              className="w-[60%] max-w-[280px] h-auto object-contain rounded-lg border-[6px] border-black shadow-2xl"
+              className="w-[60%] max-w-[320px] h-auto object-contain rounded-lg border-[3px] border-black/40 shadow-2xl"
             />
           </motion.div>
 
-          {/* COL 3 — Services list (staggers in) */}
-          <div className="col-span-3 flex flex-col items-end gap-2 pt-2 self-end">
+          {/* COL 3 — Services (Right Aligned, No Bullets, Bottom Aligned) */}
+          <div className="col-span-3 h-full flex flex-col items-end justify-end gap-2 pb-2">
             {project.expandedContent.services.map((service, i) => (
               <motion.div
                 key={i}
@@ -158,7 +166,6 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
                 initial="hidden"
                 animate="visible"
               >
-                {/* The bullet point <div> has been removed, and 'text-right block' added */}
                 <span className="inter-tight text-white/60 text-sm text-right block">
                   {service}
                 </span>
@@ -168,9 +175,10 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
         </div>
 
         {/* ── MOBILE layout ── */}
-        <div className="flex lg:hidden flex-col gap-6 mt-8">
-          {/* Laptop + services side by side */}
-          <div className="flex items-start gap-4">
+        <div className="flex lg:hidden flex-col gap-4 flex-1 mt-4 min-h-0 overflow-hidden">
+          <div className="flex items-start justify-between gap-4">
+            
+            {/* Laptop Image */}
             <motion.div
               className="w-3/5"
               variants={laptopVariants}
@@ -180,12 +188,13 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
               <Image
                 src={project.expandedContent.laptopImage}
                 alt={`${project.title} laptop`}
-                width={400}
-                height={280}
+                width={360}
+                height={240}
                 className="w-full h-auto object-contain"
               />
             </motion.div>
 
+            {/* Services List */}
             <motion.div
               className="w-2/5 flex flex-col items-end gap-2 pt-2"
               variants={fadeUp}
@@ -193,16 +202,14 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
               animate="visible"
             >
               {project.expandedContent.services.map((service, i) => (
-                <span
-                  key={i}
-                  className="inter-tight text-white/80 text-xs text-right"
-                >
+                <span key={i} className="inter-tight text-white/80 text-xs text-right block">
                   {service}
                 </span>
               ))}
             </motion.div>
           </div>
         </div>
+
       </SiteContainer>
     </div>
   );

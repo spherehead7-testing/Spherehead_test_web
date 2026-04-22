@@ -3,13 +3,14 @@
 import { useEffect, useRef } from "react";
 
 interface UseCurtainRevealScrollOptions {
-
   onReveal: () => void;
   onDismiss: () => void;
-  scrollContainerRef: React.RefObject<HTMLDivElement |null>;
+  scrollContainerRef: React.RefObject<HTMLDivElement | null>;
   isVisible: boolean;
   isAnimating: boolean;
+  /** Minimum accumulated wheel delta to trigger (default: 200) */
   threshold?: number;
+  /** Minimum touch swipe distance in px to trigger (default: 100) */
   touchThreshold?: number;
 }
 
@@ -19,31 +20,46 @@ export default function useCurtainRevealScroll({
   scrollContainerRef,
   isVisible,
   isAnimating,
-  threshold = 10,
-  touchThreshold = 30,
+  threshold = 200,       // ← was 80, needs a very deliberate scroll
+  touchThreshold = 100,  // ← was 80, needs a firm swipe
 }: UseCurtainRevealScrollOptions) {
   const touchStartY = useRef(0);
+  const wheelAccumulator = useRef(0);
+  const wheelTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // ── Wheel ──────────────────────────────────────────────────────
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
       if (isAnimating) return;
 
-      if (!isVisible && e.deltaY > threshold) {
+      wheelAccumulator.current += e.deltaY;
+
+      // Reset accumulator after 400ms of no scrolling (was 300ms)
+      if (wheelTimer.current) clearTimeout(wheelTimer.current);
+      wheelTimer.current = setTimeout(() => {
+        wheelAccumulator.current = 0;
+      }, 400);
+
+      if (!isVisible && wheelAccumulator.current > threshold) {
         e.preventDefault();
+        wheelAccumulator.current = 0;
         onReveal();
         return;
       }
 
       const scrollTop = scrollContainerRef.current?.scrollTop ?? 0;
-      if (isVisible && scrollTop <= 0 && e.deltaY < -threshold) {
+      if (isVisible && scrollTop <= 0 && wheelAccumulator.current < -threshold) {
         e.preventDefault();
+        wheelAccumulator.current = 0;
         onDismiss();
       }
     };
 
     window.addEventListener("wheel", handleWheel, { passive: false });
-    return () => window.removeEventListener("wheel", handleWheel);
+    return () => {
+      window.removeEventListener("wheel", handleWheel);
+      if (wheelTimer.current) clearTimeout(wheelTimer.current);
+    };
   }, [isVisible, isAnimating, onReveal, onDismiss, threshold]);
 
   // ── Touch ──────────────────────────────────────────────────────
