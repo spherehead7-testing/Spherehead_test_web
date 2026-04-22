@@ -20,7 +20,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <main className={`${archivo.variable} ${interTight.variable}`}>
       <SiteBackground>
-        <Navbar />
+        {/* <Navbar /> */}
         <Component {...pageProps} />
       </SiteBackground>
     </main>
