@@ -3,19 +3,13 @@
 import { useEffect, useRef } from "react";
 
 interface UseCurtainRevealScrollOptions {
-  /** Called when user scrolls DOWN on the hero (curtain should open) */
+
   onReveal: () => void;
-  /** Called when user scrolls UP at the top of the panel (curtain should close) */
   onDismiss: () => void;
-  /** Ref to the scrollable inner container of the panel */
-  scrollContainerRef: React.RefObject<HTMLDivElement>;
-  /** Whether the panel is currently visible */
+  scrollContainerRef: React.RefObject<HTMLDivElement |null>;
   isVisible: boolean;
-  /** Whether a transition is in progress (prevents double-firing) */
   isAnimating: boolean;
-  /** Minimum wheel deltaY to trigger reveal/dismiss (default: 10) */
   threshold?: number;
-  /** Minimum touch swipe distance in px to trigger (default: 30) */
   touchThreshold?: number;
 }
 
