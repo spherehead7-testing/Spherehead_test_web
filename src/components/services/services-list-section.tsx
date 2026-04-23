@@ -16,14 +16,14 @@ interface Service {
 
 const servicesData: Service[] = [
   { id: "01", title: "IT Consultations", desc: "Strategic guidance to align technology with your business goals.", image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1776399464/services_list_ny50qm.png" },
-  { id: "02", title: "Software Product Development", desc: "End-to-end product engineering from ideation to market entry.", image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1776399464/services_list_ny50qm.png" },
-  { id: "03", title: "IoT Development", desc: "Connecting devices to create smart, data-driven ecosystems.", image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1776399464/services_list_ny50qm.png" },
-  { id: "04", title: "Custom Web Development", desc: "We build custom software products that align with your vision, delivering innovation, scalability, and long-term value.", image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1776399464/services_list_ny50qm.png" },
-  { id: "05", title: "Robotics & Electronics", desc: "Advanced hardware solutions and automation engineering.", image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1776399464/services_list_ny50qm.png" },
-  { id: "06", title: "Quality Assurance & Testing", desc: "Rigorous testing protocols to ensure high performance.", image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1776399464/services_list_ny50qm.png" },
-  { id: "07", title: "Maintenance & Support", desc: "Continuous monitoring, security updates, and performance tuning.", image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1776399464/services_list_ny50qm.png" },
-  { id: "08", title: "Backend Development", desc: "Robust, scalable server-side architectures and database management.", image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1776399464/services_list_ny50qm.png" },
-  { id: "09", title: "Website Audit & Optimization", desc: "Comprehensive analysis and performance enhancements for your digital presence.", image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1776399464/services_list_ny50qm.png" },
+  { id: "02", title: "Software Product Development", desc: "End-to-end product engineering from ideation to market entry.", image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1776744960/Services_list_img6_twlcre.png" },
+  { id: "03", title: "IoT Development", desc: "Connecting devices to create smart, data-driven ecosystems.", image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1776744960/Services_list_img2_ncxxv8.png" },
+  { id: "04", title: "Custom Web Development", desc: "We build custom software products that align with your vision, delivering innovation, scalability, and long-term value.", image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1776744959/Services_list_img4_ls76el.png" },
+  { id: "05", title: "Robotics & Electronics", desc: "Advanced hardware solutions and automation engineering.", image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1776744959/Services_list_img7_aazspt.png" },
+  { id: "06", title: "Quality Assurance & Testing", desc: "Rigorous testing protocols to ensure high performance.", image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1776744959/Services_list_img9_hqz8tk.png" },
+  { id: "07", title: "Maintenance & Support", desc: "Continuous monitoring, security updates, and performance tuning.", image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1776744959/Services_list_img8_yeejer.png" },
+  { id: "08", title: "Backend Development", desc: "Robust, scalable server-side architectures and database management.", image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1776744959/Services_list_img5_xraozk.png" },
+  { id: "09", title: "Website Audit & Optimization", desc: "Comprehensive analysis and performance enhancements for your digital presence.", image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1776744959/Services_list_img3_ylhhjb.png" },
 ];
 
 const plusIconColors = ["text-[#FD7624]", "text-[#0D54CA]", "text-[#92D9FF]"];
@@ -92,7 +92,7 @@ export default function ServicesListSection() {
                       animate={{ opacity: 1, height: "auto", marginTop: "2rem" }}
                       exit={{ opacity: 0, height: 0, marginTop: 0 }}
                       transition={{ duration: 0.6, ease: "easeInOut" }}
-                      className="site-background-fixed !relative w-full max-w-[360px] overflow-hidden rounded-none"
+                      className="bg-animated-gradient !relative w-full max-w-[360px] overflow-hidden rounded-none"
                     >
                       <div className="relative w-full aspect-[4/3]">
                         <AnimatePresence mode="wait">
@@ -151,7 +151,7 @@ export default function ServicesListSection() {
                       <motion.div
                         initial={false}
                         animate={{ height: isActive ? "auto" : 0, opacity: isActive ? 1 : 0 }}
-                        transition={{ duration: 0.4, ease: "easeInOut" }}
+                        transition={{ duration: 0.2, ease: "easeInOut" }}
                         className="overflow-hidden"
                       >
                         <p className="body-small text-[#55565C] pt-4 pb-2 leading-relaxed max-w-lg ml-16 lg:ml-20">
