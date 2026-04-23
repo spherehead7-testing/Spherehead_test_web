@@ -15,15 +15,14 @@ export default function WorkShowcaseSection() {
   const showcaseRef = useRef<HTMLDivElement>(null);
 
   const [activeIndex, setActiveIndex] = useState(-1);
-
-  // Once the user scrolls into the project list, hide the intro permanently
-  // until the panel is closed and reopened
   const [introHidden, setIntroHidden] = useState(false);
 
   const itemRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const stepLockRef = useRef(false);
   const lockTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const snapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const finalSnapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const rAFRef = useRef<number | null>(null);
 
   const wheelAcc = useRef(0);
   const wheelTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -31,7 +30,6 @@ export default function WorkShowcaseSection() {
   const TOUCH_THRESHOLD = 80;
   const touchStartY = useRef(0);
 
-  // Reset everything on panel open
   useEffect(() => {
     if (isVisible) {
       setActiveIndex(-1);
@@ -41,35 +39,37 @@ export default function WorkShowcaseSection() {
     }
   }, [isVisible]);
 
-  // Hide intro as soon as first project activates, snap to top of list
   useEffect(() => {
-    if (snapTimer.current) clearTimeout(snapTimer.current);
     const container = showcaseRef.current;
     if (!container) return;
 
+    if (snapTimer.current) clearTimeout(snapTimer.current);
+
     if (activeIndex < 0) {
-      // Collapsed all — show intro again, scroll to top
       setIntroHidden(false);
+      // When completely closed, smoothly scroll back to the intro
       snapTimer.current = setTimeout(() => {
         container.scrollTo({ top: 0, behavior: "smooth" });
-      }, 100);
+      }, 50);
       return;
     }
 
-    // Hide intro immediately when first item activates
+    // Hide the intro as soon as any item is clicked
     setIntroHidden(true);
 
-    const project = projects[activeIndex];
-    if (!project) return;
-
-    // After expand animation, snap item to top
+    // ✨ THE FIX:
+    // Instead of forcing the scrollbar down to the individual element's offsetTop
+    // (which pushes the headers above it out of view and fights the shrinking intro),
+    // we just let the browser naturally smooth-scroll to the top of the container.
+    // Because the Intro is collapsing, 'top: 0' perfectly docks the entire 
+    // accordion on the screen, keeping all collapsed items beautifully visible!
     snapTimer.current = setTimeout(() => {
-      const el = itemRefs.current[project.id];
-      if (!el || !container) return;
-      container.scrollTo({ top: el.offsetTop, behavior: "smooth" });
-    }, 950);
+      container.scrollTo({ top: 0, behavior: "smooth" });
+    }, 50);
 
-    return () => { if (snapTimer.current) clearTimeout(snapTimer.current); };
+    return () => { 
+      if (snapTimer.current) clearTimeout(snapTimer.current); 
+    };
   }, [activeIndex]);
 
   const acquireLock = useCallback(() => {
@@ -94,15 +94,30 @@ export default function WorkShowcaseSection() {
     });
   }, []);
 
-  // ── Wheel ────────────────────────────────────────────────
+  // ── Wheel (Added Momentum Protection) ────────────────────
   useEffect(() => {
     const container = showcaseRef.current;
     if (!container || !isVisible) return;
 
     const handleWheel = (e: WheelEvent) => {
-      if (activeIndex === projects.length - 1 && e.deltaY > 0) return;
+      const lastIndex = projects.length - 1;
+      const lastItemEl = projects.length > 0 ? itemRefs.current[projects[lastIndex].id] : null;
+
+      // 1. If at the absolute top, let it bubble so the curtain closes
       if (activeIndex === -1 && e.deltaY < 0 && container.scrollTop <= 0) return;
 
+      // 2. Hide all other internal scrolling from the global curtain hook!
+      e.stopPropagation();
+
+      // 3. Footer Zone Rules
+      if (activeIndex === lastIndex) {
+        if (e.deltaY > 0) return; // Allow natural scroll down to footer
+        if (e.deltaY < 0 && lastItemEl && container.scrollTop > lastItemEl.offsetTop + 5) {
+          return; // Allow natural scroll up from footer
+        }
+      }
+
+      // 4. Trap and step
       e.preventDefault();
       wheelAcc.current += e.deltaY;
 
@@ -123,7 +138,7 @@ export default function WorkShowcaseSection() {
     return () => container.removeEventListener("wheel", handleWheel);
   }, [isVisible, activeIndex, stepDown, stepUp, acquireLock]);
 
-  // ── Touch ────────────────────────────────────────────────
+  // ── Touch (Added Momentum Protection) ────────────────────
   useEffect(() => {
     const container = showcaseRef.current;
     if (!container || !isVisible) return;
@@ -131,11 +146,23 @@ export default function WorkShowcaseSection() {
     const handleTouchStart = (e: TouchEvent) => {
       touchStartY.current = e.touches[0].clientY;
     };
+    
     const handleTouchEnd = (e: TouchEvent) => {
       const deltaY = touchStartY.current - e.changedTouches[0].clientY;
       if (Math.abs(deltaY) < TOUCH_THRESHOLD) return;
-      if (activeIndex === projects.length - 1 && deltaY > 0) return;
-      if (activeIndex === -1 && deltaY < 0) return;
+
+      const lastIndex = projects.length - 1;
+      const lastItemEl = projects.length > 0 ? itemRefs.current[projects[lastIndex].id] : null;
+
+      if (activeIndex === -1 && deltaY < 0 && container.scrollTop <= 0) return;
+      
+      e.stopPropagation(); // Hide from global hook
+
+      if (activeIndex === lastIndex) {
+        if (deltaY > 0) return;
+        if (deltaY < 0 && lastItemEl && container.scrollTop > lastItemEl.offsetTop + 5) return;
+      }
+
       if (!acquireLock()) return;
       if (deltaY > 0) stepDown();
       else stepUp();
@@ -148,6 +175,27 @@ export default function WorkShowcaseSection() {
       container.removeEventListener("touchend", handleTouchEnd);
     };
   }, [isVisible, activeIndex, stepDown, stepUp, acquireLock]);
+
+  // ── NEW: Momentum Clamp ──────────────────────────────────
+  // This instantly kills native browser scrolling momentum the second 
+  // you cross the top boundary of the last project, guaranteeing it never skips!
+  useEffect(() => {
+    const container = showcaseRef.current;
+    if (!container || !isVisible) return;
+
+    const handleScroll = () => {
+      const lastIndex = projects.length - 1;
+      if (activeIndex === lastIndex) {
+        const lastItemEl = itemRefs.current[projects[lastIndex].id];
+        if (lastItemEl && container.scrollTop < lastItemEl.offsetTop) {
+          container.scrollTop = lastItemEl.offsetTop;
+        }
+      }
+    };
+
+    container.addEventListener("scroll", handleScroll, { passive: true });
+    return () => container.removeEventListener("scroll", handleScroll);
+  }, [isVisible, activeIndex]);
 
   // ── Curtain ──────────────────────────────────────────────
   const showShowcase = useCallback(() => {
@@ -185,11 +233,13 @@ export default function WorkShowcaseSection() {
             initial={{ clipPath: "inset(90% 90% 0% 0%)" }}
             animate={{
               clipPath: "inset(0% 0% 0% 0%)",
-              transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] },
+              // ✨ THE FIX: Changed easing for a buttery smooth reveal
+              transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] }, 
             }}
             exit={{
               clipPath: "inset(90% 90% 0% 0%)",
-              transition: { duration: 0.7, ease: [0.76, 0, 0.24, 1] },
+              // ✨ THE FIX: Changed easing for a buttery smooth exit
+              transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] }, 
             }}
             className="fixed inset-0 z-20 bg-white"
             style={{ willChange: "clip-path" }}
@@ -198,7 +248,7 @@ export default function WorkShowcaseSection() {
               ref={showcaseRef}
               className="w-full h-full overflow-y-auto overflow-x-hidden"
             >
-              {/* ── Intro — hidden once user enters the project list ── */}
+              {/* ── Intro ── */}
               <AnimatePresence>
                 {!introHidden && (
                   <motion.section
@@ -229,7 +279,7 @@ export default function WorkShowcaseSection() {
               </AnimatePresence>
 
               {/* ── Project List ── */}
-              <section className="relative w-full bg-white text-[#01030B]">
+              <section className="relative w-full min-h-[100svh] bg-white text-[#01030B]">
                 <div className="w-full flex flex-col">
                   {projects.map((project, index) => {
                     const isExpanded = activeIndex === index;
@@ -257,7 +307,7 @@ export default function WorkShowcaseSection() {
                                 height: "auto",
                                 opacity: 1,
                                 transition: {
-                                  height: { duration: 0.9, ease: [0.04, 0.62, 0.23, 0.98] },
+                                  height: { duration: 0.8, ease: [0.04, 0.62, 0.23, 0.98] },
                                   opacity: { duration: 0.6, delay: 0.15, ease: "easeOut" },
                                 },
                               }}
@@ -265,7 +315,7 @@ export default function WorkShowcaseSection() {
                                 height: 0,
                                 opacity: 0,
                                 transition: {
-                                  height: { duration: 0.7, ease: "easeInOut" },
+                                  height: { duration: 0.8, ease: [0.04, 0.62, 0.23, 0.98] },
                                   opacity: { duration: 0.3, ease: "easeIn" },
                                 },
                               }}
