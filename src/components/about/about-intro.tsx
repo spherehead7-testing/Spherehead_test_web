@@ -39,7 +39,7 @@ export default function AboutIntro() {
         {/* MAP */}
         <div className="relative mt-12 lg:mt-16 -mb-12 lg:-mb-20">
           <img
-            src="/images/about-us/world-map-dots.svg"
+            src="https://res.cloudinary.com/dku9in8sb/image/upload/v1776759937/About-Us-World-Map_whcynj.webp"
             alt="world map"
             className="w-full"
           />
