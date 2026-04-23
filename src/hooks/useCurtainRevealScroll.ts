@@ -24,6 +24,7 @@ export default function useCurtainRevealScroll({
   const touchStartY = useRef(0);
   const wheelAccumulator = useRef(0);
   const wheelTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const scrollStartTop = useRef(0); 
 
   // ── Wheel ──────────────────────────────────────────────────────
   useEffect(() => {
@@ -33,12 +34,16 @@ export default function useCurtainRevealScroll({
       const scrollTop = scrollContainerRef.current?.scrollTop ?? 0;
       const isScrollingUp = e.deltaY < 0;
 
-      // ✨ THE FIX: Kill the native touchpad bounce immediately!
-      // If we are closed (Hero), or if we are open but at the very top trying to scroll up,
-      // prevent the default native scroll BEFORE the threshold math even starts.
+      // If the accumulator is 0, this is a brand new scroll.
+      // Record where the scrollbar is starting!
+      if (wheelAccumulator.current === 0) {
+        scrollStartTop.current = scrollTop;
+      }
+
+      // Prevent native scroll bounce immediately on bounds
       if (!isVisible) {
         e.preventDefault(); 
-      } else if (isVisible && scrollTop <= 0 && isScrollingUp) {
+      } else if (isVisible && scrollTop <= 2 && isScrollingUp) { 
         e.preventDefault();
       }
 
@@ -56,9 +61,14 @@ export default function useCurtainRevealScroll({
         return;
       }
 
-      if (isVisible && scrollTop <= 0 && wheelAccumulator.current < -threshold) {
-        wheelAccumulator.current = 0;
-        onDismiss();
+      if (isVisible && scrollTop <= 2 && wheelAccumulator.current < -threshold) {
+        // ✨ THE FIX: Only allow the curtain to close if the scroll gesture 
+        // ACTUALLY STARTED at the top. If they scrolled up from the bottom, 
+        // they just hit the ceiling and must pause before trying again!
+        if (scrollStartTop.current <= 2) {
+          wheelAccumulator.current = 0;
+          onDismiss();
+        }
       }
     };
 
@@ -73,6 +83,8 @@ export default function useCurtainRevealScroll({
   useEffect(() => {
     const handleTouchStart = (e: TouchEvent) => {
       touchStartY.current = e.touches[0].clientY;
+      // ✨ Record where the finger was when it first touched the screen
+      scrollStartTop.current = scrollContainerRef.current?.scrollTop ?? 0;
     };
 
     const handleTouchMove = (e: TouchEvent) => {
@@ -80,12 +92,12 @@ export default function useCurtainRevealScroll({
       
       const deltaY = touchStartY.current - e.touches[0].clientY;
       const scrollTop = scrollContainerRef.current?.scrollTop ?? 0;
-      const isSwipingUpToDown = deltaY < 0; // Finger moving down, trying to pull screen down
+      const isSwipingUpToDown = deltaY < 0; 
 
-      // ✨ THE FIX: Apply the same bounce protection to mobile/touch swiping
+      // Prevent native touch bounce immediately on bounds
       if (!isVisible) {
         e.preventDefault();
-      } else if (isVisible && scrollTop <= 0 && isSwipingUpToDown) {
+      } else if (isVisible && scrollTop <= 2 && isSwipingUpToDown) { 
         e.preventDefault();
       }
 
@@ -94,13 +106,15 @@ export default function useCurtainRevealScroll({
         return;
       }
 
-      if (isVisible && scrollTop <= 0 && deltaY < -touchThreshold) {
-        onDismiss();
+      if (isVisible && scrollTop <= 2 && deltaY < -touchThreshold) {
+        // ✨ THE FIX: Apply the exact same protection for mobile swipes
+        if (scrollStartTop.current <= 2) {
+          onDismiss();
+        }
       }
     };
 
     window.addEventListener("touchstart", handleTouchStart, { passive: true });
-    // Note: passive MUST be false here so e.preventDefault() works
     window.addEventListener("touchmove", handleTouchMove, { passive: false });
     return () => {
       window.removeEventListener("touchstart", handleTouchStart);

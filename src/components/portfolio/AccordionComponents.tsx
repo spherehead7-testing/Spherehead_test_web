@@ -25,7 +25,7 @@ export const ProjectListItemHeader: React.FC<ProjectListItemHeaderProps> = ({
     >
       <SiteContainer className="flex items-center justify-between gap-6">
         <h3
-          className={`heading-3 transition-colors flex-shrink-0 ${
+          className={`body-large transition-colors flex-shrink-0 ${
             isExpanded
               ? "text-[#0D54CA]"
               : "text-[#01030B] group-hover:text-[#0D54CA]"
@@ -34,10 +34,10 @@ export const ProjectListItemHeader: React.FC<ProjectListItemHeaderProps> = ({
           {project.title}
         </h3>
         <span
-          className={`inter-tight text-sm transition-colors whitespace-nowrap ${
+          className={`body-small transition-colors whitespace-nowrap ${
             isExpanded
               ? "text-[#0D54CA]"
-              : "text-[#6B6B6B] group-hover:text-[#0D54CA]"
+              : "text-[#01030B] opacity-60 group-hover:opacity-100 group-hover:text-[#0D54CA]"
           }`}
         >
           {project.servicesLine}
@@ -115,7 +115,7 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
 
           <button
             onClick={onClose}
-            className="inter-tight text-white/70 text-sm tracking-[0.15em] hover:text-white transition-colors flex-shrink-0"
+            className="body-Extrasmall text-white/70 tracking-[0.15em] hover:text-white transition-colors flex-shrink-0 uppercase"
           >
             CLOSE
           </button>
@@ -166,7 +166,7 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
                 initial="hidden"
                 animate="visible"
               >
-                <span className="inter-tight text-white/60 text-sm text-right block">
+                <span className="body-small text-white/60 text-right block">
                   {service}
                 </span>
               </motion.div>
@@ -202,7 +202,7 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
               animate="visible"
             >
               {project.expandedContent.services.map((service, i) => (
-                <span key={i} className="inter-tight text-white/80 text-xs text-right block">
+                <span key={i} className="body-small text-white/80 text-right block">
                   {service}
                 </span>
               ))}
