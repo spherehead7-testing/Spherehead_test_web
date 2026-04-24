@@ -3,7 +3,7 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import SiteContainer from "@/components/layout/site-container";
-import { ProjectListItemHeader, ProjectDetailView } from "./AccordionComponents";
+import { ProjectListItemHeader, ProjectDetailView } from "./portfolio-accordion-section";
 import { projects } from "./data";
 import RotatingDots from "@/components/ui/rotating-dots";
 import Footer from "@/components/layout/footer";

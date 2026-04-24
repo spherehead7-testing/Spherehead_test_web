@@ -1,6 +1,6 @@
 import React from "react";
 import PortfolioHeroSection from "@/components/portfolio/portfolio-hero-section";
-import WorkShowcaseSection from "@/components/portfolio/WorkShowcaseSection";
+import WorkShowcaseSection from "@/components/portfolio/portfolio-workshowcase-section";
 
 export default function PortfolioPage() {
   return (
