@@ -3,7 +3,7 @@ import CareersHero from "@/components/careers/careers-hero";
 import OurCulture from "@/components/careers/our-culture";
 import StayConnected from "@/components/careers/stay-connected";
 import InternshipPrograms from "@/components/careers/internship-programs";
-// import Footer from "@/components/layout/footer";
+import Footer from "@/components/layout/footer";
 
 export default function CareersPage() {
   return (
@@ -13,7 +13,7 @@ export default function CareersPage() {
 
       {/* White background section */}
       <div className="w-full bg-white text-[#01030B] z-10 relative">
-        <OurCulture />
+        <OurCulture isAfterHero={true}/>
       </div>
 
       {/* Transparent background to show global gradient */}
@@ -25,9 +25,9 @@ export default function CareersPage() {
       </div>
 
       {/* Footer */}
-      {/* <div className="w-full bg-[#01030B]">
+      <div className="w-full bg-[#01030B]">
         <Footer />
-      </div> */}
+      </div>
     </main>
   );
 }
