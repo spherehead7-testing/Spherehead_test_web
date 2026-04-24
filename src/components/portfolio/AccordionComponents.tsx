@@ -4,7 +4,6 @@ import SiteContainer from "@/components/layout/site-container";
 import Image from "next/image";
 import { Project } from "./data";
 
-// ─────────────────────────────────────────────────────────────
 // ProjectListItemHeader
 // ─────────────────────────────────────────────────────────────
 interface ProjectListItemHeaderProps {
@@ -47,11 +46,6 @@ export const ProjectListItemHeader: React.FC<ProjectListItemHeaderProps> = ({
   );
 };
 
-// ─────────────────────────────────────────────────────────────
-// ProjectDetailView
-// Height is fixed to fill the remaining viewport after the header,
-// so collapsed items below are always visible without scrolling.
-// ─────────────────────────────────────────────────────────────
 interface ProjectDetailViewProps {
   project: Project;
   onClose: () => void;
@@ -66,7 +60,11 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
     visible: {
       x: 0,
       opacity: 1,
-      transition: { duration: 0.7, delay: 0.25, ease: [0.25, 0.46, 0.45, 0.94] },
+      transition: {
+        duration: 0.7,
+        delay: 0.25,
+        ease: [0.25, 0.46, 0.45, 0.94],
+      },
     },
   };
 
@@ -92,15 +90,14 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
     <div
       style={{
         backgroundColor: project.bgColor,
-        // Fixed to 62vh — tall enough to show content, short enough
-        // so 2-3 collapsed items remain visible below
-        height: "62vh",
-        overflow: "hidden",
+        // 1. Change to minHeight so it remains at least 62vh,
+        // but can safely stretch taller if your images need more room.
+        minHeight: "62vh",
+        // 2. We completely removed overflow: "hidden" here!
       }}
       className="w-full"
     >
       <SiteContainer className="h-full flex flex-col py-6 lg:py-8">
-        
         {/* ── Title + Close row ── */}
         <div className="flex items-center justify-between gap-6 pb-4 border-b border-white/10 flex-shrink-0">
           <motion.h2
@@ -123,7 +120,6 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
 
         {/* ── DESKTOP: 3-column grid fills remaining height ── */}
         <div className="hidden lg:grid grid-cols-12 gap-8 xl:gap-10 flex-1 mt-6 min-h-0">
-          
           {/* COL 1 — Laptop (Bottom Aligned) */}
           <motion.div
             className="col-span-4 h-full flex items-end pb-2"
@@ -177,7 +173,6 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
         {/* ── MOBILE layout ── */}
         <div className="flex lg:hidden flex-col gap-4 flex-1 mt-4 min-h-0 overflow-hidden">
           <div className="flex items-start justify-between gap-4">
-            
             {/* Laptop Image */}
             <motion.div
               className="w-3/5"
@@ -202,14 +197,16 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
               animate="visible"
             >
               {project.expandedContent.services.map((service, i) => (
-                <span key={i} className="body-small text-white/80 text-right block">
+                <span
+                  key={i}
+                  className="body-small text-white/80 text-right block"
+                >
                   {service}
                 </span>
               ))}
             </motion.div>
           </div>
         </div>
-
       </SiteContainer>
     </div>
   );
