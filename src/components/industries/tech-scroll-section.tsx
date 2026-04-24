@@ -3,7 +3,6 @@
 import RotatingDots from "@/components/ui/rotating-dots";
 import TechStackCarousel from "@/components/ui/tech-stack-carousel";
 
-
 const leftCards = [
   "https://res.cloudinary.com/dku9in8sb/image/upload/v1776839143/Industries-Big-Data_lhvogj.webp",
   "https://res.cloudinary.com/dku9in8sb/image/upload/v1776839143/Industries-Big-Data_lhvogj.webp",
@@ -18,20 +17,18 @@ const rightCards = [...leftCards];
 export default function TechScrollSection() {
   return (
     <section className="bg-[#f5f7fb]">
-
       {/* ================= HERO (FIRST VIEW) ================= */}
-      <div className="min-h-screen flex flex-col items-center justify-center text-center px-6">
-
+      <div className="min-h-screen flex flex-col items-center justify-start pt-12 text-center px-6">
         {/* Label */}
-        <div className="flex items-center gap-2 mb-6">
+        <div className="flex items-center gap-2 mb-3">
           <RotatingDots />
           <span className="text-sm text-gray-500">Technologies</span>
         </div>
 
         {/* Heading */}
-        <h2 className="text-[30px] md:text-[38px] lg:text-[44px] text-[#0b0f19] max-w-[800px] mb-10">
-          We use advanced technologies to deliver smart,
-          scalable solutions for business growth.
+        <h2 className="text-[30px] md:text-[28px] lg:text-[34px] text-[#0b0f19] max-w-[800px] mb-10">
+          We use advanced technologies to deliver smart, scalable solutions for
+          business growth.
         </h2>
 
         {/* Icons Row */}
@@ -39,14 +36,12 @@ export default function TechScrollSection() {
       </div>
 
       {/* ================= SCROLL SECTION ================= */}
-      <section className="relative h-[100vh]">
-
+      <section className="relative h-[100vh] -mt-42">
         <div className="sticky top-0 h-screen flex items-start pt-8">
-
           <div className="max-w-7xl mx-auto w-full px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-2 gap-12">
-
             {/* LEFT TEXT */}
-            <div className="flex flex-col justify-center">
+            {/* <div className="flex flex-col justify-start pt-12"> */}
+              <div className="flex flex-col h-full pt-12">
               <div className="flex items-center gap-2 mb-6">
                 <RotatingDots />
                 <span className="text-sm text-gray-500">
@@ -54,29 +49,26 @@ export default function TechScrollSection() {
                 </span>
               </div>
 
-              <h2 className="text-[34px] lg:text-[42px] leading-[1.3] font-medium text-[#0b0f19] max-w-[520px]">
-                Driving Innovation and Impact through Advanced Technologies Worldwide
+              <h2 className="text-[34px] lg:text-[30px] text-[#0b0f19] max-w-[520px]">
+                Driving Innovation and Impact through Advanced Technologies
+                Worldwide
               </h2>
 
-              <p className="text-gray-500 mt-8 max-w-[420px] text-sm leading-relaxed">
-                Leveraging cutting-edge technologies and innovative tools, we deliver digital
-                solutions that solve complex challenges, drive measurable impact, and empower
-                businesses to thrive in a rapidly evolving world.
+              <p className="text-gray-500 mt-auto max-w-[420px] text-sm">
+                Leveraging cutting-edge technologies and innovative tools, we
+                deliver digital solutions that solve complex challenges, drive
+                measurable impact, and empower businesses to thrive in a rapidly
+                evolving world.
               </p>
             </div>
 
             {/* RIGHT SCROLL AREA */}
             <div className="grid grid-cols-2 gap-6 h-[80vh] overflow-hidden">
-
               {/* LEFT COLUMN (scroll up) */}
               <div className="relative overflow-hidden">
                 <div className="animate-scrollUp flex flex-col gap-6">
                   {[...leftCards, ...leftCards].map((src, i) => (
-                    <img
-                      key={i}
-                      src={src}
-                      className="rounded-xl shadow-md"
-                    />
+                    <img key={i} src={src} className="rounded-xl shadow-md" />
                   ))}
                 </div>
               </div>
@@ -85,15 +77,10 @@ export default function TechScrollSection() {
               <div className="relative overflow-hidden">
                 <div className="animate-scrollDown flex flex-col gap-6">
                   {[...rightCards, ...rightCards].map((src, i) => (
-                    <img
-                      key={i}
-                      src={src}
-                      className="rounded-xl shadow-md"
-                    />
+                    <img key={i} src={src} className="rounded-xl shadow-md" />
                   ))}
                 </div>
               </div>
-
             </div>
           </div>
         </div>

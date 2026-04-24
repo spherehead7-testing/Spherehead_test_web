@@ -10,8 +10,7 @@ export default function IndustriesHero() {
       <div className="w-full max-w-7xl mx-auto px-6 lg:px-12 pb-32">
 
         {/* Top line */}
-        {/* <div className="w-full h-[1px] bg-white/40 mb-12" /> */}
-        <div className="w-full h-[1px] mb-12" />
+        <div className="w-full h-[1px] bg-white/40 mb-12" />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-end">
 

@@ -1,9 +1,7 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
-import { useRef, useEffect, useState } from "react";
-import RotatingDots from "../ui/rotating-dots";
+import RotatingDots from "@/components/ui/rotating-dots";
 
 const data = [
   {
@@ -38,124 +36,84 @@ const data = [
   },
 ];
 
-// ─── SINGLE SOURCE OF TRUTH for card sizing ───────────────────────────────────
-// number row:   h-[48px]  = 48px
-// content row:  h-[300px] = 300px
-// border-b:     1px
-// ─────────────────────────────────────────────────────────────────────────────
-const NUMBER_ROW_H = 48;
-const CONTENT_ROW_H = 300;
-const BORDER_H = 1;
-const CARD_HEIGHT = NUMBER_ROW_H + CONTENT_ROW_H + BORDER_H; // = 349px
-
-// We scroll the list upward by (n-1) full card heights so the last card
-// ends up at the top of the viewport — no more, no less.
-const SCROLL_DISTANCE = (data.length - 1) * CARD_HEIGHT;
-
 export default function IndustriesList() {
-  const ref = useRef(null);
-
-  // Use real window.innerHeight so mobile browser chrome doesn't cause
-  // 100vh to be taller than the visible area, which would create whitespace.
-  const [vh, setVh] = useState(0);
-
-  useEffect(() => {
-    const onResize = () => setVh(window.innerHeight);
-    onResize();
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
-  }, []);
-
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start start", "end end"],
-  });
-
-  const y = useTransform(scrollYProgress, [0, 1], [0, -SCROLL_DISTANCE]);
-
-  // Section height = one real viewport (sticky pane) + scroll runway
-const sectionHeight = vh
-  ? vh + SCROLL_DISTANCE - CARD_HEIGHT
-  : `calc(100vh + ${SCROLL_DISTANCE - CARD_HEIGHT}px)`;
-
   return (
-    <section
-      ref={ref}
-      className="relative"
-      style={{ height: sectionHeight }}
-    >
-      {/* sticky pane — always exactly one real viewport tall */}
-      <div
-        className="sticky top-0 flex overflow-hidden"
-        style={{ height: vh || "100vh" }}
-      >
-        {/* ── LEFT ── */}
-        <div className="w-1/2 text-white flex items-start pt-8 px-16 relative">
-          <div>
-            <div className="flex items-center gap-3 mb-6">
-              <RotatingDots />
-              <span className="text-sm text-white/70 ml-2">
-                Industries We Serve
-              </span>
-            </div>
-            <h2 className="text-[30px] max-w-[500px] mb-10 leading-[1.4]">
-              Our expertise spans multiple industries, enabling us to create
-              innovative solutions that enhance efficiency, improve customer
-              experiences, and support digital transformation.
-            </h2>
+    // Entire section = exactly one viewport, nothing overflows the page
+    <section className="flex w-full h-screen overflow-hidden">
+
+      {/* ── LEFT — locked, never scrolls ── */}
+      <div className="w-1/2 h-full flex-shrink-0 flex items-start pt-10 px-14">
+        <div>
+          {/* Label */}
+          <div className="flex items-center gap-3 mb-8">
+            <RotatingDots />
+            <span className="text-sm text-white/70 tracking-wide">
+              Industries We Serve
+            </span>
           </div>
-        </div>
 
-        {/* ── RIGHT ── */}
-        <div className="w-1/2 bg-[#f5f7fb] overflow-hidden relative">
-          <motion.div
-            style={{ y }}
-            className="absolute top-0 left-0 w-full will-change-transform"
-          >
-            {data.map((item, i) => (
-              <div
-                key={i}
-                style={{
-                  height: CARD_HEIGHT,
-                  borderBottom: "1px solid #e5e7eb",
-                }}
-              >
-                {/* Number row */}
-                <div
-                  style={{ height: NUMBER_ROW_H }}
-                  className="flex items-center px-6 text-blue-600 text-lg font-medium"
-                >
-                  {item.id}
-                </div>
-
-                {/* Content row */}
-                <div style={{ height: CONTENT_ROW_H }} className="flex">
-                  {/* Image */}
-                  <div className="w-[45%] relative">
-                    <Image
-                      src={item.img}
-                      alt={item.title}
-                      fill
-                      className="object-cover"
-                      sizes="25vw"
-                    />
-                  </div>
-
-                  {/* Text */}
-                  <div className="w-[55%] p-8 flex flex-col justify-center">
-                    <h3 className="text-xl font-medium mb-2 text-gray-900">
-                      {item.title}
-                    </h3>
-                    <p className="text-gray-500 text-sm leading-relaxed">
-                      {item.desc}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </motion.div>
+          {/* Headline */}
+          <h2 className="text-[28px] lg:text-[32px] font-light leading-[1.45] text-white max-w-[400px]">
+            Our expertise spans multiple industries, enabling us to create
+            innovative solutions that enhance efficiency, improve customer
+            experiences, and support digital transformation.
+          </h2>
         </div>
       </div>
+
+      {/* ── RIGHT — independently scrollable, hidden scrollbar ── */}
+      <div
+        className="w-1/2 h-full flex-shrink-0 bg-white overflow-y-scroll"
+        style={{
+          scrollbarWidth: "none",       /* Firefox */
+          msOverflowStyle: "none",      /* IE / Edge */
+        }}
+      >
+        {/* Hide scrollbar in WebKit */}
+        <style>{`
+          section .industries-scroll::-webkit-scrollbar { display: none; }
+        `}</style>
+
+        {data.map((item) => (
+          <div key={item.id} className="border-b border-gray-200">
+
+            {/* Number label */}
+            <div className="px-8 pt-5 pb-2 text-blue-600 text-base font-medium">
+              {item.id}
+            </div>
+
+            {/* Card row: image + text */}
+            <div className="flex">
+
+              {/* Image — 327 × 332 px */}
+              <div
+                className="relative flex-shrink-0"
+                style={{ width: 327, height: 332 }}
+              >
+                <Image
+                  src={item.img}
+                  alt={item.title}
+                  fill
+                  className="object-cover"
+                  sizes="327px"
+                />
+              </div>
+
+              {/* Text */}
+              <div className="flex-1 flex flex-col justify-center px-8 py-6">
+                <h3 className="text-[20px] font-semibold text-gray-900 mb-3">
+                  {item.title}
+                </h3>
+                <p className="text-gray-500 text-sm leading-relaxed max-w-[280px]">
+                  {item.desc}
+                </p>
+              </div>
+
+            </div>
+          </div>
+        ))}
+      </div>
+
     </section>
   );
 }
