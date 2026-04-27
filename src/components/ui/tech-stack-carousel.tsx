@@ -2,7 +2,7 @@
 
 import React, { useRef, useEffect, useState } from "react";
 import Image from "next/image";
-import { motion, useMotionValue, useSpring, useAnimation } from "framer-motion";
+import { motion, useMotionValue, useSpring } from "framer-motion";
 
 export interface TechItem {
   name: string;
@@ -66,13 +66,10 @@ export default function TechStackCarousel({
   const animationRef = useRef<number | null>(null);
   const lastTimeRef = useRef<number>(0);
 
-  // We track the scroll position manually now
   const x = useMotionValue(0);
-
-  // Adds a smooth, fluid glide to the mouse wheel movement
   const smoothX = useSpring(x, { damping: 40, stiffness: 200 });
 
-  // Auto-scroll effect
+  // Auto-scroll effect only
   useEffect(() => {
     const container = containerRef.current;
     const track = trackRef.current;
@@ -89,14 +86,13 @@ export default function TechStackCarousel({
         lastTimeRef.current = timestamp;
       }
       
-      const deltaTime = (timestamp - lastTimeRef.current) / 1000; // convert to seconds
+      const deltaTime = (timestamp - lastTimeRef.current) / 1000;
       lastTimeRef.current = timestamp;
 
       if (!isHovered) {
         const currentX = x.get();
         let newX = currentX - (autoScrollSpeed * deltaTime);
 
-        // Loop back to start when reaching the end
         if (newX <= -maxScroll) {
           newX = 0;
         }
@@ -116,61 +112,11 @@ export default function TechStackCarousel({
     };
   }, [x, autoScrollSpeed, isHovered]);
 
-  // Reset lastTimeRef when hover state changes
   useEffect(() => {
     if (!isHovered) {
       lastTimeRef.current = 0;
     }
   }, [isHovered]);
-
-  useEffect(() => {
-    const container = containerRef.current;
-    const track = trackRef.current;
-    if (!container || !track) return;
-
-    const handleWheel = (e: WheelEvent) => {
-      const containerWidth = container.offsetWidth;
-      const trackWidth = track.scrollWidth;
-
-      // Calculate how far the logos are allowed to scroll
-      const maxScroll = trackWidth - containerWidth;
-      if (maxScroll <= 0) return;
-
-      // Detect if user is swiping horizontally (trackpad) or scrolling vertically (mouse wheel)
-      const isHorizontal = Math.abs(e.deltaX) > Math.abs(e.deltaY);
-
-      // Multiply by 1.5 to make the scroll speed feel responsive and natural
-      const scrollAmount = (isHorizontal ? e.deltaX : e.deltaY) * 1.5;
-
-      const currentX = x.get();
-      let newX = currentX - scrollAmount;
-
-      let hitEdge = false;
-
-      // Prevent scrolling past the left edge
-      if (newX > 0) {
-        newX = 0;
-        hitEdge = true;
-      }
-      // Prevent scrolling past the right edge
-      else if (newX < -maxScroll) {
-        newX = -maxScroll;
-        hitEdge = true;
-      }
-
-      x.set(newX);
-
-      // IMPORTANT: Prevent the page from scrolling vertically UNLESS
-      // the user has reached the end of the logos. This prevents getting "trapped".
-      if (!hitEdge && !isHorizontal) {
-        e.preventDefault();
-      }
-    };
-
-    // `passive: false` is required so we can safely cancel the page scroll when needed
-    container.addEventListener("wheel", handleWheel, { passive: false });
-    return () => container.removeEventListener("wheel", handleWheel);
-  }, [x]);
 
   return (
     <div 
@@ -182,7 +128,6 @@ export default function TechStackCarousel({
         ref={containerRef}
         className="relative w-full max-w-[1200px] flex items-center"
         style={{
-          // The CSS Mask that fades the left and right edges
           maskImage:
             "linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%)",
           WebkitMaskImage:
@@ -191,10 +136,9 @@ export default function TechStackCarousel({
       >
         <motion.div
           ref={trackRef}
-          style={{ x: smoothX }} // Controlled strictly by the mouse scroll now!
+          style={{ x: smoothX }}
           className="flex items-center gap-16 md:gap-24 px-8 w-max"
         >
-          {/* Render the array twice so it overflows enough to allow scrolling */}
           {[...items, ...items].map((tech, i) => (
             <div
               key={i}
@@ -205,7 +149,6 @@ export default function TechStackCarousel({
                 alt={tech.name}
                 width={80}
                 height={80}
-                // Added pointer-events-none to prevent ghost dragging issues
                 className="object-contain h-[50px] w-auto md:h-[60px] pointer-events-none"
               />
             </div>
