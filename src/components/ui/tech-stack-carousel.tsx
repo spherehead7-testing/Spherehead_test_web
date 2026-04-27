@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import Image from "next/image";
-import { motion, useMotionValue, useSpring } from "framer-motion";
+import { motion, useMotionValue, useSpring, useAnimation } from "framer-motion";
 
 export interface TechItem {
   name: string;
@@ -52,21 +52,76 @@ const defaultTechStack: TechItem[] = [
 interface TechStackCarouselProps {
   items?: TechItem[];
   className?: string;
+  autoScrollSpeed?: number;
 }
 
 export default function TechStackCarousel({
   items = defaultTechStack,
-  // FIX: Removed `border-t`, `border-gray-100`, and `mt-10` to eliminate the line!
+  autoScrollSpeed = 40,
   className = "w-full pt-8 pb-10 flex justify-center overflow-hidden bg-white",
 }: TechStackCarouselProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
+  const [isHovered, setIsHovered] = useState(false);
+  const animationRef = useRef<number | null>(null);
+  const lastTimeRef = useRef<number>(0);
 
   // We track the scroll position manually now
   const x = useMotionValue(0);
   
   // Adds a smooth, fluid glide to the mouse wheel movement
   const smoothX = useSpring(x, { damping: 40, stiffness: 200 });
+
+  // Auto-scroll effect
+  useEffect(() => {
+    const container = containerRef.current;
+    const track = trackRef.current;
+    if (!container || !track) return;
+
+    const trackWidth = track.scrollWidth;
+    const containerWidth = container.offsetWidth;
+    const maxScroll = trackWidth - containerWidth;
+
+    if (maxScroll <= 0) return;
+
+    const animate = (timestamp: number) => {
+      if (!lastTimeRef.current) {
+        lastTimeRef.current = timestamp;
+      }
+      
+      const deltaTime = (timestamp - lastTimeRef.current) / 1000; // convert to seconds
+      lastTimeRef.current = timestamp;
+
+      if (!isHovered) {
+        const currentX = x.get();
+        let newX = currentX - (autoScrollSpeed * deltaTime);
+
+        // Loop back to start when reaching the end
+        if (newX <= -maxScroll) {
+          newX = 0;
+        }
+
+        x.set(newX);
+      }
+
+      animationRef.current = requestAnimationFrame(animate);
+    };
+
+    animationRef.current = requestAnimationFrame(animate);
+
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, [x, autoScrollSpeed, isHovered]);
+
+  // Reset lastTimeRef when hover state changes
+  useEffect(() => {
+    if (!isHovered) {
+      lastTimeRef.current = 0;
+    }
+  }, [isHovered]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -118,7 +173,11 @@ export default function TechStackCarousel({
   }, [x]);
 
   return (
-    <div className={className}>
+    <div 
+      className={className}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <div
         ref={containerRef}
         className="relative w-full max-w-[1200px] flex items-center"
