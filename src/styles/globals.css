@@ -19,20 +19,23 @@ body,
   overscroll-behavior: none;
 }
 
+/* body {
+  min-height: 100vh;
+  margin: 0;
+  background: linear-gradient(90deg, #2666D2 0%, #184AA3 15%, #0A2F76 50%, #06142E 100%);
+  background-size: 200% 200%;
+  animation: animated-gradient-flow 10s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+  color: var(--foreground);
+  font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
+} */
+
 body {
   min-height: 100vh;
   margin: 0;
-  
-  /* Light color squished into the first 15% to make a thin band */
-  background: linear-gradient(90deg, #2666D2 0%, #184AA3 15%, #0A2F76 50%, #06142E 100%);
-  background-size: 200% 200%; 
-  
-  /* Adding 'alternate' so the thin light band smoothly bounces back and forth */
-  animation: animated-gradient-flow 10s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
-  
-  color: var(--foreground);
-  font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
+  background: transparent; /* ✅ important */
 }
+
+
 * {
   box-sizing: border-box;
 }
@@ -72,7 +75,7 @@ select {
 /* Reusable utility for boxes that need the animated background */
 .bg-animated-gradient {
   background: linear-gradient(90deg, #2666D2 0%, #184AA3 15%, #0A2F76 50%, #06142E 100%);
-  background-size: 200% 200%; 
+  background-size: 200% 200%;
   animation: animated-gradient-flow 10s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
 }
 
@@ -176,9 +179,32 @@ select {
   overflow-x: hidden;
 }
 
-.site-background-content {
+.site-background-fixed {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+
+  background: linear-gradient(
+    90deg,
+    #2666D2 0%,
+    #184AA3 15%,
+    #0A2F76 50%,
+    #06142E 100%
+  );
+
+  background-size: 200% 200%;
+  animation: animated-gradient-flow 10s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+}
+
+/* .site-background-content {
   position: relative;
   z-index: 1;
+  min-height: 100vh;
+} */
+
+.site-background-content {
+  position: relative;
+  z-index: 10; /* stronger layer */
   min-height: 100vh;
 }
 
@@ -252,6 +278,34 @@ select {
   font-weight: 400;
   line-height: 1;
   color: #ffffff;
+}
+
+/* UP scroll */
+@keyframes scrollUp {
+  0% {
+    transform: translateY(0%);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+.animate-scrollUp {
+  animation: scrollUp 30s linear infinite;
+}
+
+/* DOWN scroll */
+@keyframes scrollDown {
+  0% {
+    transform: translateY(-50%);
+  }
+  100% {
+    transform: translateY(0%);
+  }
+}
+
+.animate-scrollDown {
+  animation: scrollDown 30s linear infinite;
 }
 
 /* src/styles/globals.css */

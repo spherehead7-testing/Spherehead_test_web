@@ -3,6 +3,7 @@ import { Archivo, Inter_Tight } from "next/font/google";
 import "@/styles/globals.css";
 import SiteBackground from "@/components/layout/site-background";
 import Navbar from "@/components/layout/navbar";
+import Footer from "@/components/layout/footer";
 
 const archivo = Archivo({
   subsets: ["latin"],
@@ -22,6 +23,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
       <SiteBackground>
         <Navbar />
         <Component {...pageProps} />
+        <Footer />
       </SiteBackground>
     </main>
   );
