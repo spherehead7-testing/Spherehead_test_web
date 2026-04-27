@@ -19,7 +19,7 @@ export default function CareersHero() {
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             className="flex flex-col gap-4 lg:gap-6"
           >
-            <h1 className="heading-1 !text-5xl lg:!text-[72px] lg:leading-[90px] text-white">
+            <h1 className="inner-hero !text-5xl md:!text-7xl lg:!text-[72px] lg:!leading-[90px] text-white">
               Careers at<br />Spherehead
             </h1>
           </motion.div>

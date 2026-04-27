@@ -3,30 +3,50 @@
 import React from "react";
 import { motion } from "framer-motion";
 import SiteContainer from "@/components/layout/site-container";
-
 export default function StayConnected() {
+
   return (
-    <section className="w-full py-24 lg:py-32 text-white">
-      <SiteContainer>
+    <section className="relative w-full h-[100svh] flex flex-col items-center justify-center overflow-hidden">
+      
+      <SiteContainer className="w-full h-full flex justify-center items-center px-4 md:px-8">
+        
         <motion.div 
-          initial={{ scale: 0.95, opacity: 0 }}
+          initial={{ scale: 0.98, opacity: 0 }}
           whileInView={{ scale: 1, opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          className="w-full bg-white text-[#01030B] rounded-2xl p-10 lg:p-20 relative overflow-hidden flex flex-col items-center text-center border border-white/20 shadow-2xl"
+          className="w-full max-w-[1100px] h-[400px] lg:h-[480px] bg-white relative overflow-hidden flex flex-col items-center justify-center text-center shadow-lg"
         >
-          <h2 className="heading-3 mb-4">
-            Come back later and <br />
-            <span className="text-[#0D54CA] font-semibold">stay connected!</span>
-          </h2>
-          <p className="body-small text-[#6B6B6B] max-w-sm">
-            We're not hiring at the moment, but new positions may open soon.
-          </p>
+          
+          {/* Typography */}
+          <div className="relative z-10 flex flex-col items-center px-6">
+            <h2 className="text-3xl lg:text-[44px] leading-tight text-[#333] font-normal tracking-tight mb-2">
+              Come back later and <br />
+              <span className="text-[#0D54CA] font-medium">stay connected!</span>
+            </h2>
+            <p className="text-[13px] lg:text-[15px] text-[#555] max-w-lg mt-4 font-medium">
+              We're not hiring at the moment, but new positions may open soon.
+            </p>
+          </div>
 
-          {/* Abstract Plug Graphics - Left and Right */}
-          {/* Note: You can replace these with actual SVG exports from your design file */}
-          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-32 h-16 border-b-[4px] border-r-[4px] border-[#0D54CA] rounded-br-2xl hidden md:block"></div>
-          <div className="absolute right-0 top-1/2 -translate-y-1/2 w-32 h-16 border-t-[4px] border-l-[4px] border-[#0D54CA] rounded-tl-2xl hidden md:block"></div>
+          {/* Left Graphic: Socket (Top Left) */}
+          <div className="absolute left-0 top-0 h-full w-[120px] lg:w-[180px] hidden md:block">
+            <img 
+              src="https://res.cloudinary.com/dku9in8sb/image/upload/v1777269546/connect_Icon2_nxbt0n.png" 
+              alt="Socket graphic" 
+              className="w-full h-full object-contain object-left-top pt-2 pl-2 lg:pt-4 lg:pl-4" 
+            />
+          </div>
+
+          {/* Right Graphic: Plug (Bottom Right) */}
+          <div className="absolute right-0 top-0 h-full w-[120px] lg:w-[180px] hidden md:block">
+            <img 
+              src="https://res.cloudinary.com/dku9in8sb/image/upload/v1777269546/connect_Icon1_nyua2x.png" 
+              alt="Plug graphic"    
+              className="w-full h-full object-contain object-right-bottom pb-2 pr-2 lg:pb-4 lg:pr-4" 
+            />
+          </div>
+
         </motion.div>
       </SiteContainer>
     </section>
