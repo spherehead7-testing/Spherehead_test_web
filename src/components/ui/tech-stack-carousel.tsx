@@ -68,7 +68,7 @@ export default function TechStackCarousel({
 
   // We track the scroll position manually now
   const x = useMotionValue(0);
-  
+
   // Adds a smooth, fluid glide to the mouse wheel movement
   const smoothX = useSpring(x, { damping: 40, stiffness: 200 });
 
@@ -131,14 +131,14 @@ export default function TechStackCarousel({
     const handleWheel = (e: WheelEvent) => {
       const containerWidth = container.offsetWidth;
       const trackWidth = track.scrollWidth;
-      
+
       // Calculate how far the logos are allowed to scroll
       const maxScroll = trackWidth - containerWidth;
       if (maxScroll <= 0) return;
 
       // Detect if user is swiping horizontally (trackpad) or scrolling vertically (mouse wheel)
       const isHorizontal = Math.abs(e.deltaX) > Math.abs(e.deltaY);
-      
+
       // Multiply by 1.5 to make the scroll speed feel responsive and natural
       const scrollAmount = (isHorizontal ? e.deltaX : e.deltaY) * 1.5;
 
@@ -151,7 +151,7 @@ export default function TechStackCarousel({
       if (newX > 0) {
         newX = 0;
         hitEdge = true;
-      } 
+      }
       // Prevent scrolling past the right edge
       else if (newX < -maxScroll) {
         newX = -maxScroll;
@@ -160,7 +160,7 @@ export default function TechStackCarousel({
 
       x.set(newX);
 
-      // IMPORTANT: Prevent the page from scrolling vertically UNLESS 
+      // IMPORTANT: Prevent the page from scrolling vertically UNLESS
       // the user has reached the end of the logos. This prevents getting "trapped".
       if (!hitEdge && !isHorizontal) {
         e.preventDefault();
