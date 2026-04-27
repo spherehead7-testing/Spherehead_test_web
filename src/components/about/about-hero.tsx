@@ -6,7 +6,7 @@ import CyclicButton from "@/components/ui/cyclic-button";
 
 export default function AboutHero() {
   return (
-    <section className="relative w-full min-h-screen bg-gradient-to-r from-[#0B1E3C] to-[#1E4DA1] text-white flex items-center">
+    <section className="relative w-full min-h-screen text-white flex items-center">
       <div className="w-full max-w-7xl mx-auto px-6 lg:px-12">
         {/* Top line */}
         <div className="w-full h-[1px] bg-white/40 mt-16 lg:mt-32" />
