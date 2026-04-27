@@ -14,14 +14,10 @@ export default function ServicesPage() {
         <title>Digital Services | Spherehead Technologies</title>
       </Head>
 
-      <div className="site-background-root">
-        <div className="site-background-content flex flex-col">
-          <ServicesHeroSection />
-          <ServicesIntroSection />
-          <ServicesApproachSection />
-          <ServicesListSection />
-        </div>
-      </div>
+      <ServicesHeroSection />
+      <ServicesIntroSection />
+      <ServicesApproachSection />
+      <ServicesListSection />
     </>
   );
 }
