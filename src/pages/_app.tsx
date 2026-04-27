@@ -20,11 +20,9 @@ const interTight = Inter_Tight({
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <main className={`${archivo.variable} ${interTight.variable}`}>
-      <SiteBackground>
         <Navbar />
         <Component {...pageProps} />
         <Footer />
-      </SiteBackground>
     </main>
   );
 }
