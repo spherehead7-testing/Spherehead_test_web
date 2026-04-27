@@ -8,9 +8,16 @@ import { projects } from "./data";
 import RotatingDots from "@/components/ui/rotating-dots";
 import Footer from "@/components/layout/footer";
 
+// Durations as constants — single source of truth
+const ENTER_DURATION = 0.8;
+const EXIT_DURATION = 0.7;
+const ENTER_MS = ENTER_DURATION * 1000;
+const EXIT_MS = EXIT_DURATION * 1000;
+
 export default function WorkShowcaseSection() {
   const [isVisible, setIsVisible] = useState(false);
-  const [isAnimating, setIsAnimating] = useState(false);
+  const isAnimatingRef = useRef(false); // ← ref instead of state, avoids stale closure
+  const animTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const showcaseRef = useRef<HTMLDivElement>(null);
 
   const [activeIndex, setActiveIndex] = useState(-1);
@@ -26,6 +33,13 @@ export default function WorkShowcaseSection() {
   const WHEEL_THRESHOLD = 20;
   const TOUCH_THRESHOLD = 80;
   const touchStartY = useRef(0);
+
+  // Track visibility in a ref so scroll handlers always see current value
+  // without needing to be re-registered on every isVisible change
+  const isVisibleRef = useRef(false);
+  useEffect(() => {
+    isVisibleRef.current = isVisible;
+  }, [isVisible]);
 
   useEffect(() => {
     if (isVisible) {
@@ -83,7 +97,30 @@ export default function WorkShowcaseSection() {
     });
   }, []);
 
-  // ── Wheel Handler ──────────────────────────────────────────
+  // ── Reveal / Dismiss ─────────────────────────────────────
+  const showShowcase = useCallback(() => {
+    if (isAnimatingRef.current || isVisibleRef.current) return;
+    isAnimatingRef.current = true;
+    setIsVisible(true);
+    if (animTimerRef.current) clearTimeout(animTimerRef.current);
+    // Lock for the full enter duration + a small buffer
+    animTimerRef.current = setTimeout(() => {
+      isAnimatingRef.current = false;
+    }, ENTER_MS + 100);
+  }, []);
+
+  const hideShowcase = useCallback(() => {
+    if (isAnimatingRef.current || !isVisibleRef.current) return;
+    isAnimatingRef.current = true;
+    setIsVisible(false);
+    if (animTimerRef.current) clearTimeout(animTimerRef.current);
+    // Lock for the full exit duration + buffer so exit anim completes
+    animTimerRef.current = setTimeout(() => {
+      isAnimatingRef.current = false;
+    }, EXIT_MS + 100);
+  }, []);
+
+  // ── Inner panel wheel handler ──────────────────────────────
   useEffect(() => {
     const container = showcaseRef.current;
     if (!container || !isVisible) return;
@@ -93,7 +130,6 @@ export default function WorkShowcaseSection() {
       const lastItemEl =
         projects.length > 0 ? itemRefs.current[projects[lastIndex].id] : null;
 
-      // 1. Eat leftover momentum if we are currently locked
       if (stepLockRef.current) {
         e.preventDefault();
         e.stopPropagation();
@@ -101,7 +137,6 @@ export default function WorkShowcaseSection() {
         return;
       }
 
-      // 2. Allow native scroll up to hero section
       if (activeIndex === -1 && e.deltaY < 0) return;
 
       e.stopPropagation();
@@ -139,7 +174,7 @@ export default function WorkShowcaseSection() {
     return () => container.removeEventListener("wheel", handleWheel);
   }, [isVisible, activeIndex, stepDown, stepUp, acquireLock]);
 
-  // ── Touch (Fixed) ──────────────────────────────────────────
+  // ── Touch inner panel ──────────────────────────────────────
   useEffect(() => {
     const container = showcaseRef.current;
     if (!container || !isVisible) return;
@@ -156,13 +191,11 @@ export default function WorkShowcaseSection() {
       const lastItemEl =
         projects.length > 0 ? itemRefs.current[projects[lastIndex].id] : null;
 
-      // 1. Eat leftover momentum on mobile swipes
       if (stepLockRef.current) {
         e.stopPropagation();
         return;
       }
 
-      // 2. Allow native scroll up to hero
       if (activeIndex === -1 && deltaY < 0) return;
 
       e.stopPropagation();
@@ -212,22 +245,7 @@ export default function WorkShowcaseSection() {
     return () => container.removeEventListener("scroll", handleScroll);
   }, [isVisible, activeIndex]);
 
-  // ── Reveal / Dismiss ─────────────────────────────────────
-  const showShowcase = useCallback(() => {
-    if (isAnimating || isVisible) return;
-    setIsAnimating(true);
-    setIsVisible(true);
-    setTimeout(() => setIsAnimating(false), 500);
-  }, [isAnimating, isVisible]);
-
-  const hideShowcase = useCallback(() => {
-    if (isAnimating || !isVisible) return;
-    setIsAnimating(true);
-    setIsVisible(false);
-    setTimeout(() => setIsAnimating(false), 450);
-  }, [isAnimating, isVisible]);
-
-  // Inline scroll detection (replaces useCurtainRevealScroll)
+  // ── Global reveal wheel handler ────────────────────────────
   const revealThreshold = 200;
   const touchRevealThreshold = 100;
   const revealWheelAcc = useRef(0);
@@ -237,17 +255,18 @@ export default function WorkShowcaseSection() {
 
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
-      if (isAnimating) return;
+      if (isAnimatingRef.current) return; // ← ref read, always fresh
       const scrollTop = showcaseRef.current?.scrollTop ?? 0;
       const isScrollingUp = e.deltaY < 0;
+      const visible = isVisibleRef.current; // ← ref read
 
       if (revealWheelAcc.current === 0) {
         revealScrollStartTop.current = scrollTop;
       }
 
-      if (!isVisible) {
+      if (!visible) {
         e.preventDefault();
-      } else if (isVisible && scrollTop <= 2 && isScrollingUp) {
+      } else if (visible && scrollTop <= 2 && isScrollingUp) {
         e.preventDefault();
       }
 
@@ -258,17 +277,22 @@ export default function WorkShowcaseSection() {
         revealWheelAcc.current = 0;
       }, 400);
 
-      if (!isVisible && revealWheelAcc.current > revealThreshold) {
+      if (!visible && revealWheelAcc.current > revealThreshold) {
         revealWheelAcc.current = 0;
         showShowcase();
         return;
       }
 
-      if (isVisible && scrollTop <= 2 && revealWheelAcc.current < -revealThreshold) {
-        if (revealScrollStartTop.current <= 2) {
-          revealWheelAcc.current = 0;
-          hideShowcase();
-        }
+      // Fix: only allow hide when panel is scrolled all the way to top
+      // AND the accumulation started from the top (not mid-scroll)
+      if (
+        visible &&
+        scrollTop <= 2 &&
+        revealScrollStartTop.current <= 2 &&
+        revealWheelAcc.current < -revealThreshold
+      ) {
+        revealWheelAcc.current = 0;
+        hideShowcase();
       }
     };
 
@@ -277,7 +301,8 @@ export default function WorkShowcaseSection() {
       window.removeEventListener("wheel", handleWheel);
       if (revealWheelTimer.current) clearTimeout(revealWheelTimer.current);
     };
-  }, [isVisible, isAnimating, showShowcase, hideShowcase]);
+  // No dependency on isVisible/isAnimating — refs handle freshness
+  }, [showShowcase, hideShowcase]);
 
   useEffect(() => {
     const handleTouchStart = (e: TouchEvent) => {
@@ -286,26 +311,30 @@ export default function WorkShowcaseSection() {
     };
 
     const handleTouchMove = (e: TouchEvent) => {
-      if (isAnimating) return;
+      if (isAnimatingRef.current) return;
       const deltaY = revealTouchStartY.current - e.touches[0].clientY;
       const scrollTop = showcaseRef.current?.scrollTop ?? 0;
       const isSwipingUpToDown = deltaY < 0;
+      const visible = isVisibleRef.current;
 
-      if (!isVisible) {
+      if (!visible) {
         e.preventDefault();
-      } else if (isVisible && scrollTop <= 2 && isSwipingUpToDown) {
+      } else if (visible && scrollTop <= 2 && isSwipingUpToDown) {
         e.preventDefault();
       }
 
-      if (!isVisible && deltaY > touchRevealThreshold) {
+      if (!visible && deltaY > touchRevealThreshold) {
         showShowcase();
         return;
       }
 
-      if (isVisible && scrollTop <= 2 && deltaY < -touchRevealThreshold) {
-        if (revealScrollStartTop.current <= 2) {
-          hideShowcase();
-        }
+      if (
+        visible &&
+        scrollTop <= 2 &&
+        revealScrollStartTop.current <= 2 &&
+        deltaY < -touchRevealThreshold
+      ) {
+        hideShowcase();
       }
     };
 
@@ -315,7 +344,7 @@ export default function WorkShowcaseSection() {
       window.removeEventListener("touchstart", handleTouchStart);
       window.removeEventListener("touchmove", handleTouchMove);
     };
-  }, [isVisible, isAnimating, showShowcase, hideShowcase]);
+  }, [showShowcase, hideShowcase]);
 
   const introHtml = `With a dedicated team focused on creativity and excellence, Spherehead crafts <span class="text-[#0D54CA]">impactful projects</span> that showcase innovation, drive results, and bring <span class="text-[#0D54CA]">ideas to life</span> for our clients.`;
 
@@ -327,14 +356,18 @@ export default function WorkShowcaseSection() {
         {isVisible && (
           <motion.div
             key="showcase-panel"
+            // Fix: declare transformOrigin inside the animation props,
+            // not just as a style, so exit keyframes inherit it correctly
             initial={{ scale: 0, transformOrigin: "bottom left" }}
             animate={{
               scale: 1,
-              transition: { duration: 0.8, ease: [0.32, 0.72, 0, 1] },
+              transformOrigin: "bottom left",
+              transition: { duration: ENTER_DURATION, ease: [0.32, 0.72, 0, 1] },
             }}
             exit={{
               scale: 0,
-              transition: { duration: 0.7, ease: [0.32, 0.72, 0, 1] },
+              transformOrigin: "bottom left",
+              transition: { duration: EXIT_DURATION, ease: [0.32, 0.72, 0, 1] },
             }}
             className="fixed inset-0 z-20 bg-white rounded-t-[24px] shadow-[0_-8px_40px_rgba(0,0,0,0.12)]"
             style={{ willChange: "transform" }}
@@ -439,7 +472,7 @@ export default function WorkShowcaseSection() {
               </div>
 
               {/* Footer */}
-              <div className="w-full bg-[#01030B] mt-auto shrink-0">
+             <div className="w-full bg-animated-gradient mt-auto shrink-0">
                 <Footer />
               </div>
             </div>
@@ -449,4 +482,3 @@ export default function WorkShowcaseSection() {
     </>
   );
 }
-
