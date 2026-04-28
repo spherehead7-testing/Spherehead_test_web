@@ -35,7 +35,7 @@ export default function TestimonialsSection() {
             <div className="flex items-center gap-2 mb-4">
               {/* <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
               <span className="w-2 h-2 bg-orange-400 rounded-full"></span> */}
-              <RotatingDots />
+              <RotatingDots variant="light" />
               <p className="text-sm text-gray-500">Testimonials</p>
             </div>
 
