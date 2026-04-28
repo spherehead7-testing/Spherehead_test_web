@@ -3,12 +3,15 @@
 import React from "react";
 import { motion } from "framer-motion";
 import SiteContainer from "@/components/layout/site-container";
-export default function StayConnected() {
 
+export default function StayConnected() {
   return (
-    <section className="relative w-full h-[100svh] flex flex-col items-center justify-center overflow-hidden">
-      
-      <SiteContainer className="w-full h-full flex justify-center items-center px-4 md:px-8">
+      <section className="relative w-full flex flex-col items-center justify-center overflow-hidden snap-start">
+      {/* THE FIX: Solid white bar to restore the white gap above the blue section! */}
+      <div className="w-full h-16 lg:h-32 bg-white shrink-0" />
+
+      {/* The main content area (transparent, so it shows your global blue animated background) */}
+      <div className="w-full py-16 lg:py-24 flex justify-center items-center px-4 md:px-8">
         
         <motion.div 
           initial={{ scale: 0.98, opacity: 0 }}
@@ -48,7 +51,7 @@ export default function StayConnected() {
           </div>
 
         </motion.div>
-      </SiteContainer>
+      </div>
     </section>
   );
 }

@@ -15,8 +15,9 @@ const steps = [
 
 export default function InternshipPrograms() {
   return (
-    <section className="relative w-full flex flex-col">
-
+      // 1. CHANGED: Added min-h-[100svh] so the section is always at least full-screen height
+      <section className="relative w-full min-h-[100svh] flex flex-col snap-start">
+      
       {/* 1. HEADER SECTION — tight padding, no min-height */}
       <SiteContainer className="pt-12 lg:pt-16 pb-10 lg:pb-14">
         <div className="flex flex-col items-start gap-4">
@@ -33,8 +34,9 @@ export default function InternshipPrograms() {
         </div>
       </SiteContainer>
 
-      {/* 2. WHITE CONTENT SECTION — sits directly below header, no gap */}
-      <div className="w-full bg-white rounded-t-[32px] lg:rounded-t-[48px] pt-8 lg:pt-10 pb-8 lg:pb-10">
+      {/* 2. WHITE CONTENT SECTION */}
+      {/* 2. CHANGED: Added flex-1 so this white box stretches to the very bottom of the screen */}
+      <div className="w-full flex-1 bg-white rounded-t-[8px] lg:rounded-t-[12px] pt-8 lg:pt-10 pb-8 lg:pb-10">
         <SiteContainer>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
 

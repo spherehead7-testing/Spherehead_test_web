@@ -7,7 +7,7 @@ import CyclicButton from "@/components/ui/cyclic-button";
 
 export default function CareersHero() {
   return (
-    <section className="relative w-full min-h-[60vh] flex flex-col justify-center pt-40 pb-24 overflow-hidden">
+    <section className="relative w-full snap-start min-h-[50vh] lg:min-h-[60vh] flex flex-col justify-center pt-32 lg:pt-48 pb-20 lg:pb-32 overflow-hidden">
       <SiteContainer className="relative z-10 flex flex-col w-full">
         
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:items-center">
