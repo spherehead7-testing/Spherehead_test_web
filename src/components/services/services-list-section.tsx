@@ -74,7 +74,7 @@ export default function ServicesListSection() {
               {/* LEFT COLUMN */}
               <div className="hidden lg:flex flex-col sticky top-0">
                 <div className="flex items-center gap-4 mb-6">
-                  <RotatingDots />
+                  <RotatingDots variant="light" />
                   <span className="body-small tracking-[0.1em] text-[#0D54CA] uppercase font-bold">
                     Digital Services
                   </span>

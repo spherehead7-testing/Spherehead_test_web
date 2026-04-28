@@ -140,6 +140,16 @@ select {
   letter-spacing: 2px;
 }
 
+.inner-hero {
+  font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
+  font-weight: 300;
+  font-size: 110px;
+  line-height: 113px;
+  letter-spacing: 0px;
+  color: #ffffff; /* Assuming white, adjust if necessary */
+  text-align: left;
+}
+
 .inter-tight {
   font-family: var(--font-inter-tight), Arial, Helvetica, sans-serif;
   font-size: 15px;

@@ -9,9 +9,6 @@ import ServicesListSection from "@/components/services/services-list-section";
 import Footer from "@/components/layout/footer";
 
 export default function ServicesPage() {
-  
-  // THE FIX: This applies the magnetic snap directly to the browser window 
-  // when the page loads, and removes it when the user leaves the page!
   useEffect(() => {
     document.documentElement.classList.add("snap-y", "snap-mandatory");
     return () => {
@@ -30,7 +27,6 @@ export default function ServicesPage() {
       <ServicesIntroSection />
       <ServicesApproachSection />
       <ServicesListSection />
-      
       <div className="w-full shrink-0 snap-start">
         <Footer />
       </div>

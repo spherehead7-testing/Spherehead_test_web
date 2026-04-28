@@ -391,7 +391,7 @@ export default function WorkShowcaseSection() {
                         <div className="w-full flex flex-col gap-10">
                           <div className="w-full flex flex-col gap-3 lg:gap-4 max-w-4xl">
                             <div className="flex items-center gap-4">
-                              <RotatingDots />
+                              <RotatingDots variant="light" />
                               <span className="body-small tracking-[0.1em] text-[#01030B] uppercase font-bold">
                                 Projects delivered
                               </span>
