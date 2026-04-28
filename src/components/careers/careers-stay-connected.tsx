@@ -23,7 +23,7 @@ export default function StayConnected() {
           
           {/* Typography */}
           <div className="relative z-10 flex flex-col items-center px-6">
-            <h2 className="text-3xl lg:text-[44px] leading-tight text-[#333] font-normal tracking-tight mb-2">
+            <h2 className="text-3xl lg:text-[44px] leading-tight text-[#3F3F3F] font-normal tracking-tight mb-2">
               Come back later and <br />
               <span className="text-[#0D54CA] font-medium">stay connected!</span>
             </h2>
