@@ -45,6 +45,7 @@ export default function ServicesApproachSection() {
 
   const isAnimating = useRef(false);
 
+  // YOUR ORIGINAL WHEEL LISTENER KEPT INTACT!
   useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
@@ -74,7 +75,7 @@ export default function ServicesApproachSection() {
           edgeAccumulator += e.deltaY;
           if (edgeAccumulator > EDGE_THRESHOLD) {
             edgeAccumulator = 0;
-            return;
+            return; // This allows the browser to perform the native vertical snap!
           }
           e.preventDefault();
           return;
@@ -94,7 +95,7 @@ export default function ServicesApproachSection() {
           edgeAccumulator += Math.abs(e.deltaY);
           if (edgeAccumulator > EDGE_THRESHOLD) {
             edgeAccumulator = 0;
-            return;
+            return; // This allows the browser to perform the native vertical snap!
           }
           e.preventDefault();
           return;
@@ -133,9 +134,10 @@ export default function ServicesApproachSection() {
   );
 
   return (
+    // 1. THE ONLY CHANGE: Added 'snap-start' to the end of these classes!
     <section
       ref={sectionRef}
-      className="relative z-10 w-full h-[100vh] bg-transparent text-white flex flex-col justify-center overflow-hidden"
+      className="relative z-10 w-full h-[100vh] bg-transparent text-white flex flex-col justify-center overflow-hidden snap-start"
     >
       {/* Top overlap bar mimicking the bottom of the previous section */}
       <div className="absolute top-0 left-0 w-full h-[30px] md:h-[90px] bg-white rounded-b-[12px] z-30" />

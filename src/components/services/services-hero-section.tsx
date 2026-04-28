@@ -5,7 +5,7 @@ import CyclicButton from "@/components/ui/cyclic-button";
 
 export default function ServicesHeroSection() {
   return (
-    <section className="relative w-full h-[100svh] flex flex-col overflow-hidden">
+    <section className="relative w-full h-[100svh] flex flex-col overflow-hidden snap-start">
       <SiteContainer className="relative z-10 flex flex-col h-full flex-grow justify-end pb-12 pt-32 lg:pb-20">
         <div className="w-full flex flex-col mt-auto">
           

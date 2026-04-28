@@ -62,7 +62,7 @@ export default function ServicesListSection() {
   }, []);
 
   return (
-    <section className="relative z-30 w-full min-h-[100vh] bg-transparent flex flex-col justify-start pt-[80px] lg:pt-[100px]">
+    <section className="relative z-30 w-full min-h-[100vh] bg-transparent flex flex-col justify-start pt-[80px] lg:pt-[100px] snap-start">
       <div
         className="relative z-20 w-full rounded-t-[12px] flex flex-col shadow-[0_-20px_50px_rgba(0,0,0,0.25)]"
         style={{ backgroundColor: "white" }}
