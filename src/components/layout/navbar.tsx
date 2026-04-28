@@ -1,23 +1,42 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const lastScrollY = useRef(0);
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+      const currentScrollY = window.scrollY;
+
+      // Handle background color change (turns dark after 20px)
+      setScrolled(currentScrollY > 20);
+
+      // Handle hide/show logic based on scroll direction
+      if (currentScrollY > lastScrollY.current && currentScrollY > 50) {
+        setIsVisible(false); // Scrolling down -> Hide it
+      } else {
+        setIsVisible(true);  // Scrolling up -> Show it
+      }
+
+      // Update the last scroll position
+      lastScrollY.current = currentScrollY;
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
     <header
-      className={`className="w-full z-50" transition-all duration-300 ${
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ease-in-out ${
+        // This is the magic line that slides it up and out of view
+        isVisible ? "translate-y-0" : "-translate-y-full"
+      } ${
+        // If you want a transparent glass effect, use this:
         scrolled
           ? "bg-[#0b2a5b]/90 backdrop-blur-md shadow-md"
           : "bg-transparent"

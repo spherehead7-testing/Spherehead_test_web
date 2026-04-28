@@ -6,7 +6,6 @@ export default function PortfolioPage() {
   return (
     <div className="relative w-full h-[100svh] overflow-hidden">
       <PortfolioHeroSection />
-
       <WorkShowcaseSection />
     </div>
   );
