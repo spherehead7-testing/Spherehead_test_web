@@ -35,7 +35,7 @@ export default function ServicesIntroSection() {
   return (
     <section
       ref={containerRef}
-      className="relative z-30 isolate w-full max-w-full h-[100vh] flex flex-col justify-center overflow-hidden"
+      className="relative z-30 isolate w-full max-w-full h-[100vh] flex flex-col justify-center overflow-hidden snap-start"
     >
       {/* Columns */}
       <div className="absolute inset-0 flex w-full h-full pointer-events-none">
