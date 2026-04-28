@@ -19,6 +19,7 @@ import TestimonialSection from "@/components/common-sections/testimonial-section
 import RotatingDots from "@/components/ui/rotating-dots";
 import CyclicButton from "@/components/ui/cyclic-button";
 import Link from "next/link";
+import Footer from "@/components/layout/footer";
 
 export default function HomePage() {
   const { scrollY } = useScroll();
@@ -620,6 +621,7 @@ export default function HomePage() {
         <TechnologiesSection />
         <TestimonialSection />
       </div>
+      <Footer />
     </>
   );
 }
