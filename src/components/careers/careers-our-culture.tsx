@@ -70,7 +70,7 @@ export default function WhyWorkWithUs() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: false, margin: "-10%" }}
                 transition={{ duration: 0.6, ease: "easeOut" }}
-                className="w-full bg-[#F6F6F6] p-6 lg:p-8 flex flex-col gap-5 shadow-sm rounded-xl"
+                className="w-full bg-[#F6F6F6] p-6 lg:p-8 flex flex-col gap-5 shadow-sm"
               >
                 <div className="w-full aspect-[2/1] bg-white rounded-xl overflow-hidden flex items-center justify-center">
                   <div className="relative w-[85%] h-[85%]">
