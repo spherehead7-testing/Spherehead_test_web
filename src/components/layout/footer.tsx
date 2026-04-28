@@ -53,7 +53,7 @@ export default function Footer() {
   };
 
   return (
-    <section className="min-h-screen bg-gradient-to-r from-[#0b2a5b] to-[#2f5fb3] flex items-start">
+    <section className="min-h-screen flex items-start">
       <div className="max-w-[1400px] mx-auto w-full px-12 grid grid-cols-2 gap-20 pt-16">
         {/* LEFT SIDE */}
         <div className="text-white flex flex-col justify-between h-[85vh]">

@@ -40,7 +40,7 @@ export default function WhyWorkWithUs({ isAfterHero = false }: { isAfterHero?: b
           {/* LEFT COLUMN: Static Text */}
           <div className="lg:col-span-6 h-full flex flex-col justify-start pt-32 items-start gap-6">
             <div className="flex items-center gap-4 text-[#0D54CA] inter-tight text-sm font-semibold">
-              <RotatingDots />
+              <RotatingDots variant="light" />
               <span className="tracking-[0.1em] uppercase">
                 WHY WORK WITH US
               </span>

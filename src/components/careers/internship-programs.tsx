@@ -21,8 +21,10 @@ export default function InternshipPrograms() {
       <SiteContainer className="pt-12 lg:pt-16 pb-10 lg:pb-14">
         <div className="flex flex-col items-start gap-4">
           <div className="flex items-center gap-4 text-blue/90 text-sm font-medium tracking-wide">
-            <RotatingDots />
-            Internship and Graduate Programs
+            <RotatingDots variant="dark" />
+            <span className="body-small tracking-[0.1em] text-white/90 uppercase font-bold">
+              Internship and Graduate Programs
+            </span>
           </div>
 
           <h2 className="text-3xl lg:text-[44px] leading-tight text-white font-medium max-w-2xl mt-2">
