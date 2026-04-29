@@ -62,7 +62,7 @@ export default function ServicesListSection() {
   }, []);
 
   return (
-    <section className="relative z-30 w-full min-h-[100vh] bg-transparent flex flex-col justify-start pt-[80px] lg:pt-[100px]">
+    <section className="relative z-30 w-full min-h-[100vh] bg-transparent flex flex-col justify-start pt-[80px] lg:pt-[100px] snap-start">
       <div
         className="relative z-20 w-full rounded-t-[12px] flex flex-col shadow-[0_-20px_50px_rgba(0,0,0,0.25)]"
         style={{ backgroundColor: "white" }}
@@ -74,7 +74,7 @@ export default function ServicesListSection() {
               {/* LEFT COLUMN */}
               <div className="hidden lg:flex flex-col sticky top-0">
                 <div className="flex items-center gap-4 mb-6">
-                  <RotatingDots />
+                  <RotatingDots variant="light" />
                   <span className="body-small tracking-[0.1em] text-[#0D54CA] uppercase font-bold">
                     Digital Services
                   </span>

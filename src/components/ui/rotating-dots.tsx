@@ -1,26 +1,32 @@
-"use client";
+interface RotatingDotsProps {
+  variant?: "light" | "dark";
+}
 
-import { motion } from "framer-motion";
+export default function RotatingDots({ variant = "dark" }: RotatingDotsProps) {
+  const dot2Color = "bg-[#92D9FF]";
+  const dot3Color = "bg-[#FD7624]";
+  const dot1Color = variant === "dark" ? "bg-[#FFFFFF]" : "bg-[#0D54CA]";
 
-export default function RotatingDots() {
   return (
-    <motion.div
-      animate={{ rotate: 360 }}
-      transition={{
-        repeat: Infinity,
-        duration: 6,
-        ease: "linear",
-      }}
-      className="relative w-6 h-6"
+    <div 
+      className="relative w-7 h-7 shrink-0 animate-[spin_6s_linear_infinite]"
     >
-      {/* Dot 1 */}
-      <span className="absolute top-0 left-1/2 -translate-x-1/2 w-2.5 h-2.5 bg-[#2563eb] rounded-full" />
+      {/* Dot 1 (Top) */}
+      <div className="absolute inset-0 flex justify-center items-start">
+        <span className={`w-2.5 h-2.5 rounded-full ${dot1Color}`} />
+      </div>
 
-      {/* Dot 2 */}
-      <span className="absolute bottom-0 left-0 w-2.5 h-2.5 bg-[#60a5fa] rounded-full" />
+      {/* Dot 2 (Bottom Right) */}
+      {/* Replaced inline style with Tailwind's rotate-[120deg] */}
+      <div className="absolute inset-0 flex justify-center items-start rotate-[120deg]">
+        <span className={`w-2.5 h-2.5 rounded-full ${dot2Color}`} />
+      </div>
 
-      {/* Dot 3 */}
-      <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-[#f97316] rounded-full" />
-    </motion.div>
+      {/* Dot 3 (Bottom Left) */}
+      {/* Replaced inline style with Tailwind's rotate-[240deg] */}
+      <div className="absolute inset-0 flex justify-center items-start rotate-[240deg]">
+        <span className={`w-2.5 h-2.5 rounded-full ${dot3Color}`} />
+      </div>
+    </div>
   );
 }
