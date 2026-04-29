@@ -44,7 +44,7 @@ export default function FAQSection() {
   };
 
   return (
-    <section className="bg-gradient-to-r from-[#06142E] via-[#0A2F76] to-[#2666D2] py-20">
+    <section className="py-20">
       <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-start">
 
         {/* LEFT SIDE */}

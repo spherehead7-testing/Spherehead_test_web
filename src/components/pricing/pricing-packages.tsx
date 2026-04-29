@@ -283,7 +283,7 @@ function PricingCard({ item }: { item: PricingPackage }) {
 
 export default function PricingPackages() {
   return (
-    <section className="bg-gradient-to-r from-[#06142E] via-[#0A2F76] to-[#2666D2] text-white">
+    <section className="text-white">
       <SiteContainer className="pt-28 pb-28 lg:pt-32 lg:pb-32">
         <div className="flex items-center gap-3">
           <RotatingDots />

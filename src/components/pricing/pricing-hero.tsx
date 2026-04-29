@@ -4,7 +4,7 @@ import CyclicButton from "@/components/ui/cyclic-button";
 
 export default function PricingHero() {
   return (
-    <section className="relative min-h-screen overflow-hidden bg-gradient-to-r from-[#06142E] via-[#0A2F76] to-[#2666D2] text-white">
+    <section className="relative min-h-screen overflow-hidden text-white">
       <SiteContainer className="flex min-h-screen flex-col justify-end pt-28 pb-16 lg:pt-36 lg:pb-20">
         <motion.div
           initial={{ opacity: 0, scaleX: 0 }}
