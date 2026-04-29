@@ -7,8 +7,7 @@ import CyclicButton from "@/components/ui/cyclic-button";
 
 export default function ContactHero() {
   return (
-    // THE FIX: Removed h-[70svh] and justify-center. Added pt-40 lg:pt-56 and pb-12 lg:pb-16 to shape the box naturally.
-    <section className="relative w-full flex flex-col overflow-hidden snap-start bg-transparent pt-40 lg:pt-56 pb-12 lg:pb-16">
+    <section className="relative w-full flex flex-col overflow-hidden snap-start bg-transparent pt-48 lg:pt-85 pb-16 lg:pb-12">
       <SiteContainer className="relative z-10 flex flex-col w-full">
         
         {/* THE FIX: Changed lg:items-center to lg:items-end so the button and text align at their bottom edges */}

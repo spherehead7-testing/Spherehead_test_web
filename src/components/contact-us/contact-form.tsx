@@ -2,57 +2,58 @@
 
 import React from "react";
 import SiteContainer from "@/components/layout/site-container";
+import { FiMapPin, FiPhone, FiMail } from "react-icons/fi";
+import ContactCard from "@/components/forms/contact-form";
 
 export default function ContactForm() {
   return (
-    <section className="w-full bg-white pt-20 lg:pt-32 pb-24 snap-start">
+    <section className="w-full relative z-10 pt-8 lg:pt-12 pb-0 snap-start">
+      
+      <div className="absolute inset-0 -z-10 flex flex-col lg:flex-row">
+        <div className="w-full lg:w-1/2 h-full bg-white" />
+        <div className="w-full lg:w-1/2 h-[400px] lg:h-[450px] bg-white" />
+      </div>
+
       <SiteContainer>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-start">
           
-          {/* Form Side */}
-          <div className="flex flex-col gap-8 w-full max-w-lg">
-            <form className="flex flex-col gap-6 w-full">
-              <input 
-                type="text" 
-                placeholder="Name" 
-                className="body-small w-full border-b border-[#E5E5E5] py-4 text-[#01030B] placeholder-[#808080] focus:outline-none focus:border-[#0D54CA] bg-transparent transition-colors" 
-              />
-              <input 
-                type="email" 
-                placeholder="Email Address" 
-                className="body-small w-full border-b border-[#E5E5E5] py-4 text-[#01030B] placeholder-[#808080] focus:outline-none focus:border-[#0D54CA] bg-transparent transition-colors" 
-              />
-              <input 
-                type="tel" 
-                placeholder="Phone Number" 
-                className="body-small w-full border-b border-[#E5E5E5] py-4 text-[#01030B] placeholder-[#808080] focus:outline-none focus:border-[#0D54CA] bg-transparent transition-colors" 
-              />
-              <textarea 
-                placeholder="Message" 
-                rows={3} 
-                className="body-small w-full border-b border-[#E5E5E5] py-4 text-[#01030B] placeholder-[#808080] focus:outline-none focus:border-[#0D54CA] bg-transparent resize-none transition-colors" 
-              />
-              <button 
-                type="submit" 
-                className="inter-tight bg-[#0D54CA] text-white py-3 px-10 w-fit mt-6 rounded-[4px] hover:bg-[#0B46A8] transition-colors"
-              >
-                Submit
-              </button>
-            </form>
+          {/* LEFT: Form Side */}
+          {/* THE FIX: Removed 'self-end' so the form naturally aligns to the left */}
+          <div className="flex flex-col gap-8 w-full max-w-lg pb-24 pt-162 lg:pt-24">
+            {/* THE FIX: Tell the form to use the flat, background-free styling */}
+            <ContactCard variant="flat" />
           </div>
 
-          {/* THE FIX: Replaced the static Image with the interactive Google Maps iframe */}
-          <div className="w-full aspect-[4/3] relative overflow-hidden bg-gray-100 rounded-sm">
-            <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2831.8709373844777!2d-106.94455072369597!3d44.78343647107091!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x5335f0099be92b1f%3A0x27e6c8e7587a9694!2s1309%20Coffeen%20Ave%20STE%201200%2C%20Sheridan%2C%20WY%2082801%2C%20USA!5e0!3m2!1sen!2slk!4v1777367971333!5m2!1sen!2slk"
-              width="100%"
-              height="100%"
-              style={{ border: 0 }}
-              allowFullScreen
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              className="absolute inset-0"
-            />
+          {/* RIGHT: Map & Contact Info Side */}
+          <div className="flex flex-col w-full">
+            <div className="w-full h-[300px] lg:h-[350px] relative overflow-hidden bg-gray-100 rounded-sm">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2831.8709373844777!2d-106.94455072369597!3d44.78343647107091!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x5335f0099be92b1f%3A0x27e6c8e7587a9694!2s1309%20Coffeen%20Ave%20STE%201200%2C%20Sheridan%2C%20WY%2082801%2C%20USA!5e0!3m2!1sen!2slk!4v1777367971333!5m2!1sen!2slk"
+                width="100%" height="100%" style={{ border: 0 }} allowFullScreen loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade" className="absolute inset-0"
+              />
+            </div>
+
+            <div className="flex flex-col gap-6 text-white/90 lg:pl-4 pt-16 lg:pt-24">
+              <div className="flex items-center gap-4">
+                <FiMapPin className="w-5 h-5 shrink-0" />
+                <p className="text-[15px] font-light tracking-wide">
+                  1309 Coffeen Avenue STE 1200 Sheridan, Wyoming 82801
+                </p>
+              </div>
+              <div className="flex items-center gap-4">
+                <FiPhone className="w-5 h-5 shrink-0" />
+                <p className="text-[15px] font-light tracking-wide">
+                  +94 76 666 6688
+                </p>
+              </div>
+              <div className="flex items-center gap-4">
+                <FiMail className="w-5 h-5 shrink-0" />
+                <p className="text-[15px] font-light tracking-wide">
+                  info@Spherehead.tech
+                </p>
+              </div>
+            </div>
           </div>
 
         </div>

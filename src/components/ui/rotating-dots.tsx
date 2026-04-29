@@ -2,6 +2,14 @@ interface RotatingDotsProps {
   variant?: "light" | "dark";
 }
 
+/**
+ * RotatingDots component
+ * Default variant is "dark".
+ *
+ * Use:
+ * - "dark" → for dark backgrounds (default)
+ * - "light" → for light backgrounds
+ */
 export default function RotatingDots({ variant = "dark" }: RotatingDotsProps) {
   const dot2Color = "bg-[#92D9FF]";
   const dot3Color = "bg-[#FD7624]";
