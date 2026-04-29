@@ -432,7 +432,7 @@ export default function TestimonialSection() {
       <div className="max-w-[1400px] mx-auto px-6 lg:px-16">
         {/* ── Header ── */}
         <div className="mb-5 flex items-center gap-4">
-          <RotatingDots />
+          <RotatingDots variant="light"/>
           <p
             className="text-[#01030B] text-[13px] tracking-wide"
             style={{ fontFamily: "var(--font-inter-tight), sans-serif" }}

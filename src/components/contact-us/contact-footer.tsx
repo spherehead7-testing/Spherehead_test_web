@@ -7,7 +7,7 @@ import { FaXTwitter } from "react-icons/fa6";
 
 export default function ContactFooter() {
   return (
-    <footer className="w-full bg-transparent text-white pt-0 pb-6 flex flex-col justify-end">
+    <footer className="w-full bg-gradient-to-r from-[#2666D2] via-[#184AA3] to-[#06142E] text-white pt-0 pb-6 flex flex-col justify-end">
       <SiteContainer>
         
         {/* Bottom Bar: Copyright & Links */}
