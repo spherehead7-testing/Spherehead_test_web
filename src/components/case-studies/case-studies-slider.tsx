@@ -54,11 +54,7 @@ export default function CaseStudiesSlider() {
 
   return (
     <SiteContainer>
-      <div className="w-full flex flex-col gap-8 pb-12">
-        
-        {/* Section Title */}
-        <h3 className="heading-3 text-[#4A4A4A] mb-4">Case studies</h3>
-
+      <div className="w-full flex flex-col gap-8 pb-12 snap-start">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           
           {/* LEFT COLUMN: ACTIVE SLIDE (Takes up 8 columns) */}
@@ -73,7 +69,7 @@ export default function CaseStudiesSlider() {
                 className="flex flex-col w-full"
               >
                 {/* Main Active Image */}
-                <div className="w-full h-[250px] sm:h-[350px] lg:h-[450px] bg-gray-200 overflow-hidden relative">
+                <div className="w-full h-[250px] sm:h-[300px] lg:h-[380px] bg-gray-200 overflow-hidden relative">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img 
                     src={activeStudy.image} 
@@ -99,25 +95,27 @@ export default function CaseStudiesSlider() {
                   </div>
                 </div>
 
-                {/* Text Content */}
-                <h2 className="text-3xl lg:text-[40px] leading-tight font-light text-[#01030B] mb-6">
+                {/* THE FIX: Replaced custom Tailwind sizing with heading-2 and body-small */}
+                {/* Note: Used !text-[#01030B] to override the white color defined in heading-2 */}
+                <h2 className="heading-2 !text-[#01030B] mb-6">
                   {activeStudy.title}
                 </h2>
                 
-                <p className="body-large text-[#8A8B8F] leading-[1.6] max-w-3xl mb-8">
+                <p className="body-small text-[#8A8B8F] leading-[1.6] max-w-3xl mb-8">
                   {activeStudy.description}
                 </p>
 
-                {/* IMPORTANT: Dynamic link routing to the detailed page */}
+               {/* IMPORTANT: Dynamic link routing to the detailed page */}
                 <Link href={`/case-studies/${activeStudy.slug}`} className="w-fit">
-                  <button className="border border-[#0D54CA] text-[#0D54CA] px-6 py-2.5 text-sm font-medium hover:bg-[#0D54CA] hover:text-white transition-colors">
+                  {/* THE FIX: Added 'body-small' and removed 'text-sm font-medium' */}
+                  <button className="body-small border border-[#0D54CA] text-[#0D54CA] px-6 py-2.5 hover:bg-[#0D54CA] hover:text-white transition-colors">
                     View Full Case Study
                   </button>
                 </Link>
+
               </motion.div>
             </AnimatePresence>
           </div>
-
 
           {/* RIGHT COLUMN: PREVIEW NEXT SLIDE & COUNTER (Takes up 4 columns) */}
           <div className="hidden lg:flex lg:col-span-4 flex-col border-l border-gray-200 pl-12 h-full">
