@@ -143,12 +143,28 @@ select {
 .inner-hero {
   font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
   font-weight: 300;
-  font-size: 110px;
-  line-height: 113px;
+  line-height: 90px;
   letter-spacing: 0px;
-  color: #ffffff; /* Assuming white, adjust if necessary */
+  color: #ffffff;
   text-align: left;
+  max-width: 980px;
+  font-size: 34px; /* mobile */
 }
+ 
+/* tablet */
+@media (min-width: 640px) {
+  .inner-hero {
+    font-size: 46px;
+  }
+}
+ 
+/* desktop */
+@media (min-width: 1024px) {
+  .inner-hero {
+    font-size: 72px;
+  }
+}
+ 
 
 .inter-tight {
   font-family: var(--font-inter-tight), Arial, Helvetica, sans-serif;

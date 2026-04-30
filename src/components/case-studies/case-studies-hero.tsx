@@ -18,7 +18,7 @@ export default function CaseStudiesHero() {
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="lg:col-span-8 flex flex-col gap-6"
           >
-            <h1 className="heading-1 !leading-tight">
+            <h1 className="inner-hero !leading-tight">
               Success Stories That<br />
               Drive Innovation
             </h1>
