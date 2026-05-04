@@ -184,9 +184,9 @@ select {
 
 .body-medium {
   font-family: var(--font-inter-tight), Arial, Helvetica, sans-serif;
-  font-size: 24px;
+  font-size: 16px;
   font-weight: 400;
-  line-height: 42px;
+  line-height: 16px;
   letter-spacing: 0.02em;
 }
 
