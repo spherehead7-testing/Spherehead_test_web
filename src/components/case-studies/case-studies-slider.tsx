@@ -4,6 +4,7 @@ import React, { useState, useRef, useCallback } from "react";
 import Link from "next/link";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import SiteContainer from "@/components/layout/site-container";
+import { motion } from "framer-motion";
 
 const CASE_STUDIES = [
   {
@@ -66,13 +67,11 @@ export default function CaseStudiesSlider() {
     const mainRect = mainSlot.getBoundingClientRect();
     const previewRect = previewSlot.getBoundingClientRect();
 
-    // How much the preview differs from the main slot
     const dx = previewRect.left - mainRect.left;
     const dy = previewRect.top - mainRect.top;
     const scaleX = previewRect.width / mainRect.width;
     const scaleY = previewRect.height / mainRect.height;
 
-    // ── CLONE: starts at main slot size/position, visually offset to sit over preview ──
     const clone = document.createElement("img");
     clone.src = previewImg.src;
     clone.style.cssText = `
@@ -90,14 +89,11 @@ export default function CaseStudiesSlider() {
     `;
     document.body.appendChild(clone);
 
-    // Hide originals immediately
     previewImg.style.opacity = "0";
     mainImg.style.opacity = "0";
 
-    // Step 1: snap clone to preview position (no transition yet)
     clone.style.transform = `translate(${dx}px, ${dy}px) scale(${scaleX}, ${scaleY})`;
 
-    // Step 2: one rAF later, add transition and fly back to main slot
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         clone.style.transition = `transform ${DURATION}ms cubic-bezier(0.76, 0, 0.24, 1), filter ${DURATION}ms ease`;
@@ -106,19 +102,15 @@ export default function CaseStudiesSlider() {
       });
     });
 
-    // Step 3: slide out the outgoing main image to the left
     mainImg.style.transition = `transform ${DURATION}ms cubic-bezier(0.76, 0, 0.24, 1), opacity ${DURATION * 0.6}ms ease`;
     mainImg.style.transform = "translateX(-40px)";
 
-    // Step 4: after flight, swap index, clean up
     setTimeout(() => {
       clone.remove();
-
       mainImg.style.transition = "";
       mainImg.style.transform = "";
       mainImg.style.opacity = "1";
       previewImg.style.opacity = "1";
-
       setCurrentIndex((prev) => (prev + 1) % totalSlides);
       setIsAnimating(false);
     }, DURATION + 16);
@@ -137,19 +129,19 @@ export default function CaseStudiesSlider() {
 
           {/* LEFT: MAIN SLOT */}
           <div className="lg:col-span-8 flex flex-col">
-
-            {/* This div is the TARGET — we measure it */}
             <div
               ref={mainSlotRef}
               className="w-full h-[250px] sm:h-[300px] lg:h-[380px] bg-gray-200 overflow-hidden"
             >
-              <img
-                ref={mainImgRef}
-                src={activeStudy.image}
-                alt={activeStudy.title}
-                className="w-full h-full object-cover"
-                style={{ display: "block" }}
-              />
+              <Link href={`/case-studies/${activeStudy.slug}`} className="w-full h-full block cursor-pointer">
+                <img
+                  ref={mainImgRef}
+                  src={activeStudy.image}
+                  alt={activeStudy.title}
+                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                  style={{ display: "block" }}
+                />
+              </Link>
             </div>
 
             <div className="flex items-center justify-between w-full mt-6 mb-4">
@@ -174,13 +166,15 @@ export default function CaseStudiesSlider() {
               </div>
             </div>
 
-            <div className="max-w-lg lg:max-w-xl">
+            <div className="max-w-xl lg:max-w-2xl">
               <h2 className="heading-2 !text-[#01030B] mb-6">{activeStudy.title}</h2>
               <p className="body-small text-[#8A8B8F] leading-[1.6] mb-8">{activeStudy.description}</p>
-              <Link href={`/case-studies/${activeStudy.slug}`} className="w-fit block">
-                <button className="body-Extrasmall border border-[#0D54CA] text-[#0D54CA] px-6 py-2.5 hover:bg-[#0D54CA] hover:text-white transition-colors">
-                  View Full Case Study
-                </button>
+              
+              <Link 
+                href={`/case-studies/${activeStudy.slug}`} 
+                className="body-Extrasmall border border-[#0D54CA] !text-[#0D54CA] px-6 py-2.5 transition-colors w-fit block text-center"
+              >
+                View Full Case Study
               </Link>
             </div>
           </div>
@@ -188,21 +182,30 @@ export default function CaseStudiesSlider() {
           {/* RIGHT: PREVIEW SLOT */}
           <div className="hidden lg:flex lg:col-span-4 flex-col h-full">
 
-            {/* This div is the SOURCE — we measure it */}
-            <div className="w-full lg:mt-[80px]">
-              <div
-                ref={previewSlotRef}
-                className="h-[300px] bg-gray-100 overflow-hidden"
-                style={{ width: "calc(100% + 6rem + max(0px, (100vw - 1400px) / 2))" }}
+            <div className="w-full lg:h-[380px]">
+              <motion.div
+                initial={{ y: 0 }}
+                whileInView={{ y: 80 }}
+                // FIX: Requires 60% of the image to be scrolled into view before animating
+                viewport={{ once: false, amount: 0.6 }} 
+                transition={{ duration: 0.8, ease: "easeOut" }}
+                className="w-full"
               >
-                <img
-                  ref={previewImgRef}
-                  src={nextStudy.image}
-                  alt="Next Case Study"
-                  className="w-full h-full object-cover"
-                  style={{ filter: "grayscale(100%)", display: "block" }}
-                />
-              </div>
+                <div
+                  ref={previewSlotRef}
+                  className="h-[300px] bg-gray-100 overflow-hidden cursor-pointer"
+                  style={{ width: "calc(100% + 6rem + max(0px, (100vw - 1400px) / 2))" }}
+                  onClick={handleNext}
+                >
+                  <img
+                    ref={previewImgRef}
+                    src={nextStudy.image}
+                    alt="Next Case Study"
+                    className="w-full h-full object-cover"
+                    style={{ filter: "grayscale(100%)", display: "block" }}
+                  />
+                </div>
+              </motion.div>
             </div>
 
             <div className="mt-12 flex items-baseline gap-1 border-l border-gray-200 pl-12 flex-grow pt-2">

@@ -3,12 +3,11 @@
 import React from "react";
 import { motion } from "framer-motion";
 import SiteContainer from "@/components/layout/site-container";
-import CyclicButton from "@/components/ui/cyclic-button"; // Assuming you have this from earlier!
+import CyclicButton from "@/components/ui/cyclic-button"; 
 
 export default function CaseStudiesHero() {
   return (
-    <section className="relative w-full flex flex-col overflow-hidden snap-start pt-48 lg:pt-64 pb-16 lg:pb-24">
-      {/* If your layout uses the global background animated class, this container sits on top of it */}
+    <section className="relative w-full h-full flex flex-col justify-end overflow-hidden snap-start pb-32 lg:pb-56">
       <SiteContainer className="relative z-10 flex flex-col w-full">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end">
           
@@ -34,7 +33,6 @@ export default function CaseStudiesHero() {
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
             className="lg:col-span-4 flex lg:justify-end pb-4"
           >
-            {/* Replace with your actual button logic/text based on your components */}
             <CyclicButton onClick={() => console.log("Apply Now Clicked!")}>
               Apply Now
             </CyclicButton>

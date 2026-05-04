@@ -13,24 +13,35 @@ export default function CaseStudies() {
         <meta name="description" content="Explore our success stories." />
       </Head>
 
-      <main className="h-screen w-full overflow-y-auto overflow-x-hidden snap-y snap-mandatory">
+      <main className="relative w-full h-screen overflow-y-auto overflow-x-hidden snap-y snap-mandatory scroll-smooth">
         
-        <CaseStudiesHero />
-        
-        {/* THE FIX 1: Reduced padding to pt-12 lg:pt-16 */}
-        {/* THE FIX 2: Changed h-screen to min-h-screen and removed overflow-hidden. 
-            This allows the section to be taller than the screen, so the user can scroll normally through it! */}
-        <section className="snap-start relative z-20 w-full min-h-screen bg-white pt-12 lg:pt-16 pb-16">
-          <CaseStudiesSlider />
-        </section>
+        {/* === SCROLL ZONE 1: STICKY HERO === */}
+        <div className="snap-start relative w-full">
+          <div className="sticky top-0 left-0 w-full h-screen z-0 overflow-hidden">
+            <CaseStudiesHero />
+          </div>
 
-        {/* Testimonials section remains constrained to exactly one screen height */}
-        <section className="snap-start relative z-20 w-full h-screen bg-white flex items-center">
-          <ClientsSection />
-        </section>
+          {/* === SCROLL ZONE 2: THE GIANT WHITE CARD === */}
+          {/* Card is pulled up using negative margins (-mt-32 mobile, -mt-48 desktop) */}
+          <div className="relative z-10 w-full bg-white rounded-t-xl lg:rounded-t-2xl shadow-[0_-15px_40px_-10px_rgba(0,0,0,0.3)] -mt-32 lg:-mt-48">
+            
+            <section className="w-full pt-16 lg:pt-20 pb-16">
+              <CaseStudiesSlider />
+            </section>
 
-        {/* Footer section remains constrained to exactly one screen height */}
-        <div className="snap-start relative z-20 w-full h-screen">
+            {/* Testimonials section snaps into place but is NOT sticky. 
+                It simply acts as the second half of the white card. */}
+            <section className="snap-start w-full flex items-center min-h-screen">
+              <ClientsSection />
+            </section>
+
+          </div>
+        </div> 
+
+        {/* === SCROLL ZONE 3: THE TRANSPARENT FOOTER === */}
+        {/* Because the white card scrolls completely out of the way, 
+            this Footer is 100% transparent and perfectly shows your global background! */}
+        <div className="snap-start relative w-full z-0">
           <Footer />
         </div>
 
