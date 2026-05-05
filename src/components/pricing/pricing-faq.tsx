@@ -44,8 +44,8 @@ export default function FAQSection() {
   };
 
   return (
-    <section className="py-20">
-      <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-start">
+    <section className="min-h-screen py-20">
+      <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-start">
 
         {/* LEFT SIDE */}
         <div className="text-white">
@@ -80,7 +80,7 @@ export default function FAQSection() {
 
                   {/* ICON */}
                   <span
-                    className="text-[22px] font-light"
+                    className="text-[35px] font-light"
                     style={{ color: faq.color }}
                   >
                     {isOpen ? "−" : "+"}
@@ -102,7 +102,7 @@ export default function FAQSection() {
           })}
 
           {/* CONTACT CTA */}
-          <div className="pt-6">
+          <div className="pt-20">
             <p className="text-sm text-gray-500 mb-3">
               My question is not here.
             </p>

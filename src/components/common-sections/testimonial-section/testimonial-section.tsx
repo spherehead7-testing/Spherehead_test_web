@@ -1,7 +1,9 @@
 import Image from "next/image";
 import { useRef, useState } from "react";
 import { motion } from "motion/react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import RotatingDots from "../../ui/rotating-dots";
+import SiteContainer from "../../layout/site-container";
 
 const testimonials = [
   {
@@ -34,20 +36,21 @@ const testimonials = [
   },
 ];
 
-const IMG_W = 270;
-const IMG_H = 360;
-const NAV_H = 64;
+const IMG_W = 286;
+const IMG_H = 370;
+const NAV_H = 32;
 const CARD_H = IMG_H + NAV_H;
 
 const SIDE_CARD_COUNT = 4;
 const SIDE_CARD_W = 68;
-const SIDE_CARD_GAP = 14;
+const SIDE_CARD_GAP = 8;
 const SIDE_CARD_STEP = SIDE_CARD_W + SIDE_CARD_GAP;
+const SIDE_CARD_H = 429;
 
 const SIDE_CONTAINER_W =
   SIDE_CARD_COUNT * SIDE_CARD_W + (SIDE_CARD_COUNT - 1) * SIDE_CARD_GAP;
 
-const MAIN_CARD_W = 560;
+const MAIN_CARD_W = 574;
 
 const BASE_DURATION = 0.7;
 
@@ -64,7 +67,10 @@ export default function TestimonialSection() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [sideStack, setSideStack] = useState(() => buildSideStack(0));
   const [phase, setPhase] = useState<"idle" | "moving">("idle");
-  const [movingItem, setMovingItem] = useState<any>(null);
+  const [movingItem, setMovingItem] = useState<{
+    uid: number;
+    testimonialIndex: number;
+  } | null>(null);
   const [incomingUid, setIncomingUid] = useState<number | null>(null);
 
   const activeCard = testimonials[activeIndex];
@@ -79,7 +85,6 @@ export default function TestimonialSection() {
     setIncomingUid(null);
   };
 
-  // 👉 NEXT
   const handleNext = () => {
     if (phase !== "idle") return;
     clearTimers();
@@ -105,7 +110,6 @@ export default function TestimonialSection() {
     );
   };
 
-  // 👉 PREV
   const handlePrev = () => {
     if (phase !== "idle") return;
     clearTimers();
@@ -131,19 +135,28 @@ export default function TestimonialSection() {
     );
   };
 
-  const SideCardInner = ({ card }: any) => (
+  const SideCardInner = ({ card }: { card: (typeof testimonials)[number] }) => (
     <>
-      <span className="absolute top-5 left-1/2 [writing-mode:vertical-rl] [transform:translateX(-50%)_rotate(180deg)] text-[11px] text-[#9a9a9a]">
+      <span className="absolute top-5 left-1/2 [writing-mode:vertical-rl] [transform:translateX(-50%)_rotate(180deg)] text-[11px] leading-none text-[#8f8f8f]">
         {card.role}
       </span>
-      <span className="absolute bottom-6 left-1/2 [writing-mode:vertical-rl] [transform:translateX(-50%)_rotate(180deg)] text-[16px] font-[500]">
+      <span className="absolute bottom-6 left-1/2 [writing-mode:vertical-rl] [transform:translateX(-50%)_rotate(180deg)] text-[16px] leading-none font-[500] text-[#01030b]">
         {card.name}
       </span>
     </>
   );
 
-  const MainCard = ({ card, showControls = true }: any) => (
-    <div className="flex" style={{ width: MAIN_CARD_W, height: CARD_H }}>
+  const MainCard = ({
+    card,
+    showControls = true,
+  }: {
+    card: (typeof testimonials)[number];
+    showControls?: boolean;
+  }) => (
+    <div
+      className="flex w-full flex-col gap-5 sm:flex-row sm:gap-0"
+      style={{ maxWidth: MAIN_CARD_W, minHeight: CARD_H }}
+    >
       <div className="shrink-0" style={{ width: IMG_W }}>
         <div className="relative" style={{ width: IMG_W, height: IMG_H }}>
           <Image src={card.image} alt="" fill className="object-cover" />
@@ -151,41 +164,70 @@ export default function TestimonialSection() {
 
         {showControls && (
           <div
-            className="flex justify-between px-6 bg-white"
+            className="flex items-center justify-between bg-white"
             style={{ height: NAV_H }}
           >
-            <button onClick={handlePrev}>‹</button>
-            <button onClick={handleNext}>›</button>
+            <button
+              type="button"
+              aria-label="Previous testimonial"
+              onClick={handlePrev}
+              className="flex h-8 w-8 items-center justify-center text-[#01030b] transition hover:text-[#0D54CA]"
+            >
+              <ChevronLeft aria-hidden="true" className="h-5 w-5" />
+            </button>
+            <button
+              type="button"
+              aria-label="Next testimonial"
+              onClick={handleNext}
+              className="flex h-8 w-8 items-center justify-center text-[#01030b] transition hover:text-[#0D54CA]"
+            >
+              <ChevronRight aria-hidden="true" className="h-5 w-5" />
+            </button>
           </div>
         )}
       </div>
 
-      <div className="flex flex-col justify-between p-6">
-        <p>{card.quote}</p>
+      <div className="flex min-h-[320px] flex-col justify-between pt-10 sm:min-h-0 sm:w-[288px] sm:pl-5 sm:pt-11 sm:pb-[74px]">
+        <p className="max-w-[238px] whitespace-pre-line text-[14px] leading-[1.22] text-[#01030b]">
+          {card.quote}
+        </p>
         <div>
-          <h3>{card.name}</h3>
-          <p>{card.role}</p>
+          <h3 className="text-[22px] leading-none font-[600] text-[#01030b]">
+            {card.name}
+          </h3>
+          <p className="mt-2 text-[13px] leading-none text-[#01030b]">
+            {card.role}
+          </p>
         </div>
       </div>
     </div>
   );
 
   return (
-    <section className="py-20 bg-white">
-      <div className="max-w-[1400px] mx-auto px-6">
-        <div className="flex gap-4 mb-6">
-          <RotatingDots />
-          <p>Testimonials</p>
+    <section className="bg-white py-16 sm:py-[62px]">
+      <SiteContainer>
+        <div className="mb-4 flex items-center gap-3">
+          <RotatingDots variant="light"/>
+          <p className="text-[14px] leading-none text-[#01030b]">
+            Testimonials
+          </p>
         </div>
 
-        <div className="flex justify-between">
-          {/* MAIN */}
-          <div style={{ width: MAIN_CARD_W, position: "relative" }}>
+        <h2 className="heading-2 !text-[#01030B]">
+          Building Lasting Relationships
+          <br />
+          Through Results Our Clients Value
+        </h2>
+
+        <div className="mt-16 flex items-start justify-between gap-12 lg:mt-[76px]">
+          <div
+            className="relative w-full sm:mt-[27px]"
+            style={{ maxWidth: MAIN_CARD_W }}
+          >
             <div className={phase === "moving" ? "opacity-0" : ""}>
               <MainCard card={activeCard} />
             </div>
 
-            {/* 🔥 IMAGE SLIDE ANIMATION */}
             {phase === "moving" && movingItem && (
               <motion.div
                 initial={{ x: 300, opacity: 0 }}
@@ -201,11 +243,10 @@ export default function TestimonialSection() {
             )}
           </div>
 
-          {/* SIDE STACK */}
-          <div className="hidden lg:flex flex-1 justify-end">
+          <div className="hidden shrink-0 lg:flex">
             <div
               className="relative"
-              style={{ width: SIDE_CONTAINER_W, height: CARD_H }}
+              style={{ width: SIDE_CONTAINER_W, height: SIDE_CARD_H }}
             >
               {sideStack.map((item, index) => {
                 const card = testimonials[item.testimonialIndex];
@@ -225,22 +266,21 @@ export default function TestimonialSection() {
                       duration: BASE_DURATION,
                       ease: "linear",
                     }}
-                    className="absolute top-0 bg-gray-100 rounded"
-                    style={{ width: SIDE_CARD_W, height: CARD_H }}
+                    className="absolute top-0 rounded bg-[#f1f1f1]"
+                    style={{ width: SIDE_CARD_W, height: SIDE_CARD_H }}
                   >
                     <SideCardInner card={card} />
                   </motion.div>
                 );
               })}
 
-              {/* moving strip */}
               {phase === "moving" && movingItem && (
                 <motion.div
                   initial={{ x: 0 }}
                   animate={{ x: -1000 }}
                   transition={{ duration: BASE_DURATION, ease: "linear" }}
-                  className="absolute top-0 z-30 bg-gray-200"
-                  style={{ width: SIDE_CARD_W, height: CARD_H }}
+                  className="absolute top-0 z-30 bg-[#e9e9e9]"
+                  style={{ width: SIDE_CARD_W, height: SIDE_CARD_H }}
                 >
                   <SideCardInner
                     card={testimonials[movingItem.testimonialIndex]}
@@ -250,7 +290,7 @@ export default function TestimonialSection() {
             </div>
           </div>
         </div>
-      </div>
+      </SiteContainer>
     </section>
   );
 }

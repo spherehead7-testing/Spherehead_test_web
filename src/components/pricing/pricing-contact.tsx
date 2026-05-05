@@ -7,28 +7,28 @@ export default function ContactSection() {
   const [mode, setMode] = useState<"consultation" | "quotation">("consultation");
 
   return (
-    <section className="w-full bg-[#F6F6F6] py-20">
+    <section className="min-h-screen w-full bg-[#F6F6F6] py-20">
       <div className="max-w-6xl mx-auto px-6 text-center">
 
         {/* LABEL */}
-        <div className="flex items-center justify-center gap-2 mb-4">
+        <div className="flex items-center justify-center gap-2 mb-2">
           <RotatingDots />
-          <span className="text-sm text-gray-500">
+          <span className="body-small text-gray-500">
             Let’s Start the Conversation
           </span>
         </div>
 
         {/* HEADING */}
-        <h2 className="text-[26px] md:text-[32px] lg:text-[36px] font-medium max-w-[900px] mx-auto leading-[1.4] mb-10">
+        <p className="heading-2 !text-[#01030B] max-w-[900px] mx-auto mb-5">
           Choose the option that fits your needs, share your details, and our
           team will get back shortly.
-        </h2>
+        </p>
 
         {/* FORM CARD */}
         <div className="bg-white border border-gray-200 rounded-md p-8 md:p-10 text-left">
 
           {/* TOGGLE */}
-          <div className="flex justify-center mb-10">
+          <div className="flex justify-center mb-5">
             <div className="bg-gray-100 p-1 rounded-md flex gap-2">
               <button
                 onClick={() => setMode("consultation")}

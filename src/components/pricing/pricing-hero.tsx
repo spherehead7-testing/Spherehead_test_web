@@ -19,13 +19,13 @@ export default function PricingHero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <h1 className="max-w-[980px] text-[46px] font-[300] tracking-0 text-white sm:text-[34px] lg:text-[46px]">
+            <h1 className="inner-hero">
               Transparent Pricing for
               <br />
               Every Digital Solution
             </h1>
 
-            <p className="mt-8 max-w-[900px] text-[18px] font-[300] leading-[1.6] text-white sm:text-[22px] lg:text-[26px]">
+            <p className="heading-4">
               Our transparent pricing and tailored service plans ensure
               businesses get maximum value, combining quality, innovation, and
               measurable results.
