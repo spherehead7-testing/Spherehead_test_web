@@ -37,7 +37,7 @@ export default function WhyWorkWithUs() {
   return (
     <section className="w-full relative bg-white snap-start">
       <SiteContainer className="w-full grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8 items-start relative pt-32 lg:pt-40 pb-24 lg:pb-32">
-        
+
         {/* LEFT COLUMN: Sticky Text */}
         <div className="lg:col-span-6 sticky top-32 lg:top-40 flex flex-col justify-start items-start gap-6">
           <div className="flex items-center gap-4 inter-tight">
@@ -87,7 +87,7 @@ export default function WhyWorkWithUs() {
                   <h3 className="body-large font-medium !text-[#01030B]">
                     {card.title}
                   </h3>
-                  <p className="body-Extrasmall text-[#808080] leading-relaxed">
+                  <p className="body-extra-small text-[#808080] leading-relaxed">
                     {card.desc}
                   </p>
                 </div>

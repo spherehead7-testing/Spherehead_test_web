@@ -64,7 +64,7 @@ export default function IndustryCarouselLanding() {
               {card.title}
             </h3>
 
-            <p className="body-Extrasmall mt-2">
+            <p className="body-extra-small mt-2">
               {card.description}
             </p>
           </div>

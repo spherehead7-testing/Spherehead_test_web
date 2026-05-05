@@ -5,6 +5,7 @@
   --c2: #0a2f76;
   --c3: #184aa3;
   --c4: #2666d2;
+  --c5: #0A0D0F;
   /* Removed --c5: #a6c4fa; */
 }
 
@@ -88,7 +89,7 @@ select {
   font-weight: 300;
   font-size: 40px;
   line-height: 50px;
-  letter-spacing: 1px;
+  letter-spacing: 0px;
   color: #ffffff;
   text-align: left;
 }
@@ -109,6 +110,32 @@ select {
   letter-spacing: 0px;
 }
 
+.heading-4 {
+  font-family: var(--font-inter-tight), Arial, Helvetica, sans-serif;
+  font-weight: 300;
+  font-size: 18px;
+  line-height: 42px;
+  letter-spacing: 0;
+  color: white;
+
+  margin-top: 2rem;        /* mt-8 */
+  max-width: 900px;
+}
+
+/* sm (≥640px) */
+@media (min-width: 640px) {
+  .heading-4 {
+    font-size: 22px;
+  }
+}
+
+/* lg (≥1024px) */
+@media (min-width: 1024px) {
+  .heading-4 {
+    font-size: 26px;
+  }
+}
+
 .body-large {
   font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
   font-size: 22px;
@@ -118,6 +145,14 @@ select {
   text-transform: none;
 }
 
+.body-medium {
+  font-family: var(--font-inter-tight), Arial, Helvetica, sans-serif;
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 42px;
+  letter-spacing: 0.02em;
+}
+
 .body-small {
   font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
   font-size: 14px;
@@ -125,7 +160,7 @@ select {
   text-transform: none;
 }
 
-.body-Extrasmall {
+.body-extra-small {
   font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
   font-size: 12px;
   font-weight: 200;
@@ -143,11 +178,26 @@ select {
 .inner-hero {
   font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
   font-weight: 300;
-  font-size: 110px;
-  line-height: 113px;
+  line-height: 90px;
   letter-spacing: 0px;
-  color: #ffffff; /* Assuming white, adjust if necessary */
+  color: #ffffff;
   text-align: left;
+  max-width: 980px;
+  font-size: 34px; /* mobile */
+}
+
+/* tablet */
+@media (min-width: 640px) {
+  .inner-hero {
+    font-size: 46px;
+  }
+}
+
+/* desktop */
+@media (min-width: 1024px) {
+  .inner-hero {
+    font-size: 72px;
+  }
 }
 
 .inter-tight {
@@ -163,14 +213,6 @@ select {
   font-size: 18px;
   font-weight: 400;
   line-height: 28px;
-  letter-spacing: 0.02em;
-}
-
-.body-medium {
-  font-family: var(--font-inter-tight), Arial, Helvetica, sans-serif;
-  font-size: 24px;
-  font-weight: 400;
-  line-height: 42px;
   letter-spacing: 0.02em;
 }
 
