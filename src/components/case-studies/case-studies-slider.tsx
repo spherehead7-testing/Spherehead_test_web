@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import SiteContainer from "@/components/layout/site-container";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 
 const CASE_STUDIES = [
   {
@@ -27,199 +27,243 @@ const CASE_STUDIES = [
     id: "03",
     category: "Supply Chain",
     title: "Transforming Factory Operations Through IoT and Analytics",
-    description: "A leading healthcare provider approached us to modernize their patient management system. They needed a comprehensive solution to streamline operations, improve patient care, and ensure compliance with healthcare regulations.",
+    description: "A leading manufacturing company approached us to implement IoT solutions across their production facilities. They needed to modernize their manufacturing processes, improve efficiency, and reduce operational costs through smart technology integration.",
     slug: "transforming-factory-operations",
     image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1777462587/fac_operations_3_k9enyp.png",
   },
 ];
 
-const DURATION = 550;
+const DURATION = 1.5;
+const EASE: [number, number, number, number] = [0.76, 0, 0.24, 1];
 
 export default function CaseStudiesSlider() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
+  const [[page, direction], setPage] = useState([0, 0]);
+  const [isLg, setIsLg] = useState(true);
 
-  const mainSlotRef = useRef<HTMLDivElement>(null);
-  const previewSlotRef = useRef<HTMLDivElement>(null);
-  const mainImgRef = useRef<HTMLImageElement>(null);
-  const previewImgRef = useRef<HTMLImageElement>(null);
+  useEffect(() => {
+    setIsLg(window.innerWidth >= 1024);
+    const handleResize = () => setIsLg(window.innerWidth >= 1024);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const totalSlides = CASE_STUDIES.length;
-  const activeStudy = CASE_STUDIES[currentIndex];
+  const currentIndex = ((page % totalSlides) + totalSlides) % totalSlides;
   const nextIndex = (currentIndex + 1) % totalSlides;
+  
+  const activeStudy = CASE_STUDIES[currentIndex];
   const nextStudy = CASE_STUDIES[nextIndex];
 
-  const handleNext = useCallback(() => {
-    if (isAnimating) return;
+  const handleNext = useCallback(() => setPage([page + 1, 1]), [page]);
+  const handlePrev = useCallback(() => setPage([page - 1, -1]), [page]);
 
-    const mainSlot = mainSlotRef.current;
-    const previewSlot = previewSlotRef.current;
-    const mainImg = mainImgRef.current;
-    const previewImg = previewImgRef.current;
+  // IMAGE VARIANTS
+  const mainVariants = {
+    enter: (direction: number) => ({
+      x: direction > 0 ? "0%" : "-100%", 
+      opacity: direction > 0 ? 1 : 0,
+      scale: direction > 0 ? 1 : 0.8,
+      filter: "grayscale(100%)", // Always enter as gray, animates to color
+    }),
+    center: {
+      zIndex: 20,
+      x: "0%",
+      opacity: 1,
+      scale: 1,
+      filter: "grayscale(0%)", // Natural color in the center
+    },
+    exit: (direction: number) => ({
+      zIndex: 0,
+      x: direction > 0 ? "-100%" : "0%", 
+      opacity: 0, 
+      scale: direction > 0 ? 0.7 : 1, 
+      filter: "grayscale(100%)", // Animates to gray as it exits
+    })
+  };
 
-    if (!mainSlot || !previewSlot || !mainImg || !previewImg) {
-      setCurrentIndex((prev) => (prev + 1) % totalSlides);
-      return;
-    }
-
-    setIsAnimating(true);
-
-    const mainRect = mainSlot.getBoundingClientRect();
-    const previewRect = previewSlot.getBoundingClientRect();
-
-    const dx = previewRect.left - mainRect.left;
-    const dy = previewRect.top - mainRect.top;
-    const scaleX = previewRect.width / mainRect.width;
-    const scaleY = previewRect.height / mainRect.height;
-
-    const clone = document.createElement("img");
-    clone.src = previewImg.src;
-    clone.style.cssText = `
-      position: fixed;
-      left: ${mainRect.left}px;
-      top: ${mainRect.top}px;
-      width: ${mainRect.width}px;
-      height: ${mainRect.height}px;
-      object-fit: cover;
-      z-index: 9999;
-      pointer-events: none;
-      will-change: transform, filter;
-      transform-origin: top left;
-      filter: grayscale(100%);
-    `;
-    document.body.appendChild(clone);
-
-    previewImg.style.opacity = "0";
-    mainImg.style.opacity = "0";
-
-    clone.style.transform = `translate(${dx}px, ${dy}px) scale(${scaleX}, ${scaleY})`;
-
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        clone.style.transition = `transform ${DURATION}ms cubic-bezier(0.76, 0, 0.24, 1), filter ${DURATION}ms ease`;
-        clone.style.transform = `translate(0px, 0px) scale(1, 1)`;
-        clone.style.filter = "grayscale(0%)";
-      });
-    });
-
-    mainImg.style.transition = `transform ${DURATION}ms cubic-bezier(0.76, 0, 0.24, 1), opacity ${DURATION * 0.6}ms ease`;
-    mainImg.style.transform = "translateX(-40px)";
-
-    setTimeout(() => {
-      clone.remove();
-      mainImg.style.transition = "";
-      mainImg.style.transform = "";
-      mainImg.style.opacity = "1";
-      previewImg.style.opacity = "1";
-      setCurrentIndex((prev) => (prev + 1) % totalSlides);
-      setIsAnimating(false);
-    }, DURATION + 16);
-
-  }, [isAnimating, totalSlides]);
-
-  const handlePrev = useCallback(() => {
-    if (isAnimating) return;
-    setCurrentIndex((prev) => (prev - 1 + totalSlides) % totalSlides);
-  }, [isAnimating, totalSlides]);
+  const previewVariants = {
+    enter: (direction: number) => ({
+      x: direction > 0 ? "100%" : "0%", 
+      opacity: direction > 0 ? 0 : 1,
+      // FIX: If going backward (direction < 0), it comes from the Main Slot, so it starts with natural color (0%) and fades to gray!
+      filter: direction > 0 ? "grayscale(100%)" : "grayscale(0%)"
+    }),
+    center: {
+      zIndex: 10,
+      x: "0%",
+      opacity: 1,
+      filter: "grayscale(100%)" // Stays gray in preview
+    },
+    exit: (direction: number) => ({
+      zIndex: 0,
+      x: direction > 0 ? "0%" : "100%", 
+      opacity: 0, 
+      filter: "grayscale(100%)"
+    })
+  };
 
   return (
     <SiteContainer>
-      <div className="w-full flex flex-col gap-8 pb-12">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+      <LayoutGroup>
+        <div className="w-full flex flex-col gap-8 pb-12">
+          
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
 
-          {/* LEFT: MAIN SLOT */}
-          <div className="lg:col-span-8 flex flex-col">
-            <div
-              ref={mainSlotRef}
-              className="w-full h-[250px] sm:h-[300px] lg:h-[380px] bg-gray-200 overflow-hidden"
-            >
-              <Link href={`/case-studies/${activeStudy.slug}`} className="w-full h-full block cursor-pointer">
-                <img
-                  ref={mainImgRef}
-                  src={activeStudy.image}
-                  alt={activeStudy.title}
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
-                  style={{ display: "block" }}
-                />
-              </Link>
-            </div>
+            {/* === LEFT: MAIN SLOT === */}
+            <div className="lg:col-span-8 flex flex-col">
+              
+              <div className="w-full h-[250px] sm:h-[300px] lg:h-[380px] relative overflow-visible rounded-sm">
+                <AnimatePresence custom={direction} initial={false}>
+                  <motion.div
+                    key={`main-slide-${page}`}
+                    layoutId={`shared-slide-${page}`}
+                    custom={direction}
+                    variants={mainVariants}
+                    initial="enter"
+                    animate="center"
+                    exit="exit"
+                    transition={{ duration: DURATION, ease: EASE }}
+                    className="absolute inset-0 w-full h-full overflow-hidden rounded-sm shadow-sm"
+                  >
+                    <Link href={`/case-studies/${activeStudy.slug}`} className="w-full h-full block cursor-pointer">
+                      <img
+                        src={activeStudy.image}
+                        alt={activeStudy.title}
+                        className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                      />
+                    </Link>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
 
-            <div className="flex items-center justify-between w-full mt-6 mb-4">
-              <span className="px-3 py-1 bg-blue-50 text-[#0D54CA] text-xs font-semibold uppercase tracking-wider rounded-sm">
-                {activeStudy.category}
-              </span>
-              <div className="flex items-center gap-4 text-gray-500">
-                <button
-                  onClick={handlePrev}
-                  disabled={isAnimating}
-                  className="hover:text-[#0D54CA] transition-colors p-1 disabled:opacity-40"
-                >
-                  <FiChevronLeft className="w-6 h-6" />
-                </button>
-                <button
-                  onClick={handleNext}
-                  disabled={isAnimating}
-                  className="hover:text-[#0D54CA] transition-colors p-1 disabled:opacity-40"
-                >
-                  <FiChevronRight className="w-6 h-6" />
-                </button>
+              {/* DISSOLVING CATEGORY AND STATIC CONTROLS */}
+              <div className="flex items-center w-full mt-6 mb-4 relative min-h-[32px]">
+                <div className="flex items-center h-full">
+                  <AnimatePresence mode="wait" initial={false}>
+                    <motion.span
+                      key={`category-${page}`}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.4 }}
+                      className="px-3 py-1 bg-blue-50 text-[#0D54CA] text-xs font-semibold uppercase tracking-wider rounded-sm whitespace-nowrap"
+                    >
+                      {activeStudy.category}
+                    </motion.span>
+                  </AnimatePresence>
+                </div>
+
+                <div className="flex items-center gap-4 text-gray-500 relative z-10 ml-auto">
+                  <button onClick={handlePrev} className="hover:text-[#0D54CA] transition-colors p-1">
+                    <FiChevronLeft className="w-6 h-6" />
+                  </button>
+                  <button onClick={handleNext} className="hover:text-[#0D54CA] transition-colors p-1">
+                    <FiChevronRight className="w-6 h-6" />
+                  </button>
+                </div>
+              </div>
+
+              {/* DISSOLVING TEXT CONTENT & STATIC BUTTON */}
+              <div className="max-w-xl lg:max-w-2xl min-h-[160px] flex flex-col justify-between">
+                <div>
+                  <AnimatePresence mode="wait" initial={false}>
+                    <motion.div
+                      key={`text-${page}`}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.4 }}
+                    >
+                      <h2 className="heading-2 !text-[#01030B] mb-6">{activeStudy.title}</h2>
+                      <p className="body-small text-[#8A8B8F] leading-[1.6] mb-8">{activeStudy.description}</p>
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+
+                <div className="pt-2">
+                  <Link 
+                    href={`/case-studies/${activeStudy.slug}`} 
+                    className="body-Extrasmall border border-[#0D54CA] !text-[#0D54CA] px-6 py-2.5 transition-colors w-fit block text-center"
+                  >
+                    View Full Case Study
+                  </Link>
+                </div>
               </div>
             </div>
 
-            <div className="max-w-xl lg:max-w-2xl">
-              <h2 className="heading-2 !text-[#01030B] mb-6">{activeStudy.title}</h2>
-              <p className="body-small text-[#8A8B8F] leading-[1.6] mb-8">{activeStudy.description}</p>
-              
-              <Link 
-                href={`/case-studies/${activeStudy.slug}`} 
-                className="body-Extrasmall border border-[#0D54CA] !text-[#0D54CA] px-6 py-2.5 transition-colors w-fit block text-center"
-              >
-                View Full Case Study
-              </Link>
-            </div>
-          </div>
+            {/* === RIGHT: PREVIEW SLOT === */}
+            <div className="hidden lg:flex lg:col-span-4 flex-col h-full">
 
-          {/* RIGHT: PREVIEW SLOT */}
-          <div className="hidden lg:flex lg:col-span-4 flex-col h-full">
-
-            <div className="w-full lg:h-[380px]">
-              <motion.div
-                initial={{ y: 0 }}
-                whileInView={{ y: 80 }}
-                // FIX: Requires 60% of the image to be scrolled into view before animating
-                viewport={{ once: false, amount: 0.6 }} 
-                transition={{ duration: 0.8, ease: "easeOut" }}
-                className="w-full"
-              >
-                <div
-                  ref={previewSlotRef}
-                  className="h-[300px] bg-gray-100 overflow-hidden cursor-pointer"
-                  style={{ width: "calc(100% + 6rem + max(0px, (100vw - 1400px) / 2))" }}
-                  onClick={handleNext}
+              <div className="w-full lg:h-[380px] relative overflow-visible">
+                <motion.div
+                  initial={{ y: 0 }}
+                  whileInView={{ y: 80 }}
+                  viewport={{ once: false, amount: 0.6 }} 
+                  transition={{ duration: 0.8, ease: "easeOut" }}
+                  className="w-full h-full relative"
                 >
-                  <img
-                    ref={previewImgRef}
-                    src={nextStudy.image}
-                    alt="Next Case Study"
-                    className="w-full h-full object-cover"
-                    style={{ filter: "grayscale(100%)", display: "block" }}
-                  />
+                  <div
+                    className="h-[300px] cursor-pointer relative overflow-visible"
+                    style={{ width: "calc(100% + 6rem + max(0px, (100vw - 1400px) / 2))" }}
+                    onClick={handleNext}
+                  >
+                    <AnimatePresence custom={direction} initial={false}>
+                      <motion.div
+                        key={`preview-slide-${page}`}
+                        layoutId={`shared-slide-${page + 1}`} 
+                        custom={direction}
+                        variants={previewVariants}
+                        initial="enter"
+                        animate="center"
+                        exit="exit"
+                        transition={{ duration: DURATION, ease: EASE }}
+                        className="absolute inset-0 w-full h-full overflow-hidden rounded-sm"
+                      >
+                        <img
+                          src={nextStudy.image}
+                          alt="Next Case Study"
+                          className="w-full h-full object-cover"
+                        />
+                      </motion.div>
+                    </AnimatePresence>
+                  </div>
+                </motion.div>
+              </div>
+
+              {/* === STATIC COUNTER WITH SMOOTH FADING NUMBER === */}
+              <div className="mt-12 border-l border-gray-200 flex-grow relative min-h-[90px]">
+                <div className="pl-12 flex items-baseline gap-1 pt-2">
+                  
+                  <div className="relative flex items-baseline">
+                    <span className="text-7xl font-light leading-none invisible pointer-events-none">
+                      00
+                    </span>
+                    
+                    <AnimatePresence mode="wait" initial={false}>
+                      <motion.span
+                        key={`counter-${page}`}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.4, ease: "easeInOut" }}
+                        className="absolute left-0 bottom-0 text-7xl font-light text-[#0D54CA] leading-none"
+                      >
+                        {activeStudy.id}
+                      </motion.span>
+                    </AnimatePresence>
+                  </div>
+
+                  <span className="text-2xl font-light text-gray-400">
+                    /0{totalSlides}
+                  </span>
+                  
                 </div>
-              </motion.div>
-            </div>
+              </div>
 
-            <div className="mt-12 flex items-baseline gap-1 border-l border-gray-200 pl-12 flex-grow pt-2">
-              <span className="text-7xl font-light text-[#0D54CA] leading-none">
-                {activeStudy.id}
-              </span>
-              <span className="text-2xl font-light text-gray-400">
-                /0{totalSlides}
-              </span>
             </div>
-
           </div>
         </div>
-      </div>
+      </LayoutGroup>
     </SiteContainer>
   );
 }

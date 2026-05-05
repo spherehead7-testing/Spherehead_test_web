@@ -7,7 +7,8 @@ import CyclicButton from "@/components/ui/cyclic-button";
 
 export default function CaseStudiesHero() {
   return (
-    <section className="relative w-full h-full flex flex-col justify-end overflow-hidden snap-start pb-32 lg:pb-56">
+    // FIX: Removed 'snap-start' from here to prevent scroll-locking conflicts
+    <section className="relative w-full h-full flex flex-col justify-end overflow-hidden pb-32 lg:pb-56">
       <SiteContainer className="relative z-10 flex flex-col w-full">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end">
           
