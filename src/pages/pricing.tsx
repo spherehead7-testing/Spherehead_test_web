@@ -23,7 +23,7 @@ export default function PricingPage() {
       <PricingPackages />
       <ContactSection />
       <FAQSection />
-      <TestimonialSection />
+      <TestimonialSection snapToScreen />
       <Footer />
     </>
   );
