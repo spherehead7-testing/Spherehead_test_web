@@ -11,7 +11,7 @@ export default function FounderMessage() {
         <div>
           {/* Label */}
           <div className="flex items-center gap-3 mb-8">
-            <RotatingDots />
+            <RotatingDots variant="light" />
             <span className="text-sm text-gray-500 font-medium">
               Founder&apos;s Message
             </span>

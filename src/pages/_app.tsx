@@ -21,7 +21,6 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     <main className={`${archivo.variable} ${interTight.variable}`}>
         <Navbar />
         <Component {...pageProps} />
-        <Footer />
     </main>
   );
 }
