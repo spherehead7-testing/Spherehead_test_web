@@ -4,6 +4,7 @@ import { useState } from "react";
 import RotatingDots from "../ui/rotating-dots";
 import { FaFacebookF, FaInstagram, FaLinkedinIn } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
+import SiteContainer from "./site-container";
 
 export default function Footer() {
   // 🔹 STATE
@@ -53,14 +54,15 @@ export default function Footer() {
   };
 
   return (
-    <section className="min-h-screen flex items-start">
-      <div className="max-w-[1400px] mx-auto w-full px-12 grid grid-cols-2 gap-20 pt-16">
+    <section className="flex items-start">
+      <SiteContainer>
+      <div className="grid grid-cols-2 gap-10 pt-16 ">
         {/* LEFT SIDE */}
         <div className="text-white flex flex-col justify-between h-[85vh]">
           {/* TOP CONTENT */}
           <div className="mb-5">
-            <div className="text-[40px] leading-[1.1]">
-              <div>Let’s Build Something</div>
+            <div className="heading-1">
+              <h1>Let’s Build Something</h1>
 
               <div className="flex items-center gap-2">
                 <span>Awesome together</span>
@@ -126,7 +128,7 @@ export default function Footer() {
         <div className="flex justify-end items-end h-[90vh] pb-0 mr-10 ml-1">
           <form
             onSubmit={handleSubmit}
-            className="bg-[#F3F3F3] p-12 w-[460px] shadow-[0_10px_40px_rgba(0,0,0,0.15)]"
+            className="bg-[#F3F3F3] p-12 w-[660px]"
           >
             <input
               value={name}
@@ -171,6 +173,7 @@ export default function Footer() {
           </form>
         </div>
       </div>
+      </SiteContainer>
     </section>
   );
 }
