@@ -1,9 +1,12 @@
+"use client";
+
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import RotatingDots from "../../ui/rotating-dots";
 import SiteContainer from "../../layout/site-container";
+import { cn } from "@/lib/utils";
 
 const testimonials = [
   {
@@ -54,18 +57,25 @@ const MAIN_CARD_W = 574;
 
 const BASE_DURATION = 0.7;
 
-export default function TestimonialSection() {
-  const uidRef = useRef(0);
-  const moveTimeoutRef = useRef<number | null>(null);
+type TestimonialSectionProps = {
+  snapToScreen?: boolean;
+};
 
-  const buildSideStack = (startIndex: number) =>
-    Array.from({ length: SIDE_CARD_COUNT }, (_, i) => ({
-      uid: uidRef.current++,
-      testimonialIndex: (startIndex + i + 1) % testimonials.length,
-    }));
+const initialSideStack = Array.from({ length: SIDE_CARD_COUNT }, (_, i) => ({
+  uid: i,
+  testimonialIndex: (i + 1) % testimonials.length,
+}));
+
+export default function TestimonialSection({
+  snapToScreen = false,
+}: TestimonialSectionProps) {
+  const uidRef = useRef(SIDE_CARD_COUNT);
+  const moveTimeoutRef = useRef<number | null>(null);
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const snapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [activeIndex, setActiveIndex] = useState(0);
-  const [sideStack, setSideStack] = useState(() => buildSideStack(0));
+  const [sideStack, setSideStack] = useState(initialSideStack);
   const [phase, setPhase] = useState<"idle" | "moving">("idle");
   const [movingItem, setMovingItem] = useState<{
     uid: number;
@@ -74,6 +84,39 @@ export default function TestimonialSection() {
   const [incomingUid, setIncomingUid] = useState<number | null>(null);
 
   const activeCard = testimonials[activeIndex];
+
+  useEffect(() => {
+    if (!snapToScreen) return;
+
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const handleScroll = () => {
+      if (snapTimerRef.current) {
+        clearTimeout(snapTimerRef.current);
+      }
+
+      snapTimerRef.current = setTimeout(() => {
+        const rect = section.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        const shouldLock =
+          rect.top < viewportHeight * 0.38 && rect.top > 8;
+
+        if (shouldLock) {
+          section.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }, 120);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (snapTimerRef.current) {
+        clearTimeout(snapTimerRef.current);
+      }
+    };
+  }, [snapToScreen]);
 
   const clearTimers = () => {
     if (moveTimeoutRef.current) window.clearTimeout(moveTimeoutRef.current);
@@ -204,7 +247,15 @@ export default function TestimonialSection() {
   );
 
   return (
-    <section className="bg-white py-16 sm:py-[62px]">
+    <section
+      ref={sectionRef}
+      className={cn(
+        "bg-white",
+        snapToScreen
+          ? "h-[100svh] w-full snap-start overflow-hidden py-8 lg:flex lg:items-center"
+          : "py-16 sm:py-[62px]",
+      )}
+    >
       <SiteContainer>
         <div className="mb-4 flex items-center gap-3">
           <RotatingDots variant="light"/>
@@ -213,13 +264,23 @@ export default function TestimonialSection() {
           </p>
         </div>
 
-        <h2 className="heading-2 !text-[#01030B]">
+        <h2
+          className={cn(
+            "heading-2 !text-[#01030B]",
+            snapToScreen && "!text-[32px] !leading-[1.2] lg:!text-[36px]",
+          )}
+        >
           Building Lasting Relationships
           <br />
           Through Results Our Clients Value
         </h2>
 
-        <div className="mt-16 flex items-start justify-between gap-12 lg:mt-[76px]">
+        <div
+          className={cn(
+            "flex items-start justify-between gap-12",
+            snapToScreen ? "mt-8 lg:mt-10" : "mt-16 lg:mt-[76px]",
+          )}
+        >
           <div
             className="relative w-full sm:mt-[27px]"
             style={{ maxWidth: MAIN_CARD_W }}
