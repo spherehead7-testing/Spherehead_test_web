@@ -15,14 +15,14 @@ export default function Footer() {
           <div className="text-white flex flex-col justify-between">
             {/* TOP CONTENT */}
             <div className="mb-5">
-              <div className="heading-1 relative z-20 max-w-[900px] lg:ml-10">
+              <div className="heading-1">
                 {/* LINE 1 */}
                 <h1 className="whitespace-nowrap">Let’s Build Something</h1>
 
                 {/* LINE 2 */}
-                <h1 className="flex items-center gap-4 whitespace-nowrap leading-none">
+                <h1 className="flex items-center gap-6 whitespace-nowrap">
                   Awesome together
-                  <div className="scale-125 relative top-[4px]">
+                  <div className="scale-170 relative top-[4px]">
                     <RotatingDots />
                   </div>
                 </h1>
@@ -30,7 +30,7 @@ export default function Footer() {
             </div>
 
             {/* BOTTOM */}
-            <div className="body-extra-small lg:mb-20">
+            <div className="body-small lg:mb-20">
               {/* SOCIAL LINKS */}
               <div className="flex gap-6 mt-16">
                 <FaFacebookF className="hover:opacity-70 transition cursor-pointer" />
@@ -44,7 +44,8 @@ export default function Footer() {
               </p>
 
               <p>
-                © 2026 All Rights Reserved. Designed and Developed by Spherehead
+                © 2026 All Rights Reserved. Designed and Developed
+                <br />by Spherehead
               </p>
             </div>
           </div>
@@ -52,7 +53,7 @@ export default function Footer() {
           {/* RIGHT SIDE */}
           <div className="flex justify-end items-end">
             {/* FORCE WIDTH OVERRIDE */}
-            <div className="w-full lg:w-[800px] lg:-ml-20 [&>form]:max-w-none">
+            <div className="w-full lg:w-[600px] lg:-ml-20 [&>form]:max-w-none lg:mt-50">
               <ContactCard variant="card" />
             </div>
           </div>
