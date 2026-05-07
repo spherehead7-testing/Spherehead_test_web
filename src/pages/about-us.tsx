@@ -17,7 +17,6 @@ export default function AboutPage() {
       <CoreValues />
       <CommunitySection />
       <Footer />
-
     </>
   );
 }
