@@ -21,23 +21,79 @@ import TechnologiesSection from "@/components/common-sections/technologies-secti
 import TestimonialSection from "@/components/common-sections/testimonial-section";
 import LetsTalkButton from "@/components/landing/lets-talk-button";
 
+// Slower durations as requested
 const ENTER_DURATION = 1.0; 
-const EXIT_DURATION = 1.0;  
+const EXIT_DURATION = 0.8;  
+
+// --- UPDATED BUTTON COMPONENT (Keep it in the same file for now to see the fix) ---
+function FloatingLetsTalkButton({ isVisible, onClick }: { isVisible: boolean; onClick: () => void }) {
+  return (
+    <AnimatePresence>
+      {isVisible && (
+        <motion.div
+          layoutId="lets-talk-morph" // THE MAGIC LINK
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }} // Fast opacity fade to let layout take over
+          onClick={onClick}
+          className="fixed bottom-0 left-0 z-[100] flex h-[120px] w-[48px] cursor-pointer items-center justify-center bg-[#0D54CA] shadow-2xl hover:bg-blue-700 transition-colors sm:h-[150px] sm:w-[56px] overflow-hidden"
+        >
+          <motion.span
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="[writing-mode:vertical-rl] rotate-180 text-sm font-medium tracking-widest text-white sm:text-base"
+          >
+            Let's Talk
+          </motion.span>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+// --- UPDATED FOOTER OVERLAY COMPONENT ---
+function AnimatedFooterOverlay({ isVisible, onClose }: { isVisible: boolean; onClose: () => void }) {
+  return (
+    <AnimatePresence>
+      {isVisible && (
+        <motion.div
+          layoutId="lets-talk-morph" // THE MAGIC LINK
+          // No manual scale or transformOrigin here. Let layoutId do the work.
+          transition={{ 
+            duration: isVisible ? ENTER_DURATION : EXIT_DURATION, 
+            ease: [0.32, 0.72, 0, 1] 
+          }}
+          className="fixed inset-0 z-[110] bg-[#01030b] flex flex-col overflow-y-auto overflow-x-hidden shadow-[0_-8px_40px_rgba(0,0,0,0.12)]"
+        >
+          {/* We wrap the content in a separate motion.div to fade it in AFTER the layout morph starts */}
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ delay: 0.2, duration: 0.4 }} // Wait a tiny bit before showing content
+            className="w-full min-h-full flex flex-col relative z-10 bg-transparent"
+          >
+            <div className="w-full bg-animated-gradient mt-auto shrink-0">
+              <Footer />
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
 
 export default function HomePage() {
   const scrollContainerRef = useRef<HTMLElement | null>(null);
   const measureRef = useRef<HTMLDivElement | null>(null);
   
-  // 1. Viewport & Sizing State
   const { viewportWidth, viewportHeight, containerWidth } = useViewportSizes(measureRef);
-
-  // 2. Custom Smooth Scrolling Engine
   useSmoothScrollEngine(scrollContainerRef, viewportHeight);
 
-  // 3. Scroll Tracking for Animations
   const { scrollY } = useScroll({ container: scrollContainerRef });
   
-  // 4. Section Intersection Observers
   const techAreaRef = useRef<HTMLDivElement | null>(null);
   const testimonialAreaRef = useRef<HTMLDivElement | null>(null);
   const footerAreaRef = useRef<HTMLDivElement | null>(null);
@@ -46,7 +102,6 @@ export default function HomePage() {
   const isTestimonialInView = useInView(testimonialAreaRef, { root: scrollContainerRef, amount: 0.4 });
   const isFooterInView = useInView(footerAreaRef, { root: scrollContainerRef, amount: 0.1 });
 
-  // 5. Framer Motion Calculations
   const currentViewportHeight = viewportHeight || 900;
   const animationEnd = 100;
   const swapStart = currentViewportHeight;
@@ -78,9 +133,12 @@ export default function HomePage() {
   const leftPanelWidth = useMotionTemplate`calc(100% - ${rightPanelWidth})`;
   const rightPanelClipPath = useMotionTemplate`inset(0% 0% ${rightPanelCutBottom} 0% round 4px 0px 0px 4px)`;
 
-  // 6. Action Handlers
   const scrollToBottom = () => {
     scrollContainerRef.current?.scrollTo({ top: scrollContainerRef.current.scrollHeight, behavior: "smooth" });
+  };
+
+  const scrollUpFromFooter = () => {
+    scrollContainerRef.current?.scrollTo({ top: scrollContainerRef.current.scrollTop - viewportHeight * 0.8, behavior: "smooth" });
   };
 
   return (
@@ -92,7 +150,7 @@ export default function HomePage() {
 
       <main ref={scrollContainerRef} className="h-screen w-full overflow-y-auto overflow-x-hidden relative">
         
-        <LetsTalkButton 
+        <FloatingLetsTalkButton 
           isVisible={isTestimonialInView && !isTechInView && !isFooterInView} 
           onClick={scrollToBottom} 
         />
@@ -128,48 +186,38 @@ export default function HomePage() {
           </div>
         </div>
 
+        {/* Sections tracking refs */}
         <div ref={techAreaRef} id="tech-section" className="relative z-30 bg-white" style={{ marginTop: "-8vh" }}>
           <TechnologiesSection />
         </div>
 
-        <div ref={testimonialAreaRef} className="relative z-30 bg-white h-[100vh] w-full flex flex-col justify-center overflow-hidden">
-          <TestimonialSection />
+        {/* COMBINED TESTIMONIAL & FOOTER SCROLL WRAPPER */}
+        {/* We make this wrapper 200vh tall. The first 100vh shows testimonials. 
+            The second 100vh is the invisible scroll space that triggers the Footer overlay. */}
+        <div className="relative z-30 w-full h-[200vh]">
+          
+          {/* 1. The Sticky Testimonial Section */}
+          <div 
+            ref={testimonialAreaRef} 
+            // 'sticky top-0' keeps it on screen while the user scrolls down the remaining 100vh
+            className="sticky top-0 h-[100vh] w-full bg-white flex flex-col justify-center overflow-hidden"
+          >
+            <TestimonialSection />
+          </div>
+          
+          {/* 2. The Dummy Footer Trigger */}
+          {/* Placed absolutely at the bottom of the 200vh wrapper */}
+          <div 
+            ref={footerAreaRef} 
+            className="absolute bottom-0 left-0 h-[100vh] w-full bg-transparent pointer-events-none" 
+          />
+          
         </div>
-        
-        <div ref={footerAreaRef} className="relative z-0 h-[100vh] w-full bg-transparent pointer-events-none" />
 
-        <AnimatedFooterOverlay isVisible={isFooterInView} />
+        <AnimatedFooterOverlay isVisible={isFooterInView} onClose={scrollUpFromFooter} />
 
       </main>
     </>
-  );
-}
-
-function AnimatedFooterOverlay({ isVisible }: { isVisible: boolean }) {
-  return (
-    <AnimatePresence>
-      {isVisible && (
-        <motion.div
-          initial={{ scale: 0, opacity: 0, borderTopRightRadius: "0px", transformOrigin: "bottom left" }}
-          animate={{
-            scale: 1, opacity: 1, borderTopRightRadius: "0px", transformOrigin: "bottom left",
-            transition: { duration: ENTER_DURATION, ease: [0.32, 0.72, 0, 1] },
-          }}
-          exit={{
-            scale: 0, opacity: 0, borderTopRightRadius: "0px", transformOrigin: "bottom left",
-            transition: { duration: EXIT_DURATION, ease: [0.32, 0.72, 0, 1] },
-          }}
-          className="fixed inset-0 z-[110] bg-[#01030b] flex flex-col overflow-y-auto overflow-x-hidden shadow-[0_-8px_40px_rgba(0,0,0,0.12)]"
-          style={{ willChange: "transform" }}
-        >
-          <div className="w-full min-h-full flex flex-col relative z-10 bg-transparent">
-            <div className="w-full bg-animated-gradient mt-auto shrink-0">
-              <Footer />
-            </div>
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
   );
 }
 
