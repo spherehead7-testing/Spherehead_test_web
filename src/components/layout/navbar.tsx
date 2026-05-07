@@ -64,6 +64,7 @@ export default function Navbar() {
           <Link href="/portfolio">Our Work</Link>
           <Link href="/pricing">Pricing</Link>
           <Link href="/industries">Industries</Link>
+          <Link href="/blogs">News & Insights</Link>
           <Link href="/careers">Careers</Link>
           <Link href="/contact-us">Contact Us</Link>
         </nav>

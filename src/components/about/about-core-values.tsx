@@ -45,23 +45,23 @@ export default function CoreValues() {
         <div className="mb-10">
           <div className="flex items-center gap-3 mb-2">
             <RotatingDots />
-            <span className="text-sm text-white/70">Our Core Values</span>
+            <span className="body-small">Our Core Values</span>
           </div>
 
-          <h2 className="text-[34px] md:text-[36px] leading-[1.15] max-w-[700px]">
+          <h2 className="heading-2 max-w-[700px]">
             Driving Excellence through Strong Values and Purpose
           </h2>
         </div>
       </div>
 
       {/* FULL WIDTH TOP LINE */}
-      <div className="w-full h-[2px] bg-white/30 mb-10" />
+      <div className="w-full h-[2px] bg-white/30 mb-7" />
 
       {/* FULL WIDTH TABS SECTION */}
       <div className="w-full">
         {/* LABELS (still aligned to container) */}
         <div className="w-full px-6 lg:px-20">
-          <div className="flex justify-between text-white/70 text-sm mb-6">
+          <div className="body-medium flex justify-between text-white/70 mb-6">
             {values.map((item, i) => (
               <button
                 key={i}
@@ -87,8 +87,8 @@ export default function CoreValues() {
       </div>
 
       {/* 🔹 CONTENT (BACK TO CONTAINER) */}
-      <div className="max-w-[1400px] mx-auto px-6 lg:px-20">
-        <div className="grid lg:grid-cols-2 gap-16 items-center mt-20">
+      <div className="max-w-[1440px] mx-auto px-6 lg:px-20">
+        <div className="grid lg:grid-cols-2 gap-16 items-center mt-10">
           {/* IMAGE */}
           <motion.div
             key={values[active].image}

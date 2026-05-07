@@ -142,7 +142,7 @@ export default function ContactSection() {
             </div>
 
             {/* BUTTON */}
-            <button className="rounded bg-blue-700 px-6 py-1.5 text-white transition hover:bg-blue-800">
+            <button className="body-medium rounded bg-animated-gradient px-6 py-1.5 text-white">
               Submit
             </button>
           </form>
@@ -172,7 +172,7 @@ function Input({
       }`}
       aria-hidden={hidden}
     >
-      <label className="text-sm leading-none text-gray-500">{label}</label>
+      <label className="body-medium leading-none text-gray-500">{label}</label>
       <input
         type="text"
         className="w-full border-b border-gray-300 bg-transparent py-1.5 focus:outline-none"
@@ -191,7 +191,7 @@ function Select({ label, hidden = false }: { label: string; hidden?: boolean }) 
       className={hidden ? "invisible pointer-events-none" : ""}
       aria-hidden={hidden}
     >
-      <label className="text-sm leading-none text-gray-500">{label}</label>
+      <label className="body-medium leading-none text-gray-500">{label}</label>
       <select className="w-full border-b border-gray-300 bg-transparent py-1.5 focus:outline-none">
         <option value="">Select</option>
         <option>Option 1</option>
@@ -208,7 +208,7 @@ function Select({ label, hidden = false }: { label: string; hidden?: boolean }) 
 function Textarea({ label }: { label: string }) {
   return (
     <div>
-      <label className="text-sm leading-none text-gray-500">{label}</label>
+      <label className="body-medium leading-none text-gray-500">{label}</label>
       <textarea
         rows={2}
         className="w-full resize-none border-b border-gray-300 bg-transparent py-1.5 focus:outline-none"
