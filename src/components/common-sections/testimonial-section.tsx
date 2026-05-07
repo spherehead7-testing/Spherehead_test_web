@@ -4,8 +4,8 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import RotatingDots from "../../ui/rotating-dots";
-import SiteContainer from "../../layout/site-container";
+import RotatingDots from "../ui/rotating-dots";
+import SiteContainer from "../layout/site-container";
 import { cn } from "@/lib/utils";
 
 const testimonials = [
