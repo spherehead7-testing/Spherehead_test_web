@@ -91,14 +91,13 @@ export default function HomePage() {
   const rightPanelWidth = useSpring(rawRightPanelWidth, { stiffness: 85, damping: 20, mass: 0.8 });
   const rightPanelCutBottom = useSpring(rawRightPanelCutBottom, { stiffness: 85, damping: 20, mass: 0.8 });
   const aboutContentOpacity = useSpring(rawAboutContentOpacity, { stiffness: 100, damping: 20, mass: 0.8 });
-  const servicesY = useSpring(rawServicesY, { stiffness: 95, damping: 22, mass: 0.85 });
 
   const rightPanelHeight = useMotionTemplate`calc(${cutHeight} + 2px)`;
   const leftPanelWidth = useMotionTemplate`calc(100% - ${rightPanelWidth})`;
   const rightPanelClipPath = useMotionTemplate`inset(0% 0% ${rightPanelCutBottom} 0% round 4px 0px 0px 4px)`;
 
 
-  // --- 🪄 THE "ONE-WHEEL-TICK" SMOOTH GLIDE ENGINE ---
+  // SMOOTH GLIDE ENGINE ---
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (!container || !viewportHeight) return;
@@ -116,8 +115,6 @@ export default function HomePage() {
       if (techEl) {
         // Testimonials
         points.push(viewportHeight * 4 + techEl.offsetHeight); 
-
-        // ✅ FIX: Added the absolute bottom of the page so it can reach the Footer!
         points.push(container.scrollHeight - viewportHeight);
       }
       return points;
@@ -143,7 +140,7 @@ export default function HomePage() {
           autoScrollRafRef.current = requestAnimationFrame(step);
         } else {
           container.scrollTo(0, target);
-          setTimeout(() => { isAutoScrollingRef.current = false; }, 400); 
+          setTimeout(() => { isAutoScrollingRef.current = false; }, 10); 
         }
       };
       autoScrollRafRef.current = requestAnimationFrame(step);

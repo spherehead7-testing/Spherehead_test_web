@@ -11,7 +11,7 @@ export default function LandingServicesSection() {
             <div>
               <div className="mb-5 flex items-center gap-4">
                 <RotatingDots />
-                <p className="inter-tight text-white">Services</p>
+                <p className="body-small text-white !tracking-[1.2px]">Services</p>
               </div>
               
               <h2 className="heading-2">

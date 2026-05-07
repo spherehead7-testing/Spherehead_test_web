@@ -1,16 +1,59 @@
+"use client";
+
 import Image from "next/image";
 
+// Replace the placeholder URLs with your actual Cloudinary links
 const services = [
-  { number: "01", lines: ["UI/UX Design & Creative", "Graphics Services"], image: "/images/landingPage/serviceSec1.svg" },
-  { number: "02", lines: ["IoT Solutions &", "Robotics Systems"], image: "/images/landingPage/serviceSec2.svg" },
-  { number: "03", lines: ["Business Process", "Outsourcing (BPO) Services"], image: "/images/landingPage/serviceSec3.svg" },
-  { number: "04", lines: ["IT Consultation & Managed", "Support Service"], image: "/images/landingPage/serviceSec4.svg" },
-  { number: "05", lines: ["Custom Software & Mobile", "App Development"], image: "/images/landingPage/serviceSec5.svg" },
-  { number: "06", lines: ["Digital Commerce", "Development & SEO"], image: "/images/landingPage/serviceSec1.svg" },
-  { number: "07", lines: ["IoT Solutions &", "Robotics Systems"], image: "/images/landingPage/serviceSec2.svg" },
-  { number: "08", lines: ["Custom Software & Mobile", "App Development"], image: "/images/landingPage/serviceSec3.svg" },
-  { number: "09", lines: ["IoT Solutions &", "Robotics Systems"], image: "/images/landingPage/serviceSec4.svg" },
-  { number: "10", lines: ["UI/UX Design & Creative", "Graphics Services"], image: "/images/landingPage/serviceSec5.svg" },
+  { 
+    number: "01", 
+    lines: ["UI/UX Design & Creative", "Graphics Services"], 
+    image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1778069882/Services_1_tyi53h.png"
+  },
+  { 
+    number: "02", 
+    lines: ["IoT Solutions &", "Robotics Systems"], 
+    image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1778069882/Services_2_zrjuz0.png"
+  },
+  { 
+    number: "03", 
+    lines: ["Business Process", "Outsourcing (BPO) Services"], 
+    image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1778069881/Services_3_p78emb.png"
+  },
+  { 
+    number: "04", 
+    lines: ["IT Consultation & Managed", "Support Service"], 
+    image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1778069883/Services_4_qeiwoz.png"
+  },
+  { 
+    number: "05", 
+    lines: ["Custom Software & Mobile", "App Development"], 
+    image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1778069881/Services_5_hx29zn.png"
+  },
+  { 
+    number: "06", 
+    lines: ["Digital Commerce", "Development & SEO"], 
+    image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1778069885/Services_6_iqyhko.png"
+  },
+  { 
+    number: "07", 
+    lines: ["IoT Solutions &", "Robotics Systems"], 
+    image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1778069885/Services_7_vmhlpq.png"
+  },
+  { 
+    number: "08", 
+    lines: ["Custom Software & Mobile", "App Development"], 
+    image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1778069882/Services_8_wngzvj.png"
+  },
+  { 
+    number: "09", 
+    lines: ["IoT Solutions &", "Robotics Systems"], 
+    image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1778069883/Services_9_u3kr7g.png"
+  },
+  { 
+    number: "10", 
+    lines: ["UI/UX Design & Creative", "Graphics Services"], 
+    image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1778069881/Services_10_ulu8wg.png"
+  },
 ];
 
 export default function LandingServiceGrid() {
@@ -26,7 +69,12 @@ export default function LandingServiceGrid() {
               </p>
             </div>
             <div className="pointer-events-none absolute left-0 right-0 top-0 z-20 h-[146px] overflow-hidden rounded-[2px] opacity-0 shadow-[0_12px_24px_rgba(0,0,0,0.12)] transition-opacity duration-700 ease-out group-hover:opacity-100">
-              <Image src={service.image} alt={service.lines.join(" ")} fill className="object-cover" />
+              <Image 
+                src={service.image} 
+                alt={service.lines.join(" ")} 
+                fill 
+                className="object-cover" 
+              />
               <div className="absolute inset-0 bg-black/28" />
               <div className="absolute inset-0 pl-4 pt-0">
                 <p className="service-whitecard-hover-number pt-2">{service.number}</p>

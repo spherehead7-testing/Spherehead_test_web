@@ -5,7 +5,6 @@ import { ChevronsDown } from "lucide-react";
 import { motion, MotionValue } from "motion/react";
 import SiteContainer from "@/components/layout/site-container";
 import RotatingDots from "@/components/ui/rotating-dots";
-import AboutUsButton from "@/components/ui/about-us-button";
 
 type Props = {
   cardY: MotionValue<number>;
@@ -20,6 +19,14 @@ type Props = {
   aboutContentOpacity: MotionValue<number>;
   labelOpacity: MotionValue<number>;
 };
+
+// Extracted data array to significantly reduce repetitive code
+const statsData = [
+  { id: 1, value: "30+", label: "Projects Delivered" },
+  { id: 2, value: "98%", label: "Client Satisfaction" },
+  { id: 3, value: "16+", label: "Countries Served" },
+  { id: 4, value: "100+", label: "Project Completion" },
+];
 
 export default function LandingAboutSection({
   cardY,
@@ -80,17 +87,12 @@ export default function LandingAboutSection({
       >
         <SiteContainer className="h-full">
           <div className="flex h-full flex-col items-center justify-center gap-6 px-6 pt-10 pb-10 text-center">
-            <div className="scale-125">
+            <div className="scale-150">
               <RotatingDots variant="light" />
             </div>
-            <p
-              className="max-w-[1257px] font-[400] text-[28px] leading-[1.22] tracking-[0.03em] text-black sm:text-[34px] sm:leading-[1.22] lg:text-[30px] lg:leading-[38px]"
-              style={{
-                fontFamily: "var(--font-archivo), Arial, Helvetica, sans-serif",
-              }}
-            >
-              <span className="text-[#2666D2]">Spherehead Technologies</span> is
-              a <span className="text-[#2666D2]">USA established</span>{" "}
+            <h2 className="heading-2 max-w-[1257px] !text-black !text-center">
+              <span className="text-[#0D54CA]">Spherehead Technologies</span> is
+              a <span className="text-[#0D54CA]">USA established</span>{" "}
               technology
               <br />
               solutions company delivering end-to-end digital services,
@@ -98,10 +100,10 @@ export default function LandingAboutSection({
               including software development, digital transformation, and
               <br />
               creative technology{" "}
-              <span className="text-[#2666D2]">
+              <span className="text-[#0D54CA]">
                 solutions for global clients.
               </span>
-            </p>
+            </h2>
           </div>
         </SiteContainer>
       </motion.div>
@@ -116,23 +118,18 @@ export default function LandingAboutSection({
         className="absolute bottom-0 left-0 z-[3] overflow-hidden"
       >
         <div className="flex h-full items-center px-10 pl-6 sm:px-14 lg:px-16 lg:pl-24">
-          <div className="flex w-full max-w-[912px] items-start justify-start gap-8">
-            <div className="about-stat-item">
-              <span className="about-stat-number">30+</span>
-              <span className="about-stat-label mt-3">Projects Delivered</span>
-            </div>
-            <div className="about-stat-item">
-              <span className="about-stat-number">98%</span>
-              <span className="about-stat-label mt-3">Client Satisfaction</span>
-            </div>
-            <div className="about-stat-item">
-              <span className="about-stat-number">16+</span>
-              <span className="about-stat-label mt-3">Countries Served</span>
-            </div>
-            <div className="about-stat-item">
-              <span className="about-stat-number">100+</span>
-              <span className="about-stat-label mt-3">Project Completion</span>
-            </div>
+          <div className="flex w-full max-w-[912px] items-start justify-start gap-12">
+            
+            {/* Reduced code by mapping through the stats array */}
+            {statsData.map((stat) => (
+              <div key={stat.id} className="flex flex-col items-start w-min">
+                <span className="heading-1 !leading-none">{stat.value}</span>
+                <span className="body-small text-[#e8e8e8] mt-3 leading-snug tracking-[1.2px]">
+                  {stat.label}
+                </span>
+              </div>
+            ))}
+
           </div>
         </div>
       </motion.div>
@@ -148,18 +145,15 @@ export default function LandingAboutSection({
         className="absolute bottom-0 right-0 z-[4] overflow-hidden"
       >
         <div className="flex h-full flex-col items-start bg-[#ffffff] px-6 pl-6 pt-10 pb-8 sm:px-8 lg:px-14 lg:pl-14">
-          <p className="inter-tight text-[#676767]">
-            Driven by client satisfaction and continuous
-            <br />
-            feedback, we deliver tailored digital solutions
-            <br />
-            that empower businesses worldwide, building
-            <br />
-            lasting partnerships through trust, innovation,
-            <br />
-            and measurable results.
+          <p className="body-small text-[#55565C] max-w-[380px]">
+            Driven by client satisfaction and continuous feedback, we deliver
+            tailored digital solutions that empower businesses worldwide,
+            building lasting partnerships through trust, innovation, and
+            measurable results.
           </p>
-          <div className="mt-6 -ml-3 flex items-center gap-0">
+          
+          {/* Changed gap-0 to gap-6 here to increase the space */}
+          <div className="mt-6 -ml-3 flex items-center gap-6">
             <Image
               src="/images/landingPage/aboutsection.svg"
               alt="About section team"
@@ -167,7 +161,23 @@ export default function LandingAboutSection({
               height={57}
               className="h-auto w-[154px] scale-[0.85]"
             />
-            <AboutUsButton className="scale-[0.75]" />
+            
+            <button className="group relative flex h-[54px] cursor-pointer items-center justify-center overflow-hidden bg-animated-gradient px-8 text-white scale-[0.75] origin-left transition-colors duration-300">
+              
+              {/* Invisible placeholder to establish the button's natural width based on the text */}
+              <span className="invisible body-large">About Us</span>
+              
+              {/* The absolute sliding column */}
+              <div className="absolute top-0 left-0 flex w-full flex-col transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-1/2">
+                <span className="flex h-[54px] w-full items-center justify-center body-large">
+                  About Us
+                </span>
+                <span className="flex h-[54px] w-full items-center justify-center body-large">
+                  About Us
+                </span>
+              </div>
+              
+            </button>
           </div>
         </div>
       </motion.div>

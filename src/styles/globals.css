@@ -95,7 +95,7 @@ select {
 }
 
 .heading-3 {
-  font-family: var(--font-inter-tight), Arial, Helvetica, sans-serif;
+  font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
   font-weight: 400;
   font-size: 22px;
   line-height: 30px;
@@ -103,7 +103,7 @@ select {
 }
 
 .heading-4 {
-  font-family: var(--font-inter-tight), Arial, Helvetica, sans-serif;
+  font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
   font-weight: 300;
   font-size: 20px;
   line-height: 42px;
@@ -111,7 +111,7 @@ select {
 }
 
 .heading-4 {
-  font-family: var(--font-inter-tight), Arial, Helvetica, sans-serif;
+  font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
   font-weight: 300;
   font-size: 18px;
   line-height: 42px;
@@ -137,7 +137,7 @@ select {
 }
 
 .body-large {
-  font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter-tight), Arial, Helvetica, sans-serif;
   font-size: 22px;
   font-weight: 200;
   line-height: 42px;
@@ -154,14 +154,15 @@ select {
 }
 
 .body-small {
-  font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter-tight), Arial, Helvetica, sans-serif;
   font-size: 14px;
   font-weight: 400;
-  text-transform: none;
+  line-height: 24px;
+  letter-spacing: 0.04em;
 }
 
 .body-extra-small {
-  font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter-tight), Arial, Helvetica, sans-serif;
   font-size: 12px;
   font-weight: 200;
   text-transform: none;
