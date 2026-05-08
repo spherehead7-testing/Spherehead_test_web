@@ -2,7 +2,7 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Head from "next/head";
 import CaseStudiesHero from "@/components/case-studies/case-studies-hero";
 import CaseStudiesSlider from "@/components/case-studies/case-studies-slider";
-import ClientsSection from "@/components/common-sections/testimonial-section/testimonial-section";
+import ClientsSection from "@/components/common-sections/testimonial-section";
 import Footer from "@/components/layout/footer";
 
 // Safely use useLayoutEffect in Next.js without throwing server-side warnings
