@@ -53,7 +53,6 @@ function FloatingLetsTalkButton({ isVisible, onClick }: { isVisible: boolean; on
   );
 }
 
-// --- UPDATED FOOTER OVERLAY COMPONENT ---
 function AnimatedFooterOverlay({ isVisible, onClose }: { isVisible: boolean; onClose: () => void }) {
   return (
     <AnimatePresence>
@@ -65,14 +64,14 @@ function AnimatedFooterOverlay({ isVisible, onClose }: { isVisible: boolean; onC
             duration: isVisible ? ENTER_DURATION : EXIT_DURATION, 
             ease: [0.32, 0.72, 0, 1] 
           }}
-          className="fixed inset-0 z-[110] bg-[#01030b] flex flex-col overflow-y-auto overflow-x-hidden shadow-[0_-8px_40px_rgba(0,0,0,0.12)]"
+          className="fixed inset-0 z-[110] bg-animated-gradient flex flex-col overflow-y-auto overflow-x-hidden shadow-[0_-8px_40px_rgba(0,0,0,0.12)]"
+
         >
-          {/* We wrap the content in a separate motion.div to fade it in AFTER the layout morph starts */}
+          {/* We wrap the content in a separate motion.div to fade it in slightly after the circle starts growing */}
           <motion.div 
             initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ delay: 0.2, duration: 0.4 }} // Wait a tiny bit before showing content
+            animate={{ opacity: 1, transition: { delay: 0.3, duration: 0.5 } }}
+            exit={{ opacity: 0, transition: { duration: 0.2 } }}
             className="w-full min-h-full flex flex-col relative z-10 bg-transparent"
           >
             <div className="w-full bg-animated-gradient mt-auto shrink-0">
@@ -187,26 +186,20 @@ export default function HomePage() {
         </div>
 
         {/* Sections tracking refs */}
-        <div ref={techAreaRef} id="tech-section" className="relative z-30 bg-white" style={{ marginTop: "-8vh" }}>
+        <div ref={techAreaRef} id="tech-section" className="relative z-30 bg-transparent" style={{ marginTop: "-8vh" }}>
           <TechnologiesSection />
         </div>
 
-        {/* COMBINED TESTIMONIAL & FOOTER SCROLL WRAPPER */}
-        {/* We make this wrapper 200vh tall. The first 100vh shows testimonials. 
-            The second 100vh is the invisible scroll space that triggers the Footer overlay. */}
+
         <div className="relative z-30 w-full h-[200vh]">
           
-          {/* 1. The Sticky Testimonial Section */}
           <div 
             ref={testimonialAreaRef} 
-            // 'sticky top-0' keeps it on screen while the user scrolls down the remaining 100vh
             className="sticky top-0 h-[100vh] w-full bg-white flex flex-col justify-center overflow-hidden"
           >
             <TestimonialSection />
           </div>
           
-          {/* 2. The Dummy Footer Trigger */}
-          {/* Placed absolutely at the bottom of the 200vh wrapper */}
           <div 
             ref={footerAreaRef} 
             className="absolute bottom-0 left-0 h-[100vh] w-full bg-transparent pointer-events-none" 

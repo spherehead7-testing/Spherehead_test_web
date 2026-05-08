@@ -5,7 +5,7 @@ import TechStackCarousel from "@/components/ui/tech-stack-carousel";
 
 export default function TechnologiesSection() {
   return (
-    <section className="w-full flex flex-col items-center justify-start pt-16 pb-8 lg:pt-24 text-center bg-white rounded-t-[12px]">
+    <section className="w-full flex flex-col items-center justify-start pt-16 pb-8 lg:pt-24 text-center bg-white rounded-t-[12px] overflow-hidden">
       
       {/* We keep the text contained, but let the carousel below go full width */}
       <div className="w-full px-6 lg:px-10 max-w-5xl mx-auto mb-10">
@@ -23,8 +23,9 @@ export default function TechnologiesSection() {
         </h2>
       </div>
 
-      {/* Carousel */}
-      <TechStackCarousel />
+      <div className="w-full box-border px-10 lg:px-36">
+        <TechStackCarousel />
+      </div>
       
     </section>
   );
