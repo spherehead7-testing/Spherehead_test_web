@@ -73,7 +73,7 @@ export default function TestimonialSection({
   const moveTimeoutRef = useRef<number | null>(null);
   const sectionRef = useRef<HTMLElement | null>(null);
   const snapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  
+
   const mainContainerRef = useRef<HTMLDivElement>(null);
   const sideContainerRef = useRef<HTMLDivElement>(null);
 
@@ -119,8 +119,7 @@ export default function TestimonialSection({
       snapTimerRef.current = setTimeout(() => {
         const rect = section.getBoundingClientRect();
         const viewportHeight = window.innerHeight;
-        const shouldLock =
-          rect.top < viewportHeight * 0.38 && rect.top > 8;
+        const shouldLock = rect.top < viewportHeight * 0.38 && rect.top > 8;
 
         if (shouldLock) {
           section.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -171,7 +170,7 @@ export default function TestimonialSection({
 
     moveTimeoutRef.current = window.setTimeout(
       finishAnimation,
-      BASE_DURATION * 2000
+      BASE_DURATION * 2000,
     );
   };
 
@@ -198,22 +197,23 @@ export default function TestimonialSection({
 
     moveTimeoutRef.current = window.setTimeout(
       finishAnimation,
-      BASE_DURATION * 2000
+      BASE_DURATION * 2000,
     );
   };
 
   const SideCardInner = ({ card }: { card: (typeof testimonials)[number] }) => (
     <>
-      <span className="absolute top-5 left-1/2 [writing-mode:vertical-rl] [transform:translateX(-50%)_rotate(180deg)] text-[11px] leading-none text-[#8f8f8f]">
+      <span className="body-small absolute top-5 left-1/2 [writing-mode:vertical-rl] [transform:translateX(-50%)_rotate(180deg)] text-[#8A8B8F]">
         {card.role}
       </span>
-      <span className="absolute bottom-6 left-1/2 [writing-mode:vertical-rl] [transform:translateX(-50%)_rotate(180deg)] text-[16px] leading-none font-[500] text-[#01030b]">
+
+      <span className="body-small absolute bottom-6 left-1/2 [writing-mode:vertical-rl] [transform:translateX(-50%)_rotate(180deg)] text-[#01030b]">
         {card.name}
       </span>
     </>
   );
 
- const MainCard = ({
+  const MainCard = ({
     card,
     showControls = false,
   }: {
@@ -226,27 +226,23 @@ export default function TestimonialSection({
     >
       <div className="shrink-0" style={{ width: IMG_W }}>
         <div className="relative" style={{ width: IMG_W, height: IMG_H }}>
-          <Image 
-            src={card.image} 
-            alt="" 
-            fill 
-            className="object-cover pointer-events-none" 
-            draggable={false} 
+          <Image
+            src={card.image}
+            alt=""
+            fill
+            className="object-cover pointer-events-none"
+            draggable={false}
           />
         </div>
       </div>
 
       <div className="flex min-h-[320px] flex-col justify-between pt-10 sm:min-h-0 sm:w-[288px] sm:pl-5 sm:pt-11 sm:pb-[74px]">
-        <p className="max-w-[238px] whitespace-pre-line text-[14px] leading-[1.22] text-[#01030b]">
+        <p className="body-small max-w-[238px] whitespace-pre-line text-[#01030b]">
           {card.quote}
         </p>
         <div>
-          <h3 className="text-[22px] leading-none font-[600] text-[#01030b]">
-            {card.name}
-          </h3>
-          <p className="mt-2 text-[13px] leading-none text-[#01030b]">
-            {card.role}
-          </p>
+          <h3 className="heading-3 !text-[#01030b]">{card.name}</h3>
+          <p className="body-small mt-0 text-[#01030b]">{card.role}</p>
         </div>
       </div>
     </div>
@@ -255,7 +251,7 @@ export default function TestimonialSection({
     <section
       ref={sectionRef}
       className={cn(
-        "bg-white select-none", 
+        "bg-white select-none",
         snapToScreen
           ? "h-[100svh] w-full snap-start overflow-hidden py-8 lg:flex lg:items-center"
           : "py-16 sm:py-[62px]",
@@ -295,8 +291,8 @@ export default function TestimonialSection({
             <div
               className="absolute left-0 z-40 flex items-center justify-between bg-white"
               style={{
-                width: IMG_W, 
-                top: IMG_H, 
+                width: IMG_W,
+                top: IMG_H,
                 height: NAV_H,
               }}
             >
@@ -310,7 +306,7 @@ export default function TestimonialSection({
               >
                 <ChevronLeft aria-hidden="true" className="h-5 w-5" />
               </button>
-              
+
               {/* RIGHT BUTTON */}
               <button
                 type="button"
@@ -328,15 +324,15 @@ export default function TestimonialSection({
               <MainCard card={activeCard} />
             </div>
 
-           {/* 2. Incoming Main Card */}
+            {/* 2. Incoming Main Card */}
             {phase === "moving" && (
               <motion.div
                 // FIX: Increased to 800 and -800 so it visibly flies in from far away
                 initial={{ x: direction === "next" ? 800 : -800, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
-                transition={{ 
+                transition={{
                   duration: BASE_DURATION * 1.2, // Slightly slower smooth entrance
-                  ease: "easeOut" 
+                  ease: "easeOut",
                 }}
                 className="absolute top-0 left-0 z-10 bg-white"
                 style={{ width: "100%" }}
@@ -351,22 +347,28 @@ export default function TestimonialSection({
                 initial={{ x: 0, opacity: 1 }}
                 animate={
                   direction === "next"
-                    ? { x: -1500, opacity: [1, 1, 0] } 
-                    : { x: Math.abs(travelX) + 800, opacity: 0 } 
+                    ? { x: -1500, opacity: [1, 1, 0] }
+                    : { x: Math.abs(travelX) + 800, opacity: 0 }
                 }
-                transition={{ 
+                transition={{
                   // Total movement takes BASE_DURATION * 1.2
-                  duration: BASE_DURATION * 2, 
-                  ease: "easeInOut",             
-                  opacity: { 
-                    duration: direction === "prev" ? BASE_DURATION * 0.9 : BASE_DURATION * 1.2, 
-                    ease: "easeOut" 
-                  }
+                  duration: BASE_DURATION * 2,
+                  ease: "easeInOut",
+                  opacity: {
+                    duration:
+                      direction === "prev"
+                        ? BASE_DURATION * 0.9
+                        : BASE_DURATION * 1.2,
+                    ease: "easeOut",
+                  },
                 }}
                 className="absolute top-0 left-0 pointer-events-none origin-center"
                 style={{ width: "100%", zIndex: direction === "prev" ? 30 : 0 }}
               >
-                <MainCard card={testimonials[prevActiveIndex]} showControls={false} />
+                <MainCard
+                  card={testimonials[prevActiveIndex]}
+                  showControls={false}
+                />
               </motion.div>
             )}
           </div>
@@ -385,9 +387,10 @@ export default function TestimonialSection({
                 let initialAnim: any = false;
 
                 if (isIncoming) {
-                  initialAnim = direction === "next" 
-                    ? { x: SIDE_CONTAINER_W, opacity: 0 } 
-                    : { x: travelX, opacity: 0 }; 
+                  initialAnim =
+                    direction === "next"
+                      ? { x: SIDE_CONTAINER_W, opacity: 0 }
+                      : { x: travelX, opacity: 0 };
                 }
 
                 return (
@@ -397,12 +400,14 @@ export default function TestimonialSection({
                     animate={{
                       x: index * SIDE_CARD_STEP,
                       opacity: isIncomingPrev ? [0, 0, 1] : 1,
-                      scale: 1
+                      scale: 1,
                     }}
                     transition={{
                       duration: BASE_DURATION,
                       ease: "easeInOut",
-                      opacity: isIncomingPrev ? { times: [0, 0.75, 1] } : undefined
+                      opacity: isIncomingPrev
+                        ? { times: [0, 0.75, 1] }
+                        : undefined,
                     }}
                     className="absolute top-0 rounded bg-[#f1f1f1]"
                     style={{ width: SIDE_CARD_W, height: SIDE_CARD_H }}
@@ -423,10 +428,10 @@ export default function TestimonialSection({
                     scale: [1, 1, 1, 0.8],
                   }}
                   transition={{
-                    duration: BASE_DURATION * 2, 
-                    
+                    duration: BASE_DURATION * 2,
+
                     // 👇 FIX: Arrives at 30%, stays paused until 85%, then flies out
-                    times: [0, 0.30, 0.85, 1], 
+                    times: [0, 0.3, 0.85, 1],
                     ease: "easeInOut",
                   }}
                   className="absolute top-0 z-50 bg-[#e9e9e9] shadow-lg"
