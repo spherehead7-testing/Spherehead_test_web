@@ -112,7 +112,7 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
 
           <button
             onClick={onClose}
-            className="body-Extrasmall text-white/70 tracking-[0.15em] hover:text-white transition-colors flex-shrink-0 uppercase"
+            className="body-extra-small text-white/70 tracking-[0.15em] hover:text-white transition-colors flex-shrink-0 uppercase"
           >
             CLOSE
           </button>

@@ -1,10 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { motion, useSpring, useTransform, useMotionValue } from "framer-motion";
+import { useRef } from "react";
+import {
+  motion,
+  MotionValue,
+  useScroll,
+  useSpring,
+  useTransform,
+} from "framer-motion";
 import RotatingDots from "../ui/rotating-dots";
-
-// ─── Data ─────────────────────────────────────────────────────────────────────
 
 const initiatives = [
   {
@@ -37,254 +41,163 @@ const initiatives = [
   },
 ];
 
-// ─── Main Component ───────────────────────────────────────────────────────────
+const VISIBLE_ROWS = 2;
+const MAX_INDEX = initiatives.length - VISIBLE_ROWS;
+const HEADER_HEIGHT = 226;
 
-export default function OutGreaterCommunity() {
-  const scrollRef = useRef<HTMLDivElement>(null);
+function getCardHeight(progress: number, index: number) {
+  const visibleStart = Math.max(progress, index);
+  const visibleEnd = Math.min(progress + VISIBLE_ROWS, index + 1);
+  const visibleAmount = Math.max(0, visibleEnd - visibleStart);
 
-  // ROW_HEIGHT in px — the height of one initiative row in the left panel
-  const ROW_HEIGHT = 160;
+  return visibleAmount * 50;
+}
 
-  // activeIndex: which item sits at the TOP of the 2-row window (0-based)
-  // Valid: 0 .. initiatives.length - 2
-  const maxIndex = initiatives.length - 2; // = 2
-  const totalSteps = initiatives.length - 1; // 3 scroll steps (4 snaps)
-
-  // Motion values for smooth scroll-linked translation
-  const rawProgress = useMotionValue(0);
-  const springProgress = useSpring(rawProgress, { stiffness: 180, damping: 28 });
-
-  // The full row stack translates up by (activeIndex + progress) * ROW_HEIGHT
-  const [activeIndex, setActiveIndex] = useState(0);
-  const translateY = useTransform(
-    springProgress,
-    (p) => -(activeIndex * ROW_HEIGHT) - p * ROW_HEIGHT
-  );
-
-  // Image state: current pair + next pair + crossfade amount
-  const [imgs, setImgs] = useState({
-    topCurr: initiatives[0].image,
-    botCurr: initiatives[1].image,
-    topNext: null as string | null,
-    botNext: null as string | null,
-    fade: 0,
+function CollapsingCommunityRow({
+  item,
+  index,
+  progress,
+}: {
+  item: (typeof initiatives)[number];
+  index: number;
+  progress: MotionValue<number>;
+}) {
+  const height = useTransform(progress, (latest) => {
+    const h = getCardHeight(latest, index);
+    return `${h}%`;
   });
 
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-
-    const stepH = el.clientHeight;
-
-    const handleScroll = () => {
-      const s = el.scrollTop;
-      const stepFloat = s / stepH;
-      const stepFloor = Math.floor(stepFloat);
-      const frac = stepFloat - stepFloor;
-
-      // Clamp active index to valid range for the rows window
-      const clampedIndex = Math.max(0, Math.min(maxIndex, stepFloor));
-
-      setActiveIndex(clampedIndex);
-
-      // Progress within current step (0→1), but clamp at last valid step
-      const canScrollMore = stepFloor < maxIndex;
-      rawProgress.set(canScrollMore ? frac : 0);
-
-      // Cross-fade images after 40% of the scroll step
-      if (frac > 0.4 && stepFloor < maxIndex) {
-        const nextIdx = stepFloor + 1;
-        setImgs({
-          topCurr: initiatives[stepFloor].image,
-          botCurr: initiatives[stepFloor + 1]?.image ?? null,
-          topNext: initiatives[nextIdx].image,
-          botNext: initiatives[nextIdx + 1]?.image ?? null,
-          fade: Math.min(1, (frac - 0.4) / 0.6),
-        });
-      } else {
-        setImgs({
-          topCurr: initiatives[clampedIndex].image,
-          botCurr: initiatives[clampedIndex + 1]?.image ?? null,
-          topNext: null,
-          botNext: null,
-          fade: 0,
-        });
-      }
-    };
-
-    el.addEventListener("scroll", handleScroll, { passive: true });
-    return () => el.removeEventListener("scroll", handleScroll);
-  }, [rawProgress, maxIndex]);
+  const opacity = useTransform(progress, (latest) => {
+    const h = getCardHeight(latest, index);
+    return h > 5 ? 1 : 0;
+  });
 
   return (
-    <div
-      ref={scrollRef}
-      style={{ height: "100vh", overflowY: "scroll", scrollSnapType: "y mandatory" }}
+    <motion.div
+      className="grid grid-cols-[minmax(170px,250px)_minmax(230px,320px)] overflow-hidden border-b border-[#d9d9d9]"
+      style={{ height, opacity }}
+      transition={{ type: "spring", stiffness: 300, damping: 40, mass: 1 }}
     >
-      {/* Invisible snap-point spacers */}
-      {Array.from({ length: totalSteps + 1 }).map((_, i) => (
-        <div key={i} style={{ height: "100vh", scrollSnapAlign: "start" }} />
-      ))}
+      <h2 className="pt-12 text-[22px] font-[300] leading-[1.35] text-[#01030B]">
+        {item.title}
+      </h2>
 
-      {/* Sticky full-screen layout */}
-      <div
-        className="sticky top-0 h-screen w-full overflow-hidden bg-white flex flex-col"
-        style={{ marginTop: `calc(-${(totalSteps + 1) * 100}vh)` }}
-      >
-        {/* ── HEADER ────────────────────────────────────────────────────── */}
+      <p className="m-0 max-w-[300px] pt-9 text-[14px] leading-[1.35] text-[#01030B]">
+        {item.description}
+      </p>
+    </motion.div>
+  );
+}
+
+function CollapsingCommunityImage({
+  item,
+  index,
+  progress,
+}: {
+  item: (typeof initiatives)[number];
+  index: number;
+  progress: MotionValue<number>;
+}) {
+  const height = useTransform(progress, (latest) => {
+    const h = getCardHeight(latest, index);
+    return `${h}%`;
+  });
+
+  const opacity = useTransform(progress, (latest) => {
+    const h = getCardHeight(latest, index);
+    return h > 5 ? 1 : 0;
+  });
+
+  return (
+    <motion.div
+      className="overflow-hidden"
+      style={{ height, opacity }}
+      transition={{ type: "spring", stiffness: 300, damping: 40, mass: 1 }}
+    >
+      <img
+        src={item.image}
+        alt=""
+        className="h-full w-full object-cover"
+        style={index % 2 === 1 ? { filter: "grayscale(100%)" } : undefined}
+      />
+    </motion.div>
+  );
+}
+
+export default function OutGreaterCommunity() {
+  const sectionRef = useRef<HTMLElement | null>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end end"],
+  });
+
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 80,
+    damping: 20,
+    mass: 0.5,
+  });
+
+  const timelineProgress = useTransform(smoothProgress, (progress) =>
+    Math.min(progress * MAX_INDEX, MAX_INDEX),
+  );
+
+  return (
+    <section
+      ref={sectionRef}
+      className="relative h-[300vh] bg-white text-[#01030B]"
+    >
+      <div className="sticky top-0 flex h-screen w-full flex-col bg-white">
+        {/* STATIC HEADER - Never animates */}
         <div
-          className="w-full flex-shrink-0"
-          style={{
-            background: "linear-gradient(135deg, #0b2a5b 0%, #1a3fa0 55%, #2f5fbf 100%)",
-            padding: "32px 64px 40px",
-          }}
+          className="bg-animated-gradient w-full shrink-0 px-6 pt-10 sm:px-10 lg:px-16"
+          style={{ height: HEADER_HEIGHT, flex: `0 0 ${HEADER_HEIGHT}px` }}
         >
-          <div className="flex items-center gap-2 mb-5">
+          <div className="mb-6 flex items-center gap-2">
             <RotatingDots />
-            <span className="text-white text-[13px] tracking-wide font-medium">
+            <span className="text-[13px] font-medium tracking-wide text-white">
               Out Greater Community
             </span>
           </div>
-          <h1
-            className="text-white font-semibold leading-[1.2] max-w-[820px]"
-            style={{ fontSize: "clamp(26px, 3.2vw, 34px)" }}
-          >
+
+          <h1 className="max-w-[890px] text-[28px] font-[300] leading-[1.38] text-white md:text-[32px] lg:text-[34px]">
             Beyond business, we strive to make a difference
             <br />
             through care, responsibility, and meaningful impact.
           </h1>
         </div>
 
-        {/* ── BODY ──────────────────────────────────────────────────────── */}
-        <div className="flex flex-1 min-h-0">
-
-          {/* LEFT: clipped 2-row window with sliding stack */}
-          <div
-            style={{
-              flex: "0 0 57%",
-              paddingLeft: 64,
-              overflow: "hidden",
-              position: "relative",
-            }}
-          >
-            {/* The visible window — exactly 2 rows tall */}
-            <div
-              style={{
-                height: ROW_HEIGHT * 2,
-                overflow: "hidden",
-                position: "relative",
-              }}
-            >
-              {/* The full 4-row stack, translated by scroll progress */}
-              <motion.div
-                style={{
-                  translateY,
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                }}
-              >
-                {initiatives.map((item, i) => (
-                  <div
-                    key={i}
-                    style={{
-                      height: ROW_HEIGHT,
-                      display: "flex",
-                      alignItems: "flex-start",
-                      borderTop: "1px solid #e5e7eb",
-                      paddingTop: 28,
-                      paddingRight: 48,
-                      boxSizing: "border-box",
-                    }}
-                  >
-                    {/* Title column */}
-                    <div style={{ width: 240, flexShrink: 0 }}>
-                      <span
-                        style={{
-                          fontSize: 17,
-                          fontWeight: 600,
-                          color: "#111827",
-                          lineHeight: 1.35,
-                        }}
-                      >
-                        {item.title}
-                      </span>
-                    </div>
-                    {/* Description column */}
-                    <div style={{ flex: 1, maxWidth: 360 }}>
-                      <p
-                        style={{
-                          fontSize: 14,
-                          color: "#6b7280",
-                          lineHeight: 1.75,
-                          margin: 0,
-                        }}
-                      >
-                        {item.description}
-                      </p>
-                    </div>
-                  </div>
+        {/* ANIMATED CARDS SECTION */}
+        <div className="flex-1 overflow-hidden rounded-t-[4px] bg-white">
+          <div className="grid h-full grid-cols-[minmax(170px,250px)_minmax(230px,320px)_minmax(320px,1fr)] px-6 sm:px-10 lg:px-16">
+            <div className="relative col-span-2 h-full overflow-hidden">
+              <div className="flex h-full flex-col">
+                {initiatives.map((item, index) => (
+                  <CollapsingCommunityRow
+                    key={item.title}
+                    item={item}
+                    index={index}
+                    progress={timelineProgress}
+                  />
                 ))}
-              </motion.div>
-            </div>
-          </div>
-
-          {/* RIGHT: stacked images with crossfade */}
-          <div className="flex-1 min-h-0 overflow-hidden relative">
-            {/* Current image pair */}
-            <div
-              className="absolute inset-0 flex flex-col"
-              style={{ opacity: 1 - imgs.fade, transition: "none" }}
-            >
-              <div className="flex-1 overflow-hidden">
-                <img
-                  src={imgs.topCurr}
-                  alt=""
-                  className="w-full h-full object-cover"
-                />
               </div>
-              {imgs.botCurr && (
-                <div className="flex-1 overflow-hidden">
-                  <img
-                    src={imgs.botCurr}
-                    alt=""
-                    className="w-full h-full object-cover"
-                    style={{ filter: "grayscale(100%)" }}
-                  />
-                </div>
-              )}
             </div>
 
-            {/* Next image pair (fades in during transition) */}
-            {imgs.topNext && (
-              <div
-                className="absolute inset-0 flex flex-col"
-                style={{ opacity: imgs.fade, transition: "none" }}
-              >
-                <div className="flex-1 overflow-hidden">
-                  <img
-                    src={imgs.topNext}
-                    alt=""
-                    className="w-full h-full object-cover"
+            <div className="relative hidden h-full overflow-hidden md:block">
+              <div className="flex h-full flex-col">
+                {initiatives.map((item, index) => (
+                  <CollapsingCommunityImage
+                    key={item.image}
+                    item={item}
+                    index={index}
+                    progress={timelineProgress}
                   />
-                </div>
-                {imgs.botNext && (
-                  <div className="flex-1 overflow-hidden">
-                    <img
-                      src={imgs.botNext}
-                      alt=""
-                      className="w-full h-full object-cover"
-                      style={{ filter: "grayscale(100%)" }}
-                    />
-                  </div>
-                )}
+                ))}
               </div>
-            )}
+            </div>
           </div>
-
         </div>
       </div>
-    </div>
+    </section>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -19,7 +20,7 @@ export default function Navbar() {
       if (currentScrollY > lastScrollY.current && currentScrollY > 50) {
         setIsVisible(false); // Scrolling down -> Hide it
       } else {
-        setIsVisible(true);  // Scrolling up -> Show it
+        setIsVisible(true); // Scrolling up -> Show it
       }
 
       // Update the last scroll position
@@ -44,34 +45,28 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* LOGO */}
-        <div className="text-white font-semibold text-lg tracking-wide">
-          SPHEREHEAD
-        </div>
+        <Link href="/" className="flex items-center">
+          <Image
+            src="https://res.cloudinary.com/dku9in8sb/image/upload/v1778040542/Layer_1_lp72bj.png"
+            alt="Spherehead Logo"
+            width={140}
+            height={40}
+            priority
+            className="h-auto"
+          />
+        </Link>
 
         {/* MENU */}
         <nav className="hidden md:flex items-center gap-8 text-white text-sm">
+          <Link href="/">Home</Link>
           <Link href="/about-us">About Us</Link>
-
-          <div className="flex items-center gap-1 cursor-pointer">
-            Services
-            <span className="text-xs">⌄</span>
-          </div>
-
-          <div className="flex items-center gap-1 cursor-pointer">
-            Our Work
-            <span className="text-xs">⌄</span>
-          </div>
-
-          <Link href="#">Pricing</Link>
-          <Link href="#">Industries</Link>
-
-          <div className="flex items-center gap-1 cursor-pointer">
-            News & Insights
-            <span className="text-xs">⌄</span>
-          </div>
-
-          <Link href="#">Careers</Link>
-          <Link href="#">Contact Us</Link>
+          <Link href="/services">Services</Link>
+          <Link href="/portfolio">Our Work</Link>
+          <Link href="/pricing">Pricing</Link>
+          <Link href="/industries">Industries</Link>
+          <Link href="/blogs">News & Insights</Link>
+          <Link href="/careers">Careers</Link>
+          <Link href="/contact-us">Contact Us</Link>
         </nav>
       </div>
     </header>

@@ -1,625 +1,317 @@
 import Head from "next/head";
-import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { ChevronsDown } from "lucide-react";
 import {
-  motion,
   useScroll,
   useTransform,
   useSpring,
   useMotionTemplate,
+  motion,
+  AnimatePresence,
+  useInView,
 } from "motion/react";
+
 import SiteContainer from "@/components/layout/site-container";
-import ConsultationCTA from "@/components/ui/consultation-cta";
-import AboutUsButton from "@/components/ui/about-us-button";
-import ServiceWhitecardContent from "@/components/landing/service-whitecard-content";
-import IndustryCarouselLanding from "@/components/landing/industryCarouselLanding";
-import TechnologiesSection from "@/components/common-sections/technologies-section/technologies-section";
-import TestimonialSection from "@/components/common-sections/testimonial-section/testimonial-section";
-import RotatingDots from "@/components/ui/rotating-dots";
-import CyclicButton from "@/components/ui/cyclic-button";
-import Link from "next/link";
+import Footer from "@/components/layout/footer";
+
+import LandingHeroSection from "@/components/landing/landing-hero-section";
+import LandingAboutSection from "@/components/landing/landing-about-section";
+import LandingServicesSection from "@/components/landing/landing-services-section";
+import LandingIndustriesSection from "@/components/landing/landing-industries-section";
+import TechnologiesSection from "@/components/common-sections/technologies-section";
+import TestimonialSection from "@/components/common-sections/testimonial-section";
+import LetsTalkButton from "@/components/landing/lets-talk-button";
+
+// Slower durations as requested
+const ENTER_DURATION = 1.0; 
+const EXIT_DURATION = 0.8;  
+
+// --- UPDATED BUTTON COMPONENT (Keep it in the same file for now to see the fix) ---
+function FloatingLetsTalkButton({ isVisible, onClick }: { isVisible: boolean; onClick: () => void }) {
+  return (
+    <AnimatePresence>
+      {isVisible && (
+        <motion.div
+          layoutId="lets-talk-morph" // THE MAGIC LINK
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }} // Fast opacity fade to let layout take over
+          onClick={onClick}
+          className="fixed bottom-0 left-0 z-[100] flex h-[120px] w-[48px] cursor-pointer items-center justify-center bg-[#0D54CA] shadow-2xl hover:bg-blue-700 transition-colors sm:h-[150px] sm:w-[56px] overflow-hidden"
+        >
+          <motion.span
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="[writing-mode:vertical-rl] rotate-180 text-sm font-medium tracking-widest text-white sm:text-base"
+          >
+            Let's Talk
+          </motion.span>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+// --- UPDATED FOOTER OVERLAY COMPONENT ---
+function AnimatedFooterOverlay({ isVisible, onClose }: { isVisible: boolean; onClose: () => void }) {
+  return (
+    <AnimatePresence>
+      {isVisible && (
+        <motion.div
+          layoutId="lets-talk-morph" // THE MAGIC LINK
+          // No manual scale or transformOrigin here. Let layoutId do the work.
+          transition={{ 
+            duration: isVisible ? ENTER_DURATION : EXIT_DURATION, 
+            ease: [0.32, 0.72, 0, 1] 
+          }}
+          className="fixed inset-0 z-[110] bg-[#01030b] flex flex-col overflow-y-auto overflow-x-hidden shadow-[0_-8px_40px_rgba(0,0,0,0.12)]"
+        >
+          {/* We wrap the content in a separate motion.div to fade it in AFTER the layout morph starts */}
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ delay: 0.2, duration: 0.4 }} // Wait a tiny bit before showing content
+            className="w-full min-h-full flex flex-col relative z-10 bg-transparent"
+          >
+            <div className="w-full bg-animated-gradient mt-auto shrink-0">
+              <Footer />
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
 
 export default function HomePage() {
-  const { scrollY } = useScroll();
-
+  const scrollContainerRef = useRef<HTMLElement | null>(null);
   const measureRef = useRef<HTMLDivElement | null>(null);
-  const isAutoScrollingRef = useRef(false);
-  const autoScrollRafRef = useRef<number | null>(null);
-  const scrollStopTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  
+  const { viewportWidth, viewportHeight, containerWidth } = useViewportSizes(measureRef);
+  useSmoothScrollEngine(scrollContainerRef, viewportHeight);
 
-  const [containerWidth, setContainerWidth] = useState(0);
-  const [viewportWidth, setViewportWidth] = useState(0);
-  const [viewportHeight, setViewportHeight] = useState(0);
+  const { scrollY } = useScroll({ container: scrollContainerRef });
+  
+  const techAreaRef = useRef<HTMLDivElement | null>(null);
+  const testimonialAreaRef = useRef<HTMLDivElement | null>(null);
+  const footerAreaRef = useRef<HTMLDivElement | null>(null);
+
+  const isTechInView = useInView(techAreaRef, { root: scrollContainerRef, amount: 0.2 });
+  const isTestimonialInView = useInView(testimonialAreaRef, { root: scrollContainerRef, amount: 0.4 });
+  const isFooterInView = useInView(footerAreaRef, { root: scrollContainerRef, amount: 0.1 });
+
+  const currentViewportHeight = viewportHeight || 900;
+  const animationEnd = 100;
+  const swapStart = currentViewportHeight;
+  const swapEnd = currentViewportHeight * 2;
+  const springConfig = { stiffness: 85, damping: 20, mass: 0.8 };
+
+  const barHeight = useSpring(useTransform(scrollY, [0, animationEnd], [88, currentViewportHeight]), springConfig);
+  const barWidth = useSpring(useTransform(scrollY, [0, animationEnd], [containerWidth || 1200, viewportWidth || 1440]), springConfig);
+  const barRadius = useSpring(useTransform(scrollY, [0, animationEnd], [4, 4]), springConfig);
+  
+  const heroContentOpacity = useSpring(useTransform(scrollY, [0, 2, 5, animationEnd], [1, 0.12, 0, 0]), { stiffness: 180, damping: 14, mass: 0.5 });
+  const subtextOpacity = useSpring(useTransform(scrollY, [0, 1, 3, animationEnd], [1, 0.12, 0, 0]), { stiffness: 180, damping: 14, mass: 0.5 });
+  
+  const cutHeight = useSpring(useTransform(scrollY, [0, animationEnd], ["0%", "40%"]), springConfig);
+  const rightPanelWidth = useSpring(useTransform(scrollY, [0, animationEnd], ["100%", "40%"]), springConfig);
+  const rightPanelCutBottom = useSpring(useTransform(scrollY, [0, animationEnd], ["0%", "12%"]), springConfig);
+  
+  const aboutContentOpacity = useSpring(useTransform(scrollY, [10, 28, 52], [0, 0.35, 1]), { stiffness: 100, damping: 20, mass: 0.8 });
+  const labelOpacity = useSpring(useTransform(scrollY, [0, 40], [1, 0]), { stiffness: 100, damping: 22, mass: 0.7 });
+
+  const cardY = useTransform(scrollY, [swapStart, swapEnd], [0, -currentViewportHeight]);
+  const rawServicesY = useTransform(
+    scrollY,
+    [swapStart, swapEnd, currentViewportHeight * 2.45, currentViewportHeight * 3],
+    [currentViewportHeight, 0, 0, -currentViewportHeight]
+  );
+
+  const rightPanelHeight = useMotionTemplate`calc(${cutHeight} + 2px)`;
+  const leftPanelWidth = useMotionTemplate`calc(100% - ${rightPanelWidth})`;
+  const rightPanelClipPath = useMotionTemplate`inset(0% 0% ${rightPanelCutBottom} 0% round 4px 0px 0px 4px)`;
+
+  const scrollToBottom = () => {
+    scrollContainerRef.current?.scrollTo({ top: scrollContainerRef.current.scrollHeight, behavior: "smooth" });
+  };
+
+  const scrollUpFromFooter = () => {
+    scrollContainerRef.current?.scrollTo({ top: scrollContainerRef.current.scrollTop - viewportHeight * 0.8, behavior: "smooth" });
+  };
+
+  return (
+    <>
+      <Head>
+        <title>Spherehead Technologies</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </Head>
+
+      <main ref={scrollContainerRef} className="h-screen w-full overflow-y-auto overflow-x-hidden relative">
+        
+        <FloatingLetsTalkButton 
+          isVisible={isTestimonialInView && !isTechInView && !isFooterInView} 
+          onClick={scrollToBottom} 
+        />
+
+        <div className="relative h-[408vh] w-full">
+          <div className="pointer-events-none absolute inset-x-0 top-0 flex flex-col">
+            <div className="h-screen w-full" aria-hidden="true" />
+            <section id="about" className="h-screen w-full pointer-events-auto" />
+            <section id="services" className="h-screen w-full pointer-events-auto" />
+            <section id="industries" className="h-screen w-full pointer-events-auto" />
+          </div>
+
+          <div className="sticky top-0 h-screen overflow-visible">
+            <section className="absolute inset-0 z-0 overflow-visible">
+              <LandingHeroSection heroContentOpacity={heroContentOpacity} subtextOpacity={subtextOpacity} />
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 opacity-0">
+                <SiteContainer><div ref={measureRef} className="h-0 w-full" /></SiteContainer>
+              </div>
+            </section>
+
+            <motion.div style={{ y: rawServicesY }} className="absolute inset-0 z-10 pointer-events-none">
+              <div className="absolute inset-x-0 top-[42vh] rounded-[12px] bg-[#ffffff]" style={{ height: "150vh" }} />
+              <LandingServicesSection />
+              <LandingIndustriesSection />
+            </motion.div>
+
+            <LandingAboutSection
+              cardY={cardY} barHeight={barHeight} barWidth={barWidth} barRadius={barRadius}
+              cutHeight={cutHeight} rightPanelWidth={rightPanelWidth} rightPanelHeight={rightPanelHeight}
+              rightPanelClipPath={rightPanelClipPath} leftPanelWidth={leftPanelWidth}
+              aboutContentOpacity={aboutContentOpacity} labelOpacity={labelOpacity}
+            />
+          </div>
+        </div>
+
+        {/* Sections tracking refs */}
+        <div ref={techAreaRef} id="tech-section" className="relative z-30 bg-white" style={{ marginTop: "-8vh" }}>
+          <TechnologiesSection />
+        </div>
+
+        {/* COMBINED TESTIMONIAL & FOOTER SCROLL WRAPPER */}
+        {/* We make this wrapper 200vh tall. The first 100vh shows testimonials. 
+            The second 100vh is the invisible scroll space that triggers the Footer overlay. */}
+        <div className="relative z-30 w-full h-[200vh]">
+          
+          {/* 1. The Sticky Testimonial Section */}
+          <div 
+            ref={testimonialAreaRef} 
+            // 'sticky top-0' keeps it on screen while the user scrolls down the remaining 100vh
+            className="sticky top-0 h-[100vh] w-full bg-white flex flex-col justify-center overflow-hidden"
+          >
+            <TestimonialSection />
+          </div>
+          
+          {/* 2. The Dummy Footer Trigger */}
+          {/* Placed absolutely at the bottom of the 200vh wrapper */}
+          <div 
+            ref={footerAreaRef} 
+            className="absolute bottom-0 left-0 h-[100vh] w-full bg-transparent pointer-events-none" 
+          />
+          
+        </div>
+
+        <AnimatedFooterOverlay isVisible={isFooterInView} onClose={scrollUpFromFooter} />
+
+      </main>
+    </>
+  );
+}
+
+function useViewportSizes(measureRef: React.RefObject<HTMLDivElement | null>) {
+  const [sizes, setSizes] = useState({ viewportWidth: 0, viewportHeight: 0, containerWidth: 0 });
 
   useEffect(() => {
     const updateSizes = () => {
-      setViewportWidth(window.innerWidth);
-      setViewportHeight(window.innerHeight);
-
-      if (measureRef.current) {
-        const rect = measureRef.current.getBoundingClientRect();
-        setContainerWidth(rect.width);
-      }
+      setSizes({
+        viewportWidth: window.innerWidth,
+        viewportHeight: window.innerHeight,
+        containerWidth: measureRef.current?.getBoundingClientRect().width || 0,
+      });
     };
-
     updateSizes();
-
     const resizeObserver = new ResizeObserver(updateSizes);
-    if (measureRef.current) {
-      resizeObserver.observe(measureRef.current);
-    }
-
+    if (measureRef.current) resizeObserver.observe(measureRef.current);
     window.addEventListener("resize", updateSizes);
 
     return () => {
       resizeObserver.disconnect();
       window.removeEventListener("resize", updateSizes);
     };
-  }, []);
+  }, [measureRef]);
 
-  const currentViewportHeight = viewportHeight || 900;
-  const animationEnd = 100;
+  return sizes;
+}
+
+function useSmoothScrollEngine(scrollContainerRef: React.RefObject<HTMLElement | null>, viewportHeight: number) {
+  const isAutoScrollingRef = useRef(false);
+  const autoScrollRafRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if (!viewportHeight) return;
+    const container = scrollContainerRef.current;
+    if (!container || !viewportHeight) return;
 
-    const serviceTarget = currentViewportHeight * 2;
-    const industryTarget = currentViewportHeight * 3;
-
-    const serviceTriggerStart = currentViewportHeight * 1.18;
-    const industryTriggerStart = currentViewportHeight * 2.58;
-
-    const clearPending = () => {
-      if (scrollStopTimerRef.current) {
-        clearTimeout(scrollStopTimerRef.current);
-        scrollStopTimerRef.current = null;
+    const getSnapPoints = () => {
+      const points = [0, viewportHeight, viewportHeight * 2, viewportHeight * 3, viewportHeight * 4];
+      const techEl = document.getElementById("tech-section");
+      if (techEl) {
+        points.push(viewportHeight * 4 + techEl.offsetHeight);
+        points.push(container.scrollHeight - viewportHeight);
       }
-
-      if (autoScrollRafRef.current !== null) {
-        cancelAnimationFrame(autoScrollRafRef.current);
-        autoScrollRafRef.current = null;
-      }
+      return points;
     };
 
-    const animateRemainingScroll = (target: number) => {
-      if (isAutoScrollingRef.current) return;
-
-      const startY = window.scrollY;
-      const distance = target - startY;
-
-      if (distance <= 0) return;
-
+    const animateTo = (target: number) => {
       isAutoScrollingRef.current = true;
-
-      const duration = 520;
+      const startY = container.scrollTop;
+      const distance = target - startY;
+      const duration = 1100;
       const startTime = performance.now();
 
-      const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
+      const easeInOutQuart = (t: number) => t < 0.5 ? 8 * t * t * t * t : 1 - Math.pow(-2 * t + 2, 4) / 2;
 
       const step = (now: number) => {
         const progress = Math.min((now - startTime) / duration, 1);
-        const eased = easeOut(progress);
-        const nextY = startY + distance * eased;
-
-        window.scrollTo(0, nextY);
+        const eased = easeInOutQuart(progress);
+        container.scrollTo(0, startY + distance * eased);
 
         if (progress < 1) {
           autoScrollRafRef.current = requestAnimationFrame(step);
         } else {
-          window.scrollTo(0, target);
-          autoScrollRafRef.current = null;
-
-          setTimeout(() => {
-            isAutoScrollingRef.current = false;
-          }, 60);
+          container.scrollTo(0, target);
+          setTimeout(() => { isAutoScrollingRef.current = false; }, 10);
         }
       };
-
       autoScrollRafRef.current = requestAnimationFrame(step);
     };
 
-    const handleScroll = () => {
-      if (isAutoScrollingRef.current) return;
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault(); 
+      if (isAutoScrollingRef.current || Math.abs(e.deltaY) < 15) return;
 
-      if (scrollStopTimerRef.current) {
-        clearTimeout(scrollStopTimerRef.current);
-      }
+      const points = getSnapPoints();
+      const direction = e.deltaY > 0 ? 1 : -1; 
+      const currentY = container.scrollTop;
+      
+      let currentIndex = 0;
+      let minDiff = Infinity;
+      points.forEach((p, i) => {
+        const diff = Math.abs(currentY - p);
+        if (diff < minDiff) { minDiff = diff; currentIndex = i; }
+      });
 
-      scrollStopTimerRef.current = setTimeout(() => {
-        const y = window.scrollY;
-
-        if (y >= serviceTriggerStart && y < serviceTarget - 10) {
-          animateRemainingScroll(serviceTarget);
-          return;
-        }
-
-        if (y >= industryTriggerStart && y < industryTarget - 10) {
-          animateRemainingScroll(industryTarget);
-        }
-      }, 70);
+      let nextIndex = Math.max(0, Math.min(currentIndex + direction, points.length - 1));
+      if (nextIndex !== currentIndex) animateTo(points[nextIndex]);
     };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
+    container.addEventListener("wheel", handleWheel, { passive: false });
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
-      clearPending();
-      isAutoScrollingRef.current = false;
+      container.removeEventListener("wheel", handleWheel);
+      if (autoScrollRafRef.current) cancelAnimationFrame(autoScrollRafRef.current);
     };
-  }, [currentViewportHeight, viewportHeight]);
-
-  const rawBarHeight = useTransform(
-    scrollY,
-    [0, animationEnd],
-    [88, currentViewportHeight],
-  );
-
-  const rawBarWidth = useTransform(
-    scrollY,
-    [0, animationEnd],
-    [containerWidth || 1200, viewportWidth || 1440],
-  );
-
-  const rawBarRadius = useTransform(scrollY, [0, animationEnd], [4, 4]);
-  const rawLabelOpacity = useTransform(scrollY, [0, 40], [1, 0]);
-
-  const rawHeroContentOpacity = useTransform(
-    scrollY,
-    [0, 2, 5, animationEnd],
-    [1, 0.12, 0, 0],
-  );
-
-  const rawSubtextOpacity = useTransform(
-    scrollY,
-    [0, 1, 3, animationEnd],
-    [1, 0.12, 0, 0],
-  );
-
-  const rawCutHeight = useTransform(scrollY, [0, animationEnd], ["0%", "40%"]);
-
-  const rawRightPanelWidth = useTransform(
-    scrollY,
-    [0, animationEnd],
-    ["100%", "40%"],
-  );
-
-  const rawRightPanelCutBottom = useTransform(
-    scrollY,
-    [0, animationEnd],
-    ["0%", "12%"],
-  );
-
-  const rawAboutContentOpacity = useTransform(
-    scrollY,
-    [10, 28, 52],
-    [0, 0.35, 1],
-  );
-
-  // ABOUT -> SERVICES swap
-  const swapStart = currentViewportHeight;
-  const swapEnd = currentViewportHeight * 2;
-  const servicesHoldEnd = currentViewportHeight * 2.45;
-
-  const cardY = useTransform(
-    scrollY,
-    [swapStart, swapEnd],
-    [0, -currentViewportHeight],
-  );
-
-  // SERVICES -> INDUSTRIES continuation
-  const industriesEnd = currentViewportHeight * 3;
-
-  const rawServicesY = useTransform(
-    scrollY,
-    [swapStart, swapEnd, servicesHoldEnd, industriesEnd],
-    [currentViewportHeight, 0, 0, -currentViewportHeight],
-  );
-
-  const springConfig = {
-    stiffness: 85,
-    damping: 20,
-    mass: 0.8,
-  };
-
-  const barHeight = useSpring(rawBarHeight, springConfig);
-  const barWidth = useSpring(rawBarWidth, springConfig);
-  const barRadius = useSpring(rawBarRadius, springConfig);
-
-  const labelOpacity = useSpring(rawLabelOpacity, {
-    stiffness: 100,
-    damping: 22,
-    mass: 0.7,
-  });
-
-  const heroContentOpacity = useSpring(rawHeroContentOpacity, {
-    stiffness: 180,
-    damping: 14,
-    mass: 0.5,
-  });
-
-  const subtextOpacity = useSpring(rawSubtextOpacity, {
-    stiffness: 180,
-    damping: 14,
-    mass: 0.5,
-  });
-
-  const cutHeight = useSpring(rawCutHeight, {
-    stiffness: 85,
-    damping: 20,
-    mass: 0.8,
-  });
-
-  const rightPanelWidth = useSpring(rawRightPanelWidth, {
-    stiffness: 85,
-    damping: 20,
-    mass: 0.8,
-  });
-
-  const rightPanelCutBottom = useSpring(rawRightPanelCutBottom, {
-    stiffness: 85,
-    damping: 20,
-    mass: 0.8,
-  });
-
-  const aboutContentOpacity = useSpring(rawAboutContentOpacity, {
-    stiffness: 100,
-    damping: 20,
-    mass: 0.8,
-  });
-
-  const servicesY = useSpring(rawServicesY, {
-    stiffness: 95,
-    damping: 22,
-    mass: 0.85,
-  });
-
-  const rightPanelHeight = useMotionTemplate`calc(${cutHeight} + 2px)`;
-  const leftPanelWidth = useMotionTemplate`calc(100% - ${rightPanelWidth})`;
-
-  const rightPanelClipPath = useMotionTemplate`
-    inset(0% 0% ${rightPanelCutBottom} 0% round 4px 0px 0px 4px)
-  `;
-
-  return (
-    <>
-      <Head>
-        <title>Spherehead Technologies</title>
-        <meta
-          name="description"
-          content="Smart technology operations for smoother and hassle-free operations."
-        />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-      </Head>
-
-      <div className="relative h-[400vh] overflow-x-hidden">
-        <div className="pointer-events-none absolute inset-x-0 top-0">
-          {/* 1st screen */}
-          <div aria-hidden="true" className="h-screen" />
-
-          {/* 2nd screen */}
-          <section
-            id="about"
-            aria-label="About us section"
-            className="relative h-screen"
-          />
-
-          {/* 3rd screen placeholder */}
-          <section
-            id="services"
-            aria-label="Services section"
-            className="relative h-screen"
-          />
-
-          {/* 4th screen placeholder */}
-          <section
-            id="industries"
-            aria-label="Industries section"
-            className="relative h-screen"
-          />
-        </div>
-
-        <div className="sticky top-0 h-screen overflow-visible">
-          {/* HERO */}
-          <section className="absolute inset-0 z-0 overflow-visible">
-            <motion.div
-              style={{ opacity: heroContentOpacity }}
-              className="h-full"
-            >
-              <SiteContainer className="relative grid min-h-screen grid-cols-1 gap-10 pt-16 pb-12 -translate-y-6 lg:grid-cols-[minmax(0,820px)_1fr] lg:items-center lg:pt-20 lg:pb-16 lg:-translate-y-10">
-                <motion.div
-                  initial={{ opacity: 0, y: 36 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, ease: "easeOut" }}
-                  className="flex flex-col justify-center"
-                >
-                  <h1 className="heading-1">
-                    A Comprehensive
-                    <br />
-                    Technological
-                    <br />
-                    Sphere Crafted To Fulfil
-                    <br />
-                    Modern Digital Needs
-                  </h1>
-
-                  <motion.p
-                    style={{ opacity: subtextOpacity }}
-                    className="heading-4 mt-6 inline-block max-w-lg whitespace-nowrap text-white"
-                  >
-                    Smart Technology Operations for smoother and hassle-free
-                    Operations
-                  </motion.p>
-                </motion.div>
-
-                <motion.div
-                  initial={{ opacity: 0, x: 30 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-                  className="flex items-end justify-start lg:justify-end lg:self-end lg:pb-2"
-                >
-                  <div className="flex justify-start lg:justify-end items-end pt-16 lg:pt-32">
-                    <motion.div
-                      initial={{ opacity: 0, x: 40 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.5, duration: 0.6 }}
-                      className="flex items-center gap-4 text-white/90 hover:text-white transition mb-12 mt-12 lg:mt-28"
-                    >
-                      <CyclicButton
-                        onClick={() => console.log("Start Project Clicked!")}
-                      >
-                        <Link href="/contact-us">
-                          <span className="body-large text-white inline-block whitespace-nowrap">
-                            Get a Free Consultation
-                          </span>
-                        </Link>
-                      </CyclicButton>
-                    </motion.div>
-                  </div>
-                </motion.div>
-              </SiteContainer>
-            </motion.div>
-
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 opacity-0">
-              <SiteContainer>
-                <div ref={measureRef} className="h-0 w-full" />
-              </SiteContainer>
-            </div>
-          </section>
-
-          {/* SERVICES + INDUSTRIES LAYER */}
-          <motion.div
-            style={{ y: servicesY }}
-            className="absolute inset-0 z-10 pointer-events-none"
-          >
-            <div
-              className="absolute inset-x-0 top-[42vh] rounded-t-[12px] bg-[#f2f2f2]"
-              style={{ height: "150vh" }}
-            />
-
-            <SiteContainer className="relative z-[2] h-full">
-              <div className="flex h-full flex-col justify-start px-6 pt-28 pb-14 lg:px-10 lg:pt-20">
-                <div className="mb-10 flex flex-col gap-5 lg:mb-14 lg:flex-row lg:items-end lg:justify-between ">
-                  <div>
-                    <div className="mb-5 flex items-center gap-4">
-                      <RotatingDots />
-
-                      <p className="inter-tight text-white">Services</p>
-                    </div>
-
-                    <h2 className=" heading-2 ">
-                      Transforming Ideas into Powerful Digital <br />
-                      Services that Accelerate Success
-                    </h2>
-                  </div>
-                </div>
-              </div>
-            </SiteContainer>
-
-            <ServiceWhitecardContent />
-
-            <div className="absolute inset-x-0 top-[110vh] z-[4] pointer-events-auto">
-              <SiteContainer>
-                <div className="px-6 lg:px-10">
-                  <div className="mb-5 flex items-center gap-5">
-                    <RotatingDots />
-                    <p className="inter-tight text-[#01030B]">Industries</p>
-                  </div>
-
-                  <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-                    <h2 className="heading-2 !font-600 max-w-[760px] !text-[#01030B]">
-                      Empowering Industries with <br />
-                      Innovative Digital Solutions <br />
-                      for Sustainable Growth
-                    </h2>
-
-                    <p className="inter-tight max-w-[460px] !text-[#01030B] lg:pt-40 letter-spacing-0 line-height-2 ">
-                      Delivering tailored digital solutions across a wide range
-                      of
-                      <br />
-                      industries, we help businesses of all kinds innovate,
-                      adapt,
-                      <br />
-                      and grow enabling them to stay competitive and succeed in
-                      <br />
-                      an ever-evolving digital landscape.
-                    </p>
-                  </div>
-                  <IndustryCarouselLanding />
-                </div>
-              </SiteContainer>
-            </div>
-          </motion.div>
-
-          {/* ABOUT CARD */}
-          <motion.div
-            style={{
-              y: cardY,
-              height: barHeight,
-              width: barWidth,
-              borderTopLeftRadius: 4,
-              borderTopRightRadius: 4,
-            }}
-            className="absolute bottom-0 left-1/2 z-20 -translate-x-1/2 overflow-hidden"
-          >
-            <motion.div
-              style={{
-                bottom: cutHeight,
-                borderTopLeftRadius: barRadius,
-                borderTopRightRadius: barRadius,
-              }}
-              className="absolute inset-x-0 top-0 bg-[#f2f2f2]"
-            />
-
-            <motion.div
-              style={{
-                width: rightPanelWidth,
-                height: rightPanelHeight,
-                clipPath: rightPanelClipPath,
-              }}
-              className="absolute bottom-0 right-0 bg-[#f2f2f2]"
-            />
-
-            <motion.div
-              style={{ opacity: labelOpacity }}
-              className="pointer-events-none absolute inset-x-0 top-8 z-10 flex items-center justify-center gap-2"
-            >
-              <span className="text-[12px] font-bold uppercase tracking-[0.12em] text-[#0D54CA]">
-                Scroll to Discover
-              </span>
-              <ChevronsDown
-                className="h-5 w-5 text-[#0D54CA]"
-                strokeWidth={2.5}
-              />
-            </motion.div>
-
-            <motion.div
-              style={{
-                bottom: cutHeight,
-                opacity: aboutContentOpacity,
-              }}
-              className="absolute inset-x-0 top-0 z-[3] overflow-hidden"
-            >
-              <SiteContainer className="h-full">
-                <div className="flex h-full flex-col items-center justify-center px-6 pt-10 pb-10 text-center">
-                  <RotatingDots />
-
-                  <p
-                    className="max-w-[1257px] font-[400] text-[28px] leading-[1.22] tracking-[0.03em] text-black sm:text-[34px] sm:leading-[1.22] lg:text-[30px] lg:leading-[38px]"
-                    style={{
-                      fontFamily:
-                        "var(--font-archivo), Arial, Helvetica, sans-serif",
-                    }}
-                  >
-                    <span className="text-[#2666D2]">
-                      Spherehead Technologies
-                    </span>{" "}
-                    is a <span className="text-[#2666D2]">USA established</span>{" "}
-                    technology
-                    <br />
-                    solutions company delivering end-to-end digital services,
-                    <br />
-                    including software development, digital transformation, and
-                    <br />
-                    creative technology{" "}
-                    <span className="text-[#2666D2]">
-                      solutions for global clients.
-                    </span>
-                  </p>
-                </div>
-              </SiteContainer>
-            </motion.div>
-
-            <motion.div
-              style={{
-                width: leftPanelWidth,
-                height: cutHeight,
-                opacity: aboutContentOpacity,
-              }}
-              className="absolute bottom-0 left-0 z-[3] overflow-hidden"
-            >
-              <div className="flex h-full items-center px-10 pl-6 sm:px-14 lg:px-16 lg:pl-24">
-                <div className="flex w-full max-w-[912px] items-start justify-start gap-8">
-                  <div className="about-stat-item">
-                    <span className="about-stat-number">30+</span>
-                    <span className="about-stat-label mt-3">
-                      Projects Delivered
-                    </span>
-                  </div>
-
-                  <div className="about-stat-item">
-                    <span className="about-stat-number">98%</span>
-                    <span className="about-stat-label mt-3">
-                      Client Satisfaction
-                    </span>
-                  </div>
-
-                  <div className="about-stat-item">
-                    <span className="about-stat-number">16+</span>
-                    <span className="about-stat-label mt-3">
-                      Countries Served
-                    </span>
-                  </div>
-
-                  <div className="about-stat-item">
-                    <span className="about-stat-number">100+</span>
-                    <span className="about-stat-label mt-3">
-                      Project Completion
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
-            <motion.div
-              style={{
-                width: rightPanelWidth,
-                height: rightPanelHeight,
-                clipPath: rightPanelClipPath,
-                opacity: aboutContentOpacity,
-              }}
-              className="absolute bottom-0 right-0 z-[4] overflow-hidden"
-            >
-              <div className="flex h-full flex-col items-start bg-[#f2f2f2] px-6 pl-6 pt-10 pb-8 sm:px-8 lg:px-14 lg:pl-14">
-                <p className="inter-tight text-[#676767]">
-                  Driven by client satisfaction and continuous
-                  <br />
-                  feedback, we deliver tailored digital solutions
-                  <br />
-                  that empower businesses worldwide, building
-                  <br />
-                  lasting partnerships through trust, innovation,
-                  <br />
-                  and measurable results.
-                </p>
-
-                <div className="mt-6 -ml-3 flex items-center gap-0">
-                  <Image
-                    src="/images/landingPage/aboutsection.svg"
-                    alt="About section team"
-                    width={154}
-                    height={57}
-                    className="h-auto w-[154px] scale-[0.85]"
-                  />
-
-                  <AboutUsButton className="scale-[0.75]" />
-                </div>
-              </div>
-            </motion.div>
-
-            <div className="relative z-[2] h-screen box-border">
-              <SiteContainer className="h-full">
-                <div className="h-full" />
-              </SiteContainer>
-            </div>
-          </motion.div>
-        </div>
-      </div>
-
-      <div className="relative z-30 -mt-[200vh] bg-white">
-        <TechnologiesSection />
-        <TestimonialSection />
-      </div>
-    </>
-  );
+  }, [viewportHeight, scrollContainerRef]);
 }
