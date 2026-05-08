@@ -70,7 +70,7 @@ export default function ContactCard({ variant = "flat" }: Props) {
         onChange={(e) => setName(e.target.value)}
         placeholder="Name"
         required
-        className="w-full bg-transparent border-b border-[#b8b8b8] pb-3 pt-2 text-[#6f6f6f] outline-none transition-colors placeholder:text-[#b9b9b9] focus:border-blue-600"
+        className="w-full border-b border-[#BFBFBF] pb-3 pt-2 text-black outline-none transition-colors placeholder:text-[#BFBFBF] focus:border-blue-600"
       />
 
       <input
@@ -79,14 +79,14 @@ export default function ContactCard({ variant = "flat" }: Props) {
         placeholder="Email Address"
         type="email"
         required
-        className="w-full bg-transparent border-b border-[#b8b8b8] pb-3 pt-2 text-[#6f6f6f] outline-none transition-colors placeholder:text-[#b9b9b9] focus:border-blue-600"
+        className="w-full border-b border-[#BFBFBF] pb-3 pt-2 text-black outline-none transition-colors placeholder:text-[#BFBFBF] focus:border-blue-600"
       />
 
       <input
       value={phone}
         onChange={(e) => setPhone(e.target.value)}
         placeholder="Phone Number"
-        className="w-full bg-transparent border-b border-[#b8b8b8] pb-3 pt-2 text-[#6f6f6f] outline-none transition-colors placeholder:text-[#b9b9b9] focus:border-blue-600"
+        className="w-full border-b border-[#BFBFBF] pb-3 pt-2 text-black outline-none transition-colors placeholder:text-[#BFBFBF] focus:border-blue-600"
       />
 
       <textarea
@@ -95,7 +95,7 @@ export default function ContactCard({ variant = "flat" }: Props) {
         placeholder="Message"
         rows={1}
         required
-        className="w-full resize-none overflow-hidden border-b border-[#b8b8b8] bg-transparent pb-3 pt-2 leading-relaxed text-[#6f6f6f] outline-none transition-colors placeholder:text-[#b9b9b9] focus:border-blue-600"
+        className="w-full resize-none overflow-hidden border-b border-[#BFBFBF] pb-3 pt-2 leading-relaxed text-black outline-none transition-colors placeholder:text-[#BFBFBF] focus:border-blue-600"
       />
 
       {/* THE FIX: Sleek custom status message UI */}

@@ -6,25 +6,7 @@ import { Plus } from "lucide-react";
 import SiteContainer from "@/components/layout/site-container";
 import RotatingDots from "@/components/ui/rotating-dots";
 import TechStackCarousel from "@/components/ui/tech-stack-carousel";
-
-interface Service {
-  id: string;
-  title: string;
-  desc: string;
-  image: string;
-}
-
-const servicesData: Service[] = [
-  { id: "01", title: "IT Consultations", desc: "Strategic guidance to align technology with your business goals.", image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1776399464/services_list_ny50qm.png" },
-  { id: "02", title: "Software Product Development", desc: "End-to-end product engineering from ideation to market entry.", image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1776744960/Services_list_img6_twlcre.png" },
-  { id: "03", title: "IoT Development", desc: "Connecting devices to create smart, data-driven ecosystems.", image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1776744960/Services_list_img2_ncxxv8.png" },
-  { id: "04", title: "Custom Web Development", desc: "We build custom software products that align with your vision, delivering innovation, scalability, and long-term value.", image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1776744959/Services_list_img4_ls76el.png" },
-  { id: "05", title: "Robotics & Electronics", desc: "Advanced hardware solutions and automation engineering.", image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1776744959/Services_list_img7_aazspt.png" },
-  { id: "06", title: "Quality Assurance & Testing", desc: "Rigorous testing protocols to ensure high performance.", image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1776744959/Services_list_img9_hqz8tk.png" },
-  { id: "07", title: "Maintenance & Support", desc: "Continuous monitoring, security updates, and performance tuning.", image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1776744959/Services_list_img8_yeejer.png" },
-  { id: "08", title: "Backend Development", desc: "Robust, scalable server-side architectures and database management.", image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1776744959/Services_list_img5_xraozk.png" },
-  { id: "09", title: "Website Audit & Optimization", desc: "Comprehensive analysis and performance enhancements for your digital presence.", image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1776744959/Services_list_img3_ylhhjb.png" },
-];
+import { servicesData } from "@/data/services-list-data";
 
 const plusIconColors = ["text-[#FD7624]", "text-[#0D54CA]", "text-[#92D9FF]"];
 
@@ -36,23 +18,49 @@ export default function ServicesListSection() {
     setActiveIndex((prev) => (prev === index ? null : index));
 
   useEffect(() => {
+    const openServiceFromHash = () => {
+      const slug = window.location.hash.replace("#service-", "");
+      const targetIndex = servicesData.findIndex(
+        (service) => service.slug === slug,
+      );
+      if (targetIndex === -1) return;
+
+      setActiveIndex(targetIndex);
+      window.setTimeout(() => {
+        document
+          .getElementById(`service-${servicesData[targetIndex].slug}`)
+          ?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 80);
+    };
+
+    openServiceFromHash();
+    window.addEventListener("hashchange", openServiceFromHash);
+    return () => window.removeEventListener("hashchange", openServiceFromHash);
+  }, []);
+
+  useEffect(() => {
     const list = listRef.current;
     if (!list) return;
     let edgeAccumulator = 0;
     const EDGE_THRESHOLD = 150;
     const handleWheel = (e: WheelEvent) => {
       const isAtTop = list.scrollTop <= 0;
-      const isAtBottom = Math.ceil(list.scrollTop + list.clientHeight) >= list.scrollHeight - 1;
+      const isAtBottom =
+        Math.ceil(list.scrollTop + list.clientHeight) >= list.scrollHeight - 1;
       if (e.deltaY < 0 && isAtTop) {
         edgeAccumulator += Math.abs(e.deltaY);
-        if (edgeAccumulator > EDGE_THRESHOLD) { window.scrollBy(0, e.deltaY); edgeAccumulator = 0; }
-        else e.preventDefault();
+        if (edgeAccumulator > EDGE_THRESHOLD) {
+          window.scrollBy(0, e.deltaY);
+          edgeAccumulator = 0;
+        } else e.preventDefault();
         return;
       }
       if (e.deltaY > 0 && isAtBottom) {
         edgeAccumulator += Math.abs(e.deltaY);
-        if (edgeAccumulator > EDGE_THRESHOLD) { window.scrollBy(0, e.deltaY); edgeAccumulator = 0; }
-        else e.preventDefault();
+        if (edgeAccumulator > EDGE_THRESHOLD) {
+          window.scrollBy(0, e.deltaY);
+          edgeAccumulator = 0;
+        } else e.preventDefault();
         return;
       }
       edgeAccumulator = 0;
@@ -70,7 +78,6 @@ export default function ServicesListSection() {
         <div className="w-full min-h-[calc(100vh-80px)] lg:min-h-[calc(100vh-100px)] flex flex-col pt-10 lg:pt-16 pb-10">
           <SiteContainer className="flex-grow">
             <div className="grid grid-cols-1 lg:grid-cols-[4.5fr_5.5fr] gap-12 lg:gap-24 items-start h-full">
-
               {/* LEFT COLUMN */}
               <div className="hidden lg:flex flex-col sticky top-0">
                 <div className="flex items-center gap-4 mb-6">
@@ -89,7 +96,11 @@ export default function ServicesListSection() {
                   {activeIndex !== null && (
                     <motion.div
                       initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                      animate={{ opacity: 1, height: "auto", marginTop: "2rem" }}
+                      animate={{
+                        opacity: 1,
+                        height: "auto",
+                        marginTop: "2rem",
+                      }}
                       exit={{ opacity: 0, height: 0, marginTop: 0 }}
                       transition={{ duration: 0.6, ease: "easeInOut" }}
                       className="bg-animated-gradient !relative w-full max-w-[360px] overflow-hidden rounded-none"
@@ -124,8 +135,10 @@ export default function ServicesListSection() {
                 ref={listRef}
                 className="flex flex-col overflow-y-auto max-h-[60vh] lg:max-h-[70vh] pr-2 lg:pr-6 pb-20 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']"
                 style={{
-                  maskImage: "linear-gradient(to bottom, transparent 0%, black 15%, black 100%)",
-                  WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 15%, black 100%)",
+                  maskImage:
+                    "linear-gradient(to bottom, transparent 0%, black 15%, black 100%)",
+                  WebkitMaskImage:
+                    "linear-gradient(to bottom, transparent 0%, black 15%, black 100%)",
                 }}
               >
                 <div className="h-4 lg:h-8 shrink-0" />
@@ -134,14 +147,22 @@ export default function ServicesListSection() {
                   const isActive = activeIndex === index;
                   const currentPlusColor = plusIconColors[index % 3];
                   return (
-                    <div key={service.id} className="border-b border-[#e8e8e8] py-5 lg:py-6 transition-colors duration-300">
+                    <div
+                      id={`service-${service.slug}`}
+                      key={service.id}
+                      className="scroll-mt-32 border-b border-[#e8e8e8] py-5 lg:py-6 transition-colors duration-300"
+                    >
                       <div
                         className="flex items-center justify-between cursor-pointer"
                         onClick={() => toggleAccordion(index)}
                       >
                         <div className="flex items-center gap-6 lg:gap-10">
-                          <span className="body-large text-[#0D54CA]">{service.id}</span>
-                          <h3 className="body-large text-[#01030B]">{service.title}</h3>
+                          <span className="body-large text-[#0D54CA]">
+                            {service.id}
+                          </span>
+                          <h3 className="body-large text-[#01030B]">
+                            {service.title}
+                          </h3>
                         </div>
                         <button className="p-2 -mr-2 cursor-pointer focus:outline-none">
                           <Plus className={`w-6 h-6 ${currentPlusColor}`} />
@@ -150,7 +171,10 @@ export default function ServicesListSection() {
 
                       <motion.div
                         initial={false}
-                        animate={{ height: isActive ? "auto" : 0, opacity: isActive ? 1 : 0 }}
+                        animate={{
+                          height: isActive ? "auto" : 0,
+                          opacity: isActive ? 1 : 0,
+                        }}
                         transition={{ duration: 0.2, ease: "easeInOut" }}
                         className="overflow-hidden"
                       >
