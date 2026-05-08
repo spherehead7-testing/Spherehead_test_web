@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect } from "react";
 import Image from "next/image";
-import { motion, useMotionValue, useSpring } from "framer-motion";
+import { motion, useMotionValue } from "framer-motion";
 
 export interface TechItem {
   name: string;
@@ -58,26 +58,25 @@ interface TechStackCarouselProps {
 export default function TechStackCarousel({
   items = defaultTechStack,
   autoScrollSpeed = 40,
-  className = "w-full pt-8 pb-10 flex justify-center overflow-hidden bg-white",
+  className = "w-full pt-8 pb-10 flex justify-center overflow-hidden bg-transparent",
 }: TechStackCarouselProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
-  const [isHovered, setIsHovered] = useState(false);
   const animationRef = useRef<number | null>(null);
   const lastTimeRef = useRef<number>(0);
 
+  // Removed useSpring to fix the "rewind" reverse loop bug
   const x = useMotionValue(0);
-  const smoothX = useSpring(x, { damping: 40, stiffness: 200 });
 
-  // Auto-scroll effect only
+  // Auto-scroll effect only (No pause on hover)
   useEffect(() => {
     const container = containerRef.current;
     const track = trackRef.current;
     if (!container || !track) return;
 
+    // By duplicating the array, half the track width is the perfect seamless loop point
     const trackWidth = track.scrollWidth;
-    const containerWidth = container.offsetWidth;
-    const maxScroll = trackWidth - containerWidth;
+    const maxScroll = trackWidth / 2;
 
     if (maxScroll <= 0) return;
 
@@ -89,16 +88,15 @@ export default function TechStackCarousel({
       const deltaTime = (timestamp - lastTimeRef.current) / 1000;
       lastTimeRef.current = timestamp;
 
-      if (!isHovered) {
-        const currentX = x.get();
-        let newX = currentX - (autoScrollSpeed * deltaTime);
+      const currentX = x.get();
+      let newX = currentX - (autoScrollSpeed * deltaTime);
 
-        if (newX <= -maxScroll) {
-          newX = 0;
-        }
-
-        x.set(newX);
+      // Loop back seamlessly when half the track is scrolled
+      if (newX <= -maxScroll) {
+        newX += maxScroll; 
       }
+
+      x.set(newX);
 
       animationRef.current = requestAnimationFrame(animate);
     };
@@ -110,46 +108,40 @@ export default function TechStackCarousel({
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [x, autoScrollSpeed, isHovered]);
-
-  useEffect(() => {
-    if (!isHovered) {
-      lastTimeRef.current = 0;
-    }
-  }, [isHovered]);
+  }, [x, autoScrollSpeed]);
 
   return (
-    <div 
-      className={className}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
+    <div className={className}>
       <div
         ref={containerRef}
-        className="relative w-full max-w-[1200px] flex items-center"
+        // Removed max-w-[1200px] to stretch fully side-to-side
+        className="relative w-full flex items-center"
         style={{
+          // Changed from 15% to 5% to reduce the blank padding on the left/right edges
           maskImage:
-            "linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%)",
+            "linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%)",
           WebkitMaskImage:
-            "linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%)",
+            "linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%)",
         }}
       >
         <motion.div
           ref={trackRef}
-          style={{ x: smoothX }}
-          className="flex items-center gap-16 md:gap-24 px-8 w-max"
+          // Use raw 'x' value without the spring physics
+          style={{ x }}
+          className="flex items-center gap-10 md:gap-14 px-4 w-max"
         >
           {[...items, ...items].map((tech, i) => (
             <div
               key={i}
-              className="flex shrink-0 opacity-40 hover:opacity-100 transition-opacity duration-300 grayscale hover:grayscale-0 cursor-pointer"
+              className="flex shrink-0 cursor-default"
             >
               <Image
                 src={tech.icon}
                 alt={tech.name}
-                width={80}
-                height={80}
-                className="object-contain h-[50px] w-auto md:h-[60px] pointer-events-none"
+                width={120}
+                height={120}
+                // Reduced sizes from h-70/90 to h-55/75
+                className="object-contain h-[55px] w-auto md:h-[75px] pointer-events-none"
               />
             </div>
           ))}

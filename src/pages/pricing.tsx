@@ -4,7 +4,7 @@ import PricingIntro from "@/components/pricing/pricing-intro";
 import PricingPackages from "@/components/pricing/pricing-packages";
 import ContactSection from "@/components/pricing/pricing-contact";
 import FAQSection from "@/components/pricing/pricing-faq";
-import TestimonialSection from "@/components/common-sections/testimonial-section/testimonial-section";
+import TestimonialSection from "@/components/common-sections/testimonial-section";
 import Footer from "@/components/layout/footer";
 
 export default function PricingPage() {
