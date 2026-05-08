@@ -74,15 +74,15 @@ function CollapsingCommunityRow({
 
   return (
     <motion.div
-      className="grid grid-cols-[minmax(170px,250px)_minmax(230px,320px)] overflow-hidden border-b border-[#d9d9d9]"
+      className="grid grid-cols-[minmax(170px,250px)_minmax(230px,320px)] overflow-hidden border-b border-[#d9d9d9] rounded-t-3xl"
       style={{ height, opacity }}
       transition={{ type: "spring", stiffness: 300, damping: 40, mass: 1 }}
     >
-      <h2 className="pt-12 text-[22px] font-[300] leading-[1.35] text-[#01030B]">
+      <h2 className="heading-3 pt-12 !text-[#01030B]">
         {item.title}
       </h2>
 
-      <p className="m-0 max-w-[300px] pt-9 text-[14px] leading-[1.35] text-[#01030B]">
+      <p className="body-small m-0 max-w-[300px] pt-9 text-[#01030B]">
         {item.description}
       </p>
     </motion.div>
@@ -155,12 +155,12 @@ export default function OutGreaterCommunity() {
         >
           <div className="mb-6 flex items-center gap-2">
             <RotatingDots />
-            <span className="text-[13px] font-medium tracking-wide text-white">
-              Out Greater Community
+            <span className="body-medium text-white">
+              Our Greater Community
             </span>
           </div>
 
-          <h1 className="max-w-[890px] text-[28px] font-[300] leading-[1.38] text-white md:text-[32px] lg:text-[34px]">
+          <h1 className="heading-2 max-w-[890px] text-white">
             Beyond business, we strive to make a difference
             <br />
             through care, responsibility, and meaningful impact.
@@ -168,7 +168,7 @@ export default function OutGreaterCommunity() {
         </div>
 
         {/* ANIMATED CARDS SECTION */}
-        <div className="flex-1 overflow-hidden rounded-t-[4px] bg-white">
+        <div className="flex-1 overflow-hidden rounded-t-[4px] bg-white  rounded-t-3xl">
           <div className="grid h-full grid-cols-[minmax(170px,250px)_minmax(230px,320px)_minmax(320px,1fr)] px-6 sm:px-10 lg:px-16">
             <div className="relative col-span-2 h-full overflow-hidden">
               <div className="flex h-full flex-col">

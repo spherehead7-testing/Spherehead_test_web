@@ -5,25 +5,28 @@ import RotatingDots from "../ui/rotating-dots";
 
 export default function FounderMessage() {
   return (
-    <section className="w-full bg-[#f5f7fb] pt-10 pb-12 lg:pt-12 lg:pb-12 px-6 lg:px-20">
+    <section className="w-full bg-[#f5f7fb] pt-10 pb-12 lg:pt-12 lg:pb-12 px-6 lg:px-20 rounded-b-xl">
       <div className="max-w-[1400px] mx-auto grid lg:grid-cols-2 gap-20 items-start">
         {/* LEFT */}
         <div>
           {/* Label */}
           <div className="flex items-center gap-3 mb-8">
             <RotatingDots variant="light" />
-            <span className="text-sm text-gray-500 font-medium">
+            <span className="body-small font-medium">
               Founder&apos;s Message
             </span>
           </div>
 
           {/* Heading */}
           <h1 className="heading-2 !text-[#01030B] ">
-            What began as a <span className="text-[#2563eb] whitespace-nowrap">simple idea</span>{" "}
-            has grown into a journey of creativity and impact.
-            At <span className="text-[#2563eb]">Spherehead</span>, every step
+            What began as a{" "}
+            <span className="text-[#0D54CA] whitespace-nowrap">
+              simple idea
+            </span>{" "}
+            has grown into a journey of creativity and impact. At{" "}
+            <span className="text-[#0D54CA]">Spherehead</span>, every step
             forward is guided by purpose and{" "}
-            <span className="text-[#2563eb]">innovation</span>.
+            <span className="text-[#0D54CA]">innovation</span>.
           </h1>
         </div>
 
@@ -41,13 +44,11 @@ export default function FounderMessage() {
           </div>
 
           {/* Text */}
-          <div className="max-w-[420px]">
-            <h3 className="body-small">
-              Artemii Garibov
-            </h3>
-            <p className="body-small text-gray-500 mb-4">Co-Founder & CEO</p>
+          <div className="max-w-[420px] text-[#01030B]">
+            <h3 className="body-small">Artemii Garibov</h3>
+            <p className="body-small mb-4">Co-Founder & CEO</p>
 
-            <p className="body-small text-gray-600 mb-3">
+            <p className="body-small mb-3">
               At Spherehead Technologies, our vision has always been to create
               more than just software, we craft solutions that solve real
               challenges and drive meaningful change. By blending advanced
@@ -55,7 +56,7 @@ export default function FounderMessage() {
               digitally, and deliver exceptional experiences.
             </p>
 
-            <p className="body-small text-gray-600">
+            <p className="body-small">
               Our foundation is built on trust, innovation, and collaboration.
               Every solution we deliver reflects our commitment to quality and
               our mission to empower clients with secure, scalable, and
