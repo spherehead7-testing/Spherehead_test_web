@@ -107,26 +107,13 @@ select {
 .heading-4 {
   font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
   font-weight: 300;
-  font-size: 18px;
+  font-size: 20px;
   line-height: 42px;
   letter-spacing: 0;
-  color: white;
+  color: #ffffff;
   text-align: left;
 }
 
-/* sm (≥640px) */
-@media (min-width: 640px) {
-  .heading-4 {
-    font-size: 22px;
-  }
-}
-
-/* lg (≥1024px) */
-@media (min-width: 1024px) {
-  .heading-4 {
-    font-size: 26px;
-  }
-}
 
 .body-large {
   font-family: var(--font-inter-tight), Arial, Helvetica, sans-serif;

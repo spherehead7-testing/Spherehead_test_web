@@ -73,17 +73,37 @@ export default function TestimonialSection({
   const moveTimeoutRef = useRef<number | null>(null);
   const sectionRef = useRef<HTMLElement | null>(null);
   const snapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  
+  const mainContainerRef = useRef<HTMLDivElement>(null);
+  const sideContainerRef = useRef<HTMLDivElement>(null);
 
   const [activeIndex, setActiveIndex] = useState(0);
+  const [prevActiveIndex, setPrevActiveIndex] = useState(0);
   const [sideStack, setSideStack] = useState(initialSideStack);
   const [phase, setPhase] = useState<"idle" | "moving">("idle");
+  const [direction, setDirection] = useState<"next" | "prev" | null>(null);
   const [movingItem, setMovingItem] = useState<{
     uid: number;
     testimonialIndex: number;
   } | null>(null);
   const [incomingUid, setIncomingUid] = useState<number | null>(null);
+  const [travelX, setTravelX] = useState(-800);
 
   const activeCard = testimonials[activeIndex];
+
+  useEffect(() => {
+    const measureDistance = () => {
+      if (mainContainerRef.current && sideContainerRef.current) {
+        const mainLeft = mainContainerRef.current.getBoundingClientRect().left;
+        const sideLeft = sideContainerRef.current.getBoundingClientRect().left;
+        setTravelX(mainLeft - sideLeft);
+      }
+    };
+
+    measureDistance();
+    window.addEventListener("resize", measureDistance);
+    return () => window.removeEventListener("resize", measureDistance);
+  }, []);
 
   useEffect(() => {
     if (!snapToScreen) return;
@@ -124,6 +144,7 @@ export default function TestimonialSection({
 
   const finishAnimation = () => {
     setPhase("idle");
+    setDirection(null);
     setMovingItem(null);
     setIncomingUid(null);
   };
@@ -133,23 +154,24 @@ export default function TestimonialSection({
     clearTimers();
 
     const leadItem = sideStack[0];
-
     const nextTail = {
       uid: uidRef.current++,
       testimonialIndex:
         (leadItem.testimonialIndex + SIDE_CARD_COUNT) % testimonials.length,
     };
 
+    setPrevActiveIndex(activeIndex);
     setSideStack((prev) => [...prev.slice(1), nextTail]);
     setActiveIndex(leadItem.testimonialIndex);
 
     setMovingItem(leadItem);
     setIncomingUid(nextTail.uid);
+    setDirection("next");
     setPhase("moving");
 
     moveTimeoutRef.current = window.setTimeout(
       finishAnimation,
-      BASE_DURATION * 1000,
+      BASE_DURATION * 2000
     );
   };
 
@@ -165,16 +187,18 @@ export default function TestimonialSection({
       testimonialIndex: activeIndex,
     };
 
+    setPrevActiveIndex(activeIndex);
     setSideStack((prev) => [newHead, ...prev.slice(0, SIDE_CARD_COUNT - 1)]);
     setActiveIndex(prevIdx);
 
     setMovingItem(newHead);
     setIncomingUid(newHead.uid);
+    setDirection("prev");
     setPhase("moving");
 
     moveTimeoutRef.current = window.setTimeout(
       finishAnimation,
-      BASE_DURATION * 1000,
+      BASE_DURATION * 2000
     );
   };
 
@@ -189,9 +213,9 @@ export default function TestimonialSection({
     </>
   );
 
-  const MainCard = ({
+ const MainCard = ({
     card,
-    showControls = true,
+    showControls = false,
   }: {
     card: (typeof testimonials)[number];
     showControls?: boolean;
@@ -202,32 +226,14 @@ export default function TestimonialSection({
     >
       <div className="shrink-0" style={{ width: IMG_W }}>
         <div className="relative" style={{ width: IMG_W, height: IMG_H }}>
-          <Image src={card.image} alt="" fill className="object-cover" />
+          <Image 
+            src={card.image} 
+            alt="" 
+            fill 
+            className="object-cover pointer-events-none" 
+            draggable={false} 
+          />
         </div>
-
-        {showControls && (
-          <div
-            className="flex items-center justify-between bg-white"
-            style={{ height: NAV_H }}
-          >
-            <button
-              type="button"
-              aria-label="Previous testimonial"
-              onClick={handlePrev}
-              className="flex h-8 w-8 items-center justify-center text-[#01030b] transition hover:text-[#0D54CA]"
-            >
-              <ChevronLeft aria-hidden="true" className="h-5 w-5" />
-            </button>
-            <button
-              type="button"
-              aria-label="Next testimonial"
-              onClick={handleNext}
-              className="flex h-8 w-8 items-center justify-center text-[#01030b] transition hover:text-[#0D54CA]"
-            >
-              <ChevronRight aria-hidden="true" className="h-5 w-5" />
-            </button>
-          </div>
-        )}
       </div>
 
       <div className="flex min-h-[320px] flex-col justify-between pt-10 sm:min-h-0 sm:w-[288px] sm:pl-5 sm:pt-11 sm:pb-[74px]">
@@ -245,12 +251,11 @@ export default function TestimonialSection({
       </div>
     </div>
   );
-
   return (
     <section
       ref={sectionRef}
       className={cn(
-        "bg-white",
+        "bg-white select-none", 
         snapToScreen
           ? "h-[100svh] w-full snap-start overflow-hidden py-8 lg:flex lg:items-center"
           : "py-16 sm:py-[62px]",
@@ -258,7 +263,7 @@ export default function TestimonialSection({
     >
       <SiteContainer>
         <div className="mb-4 flex items-center gap-3">
-          <RotatingDots variant="light"/>
+          <RotatingDots variant="light" />
           <p className="text-[14px] leading-none text-[#01030b]">
             Testimonials
           </p>
@@ -282,50 +287,122 @@ export default function TestimonialSection({
           )}
         >
           <div
+            ref={mainContainerRef}
             className="relative w-full sm:mt-[27px]"
-            style={{ maxWidth: MAIN_CARD_W }}
+            style={{ maxWidth: MAIN_CARD_W, minHeight: CARD_H }}
           >
-            <div className={phase === "moving" ? "opacity-0" : ""}>
+            {/* FIX: PERSISTENT ARROWS. Positioned perfectly on the left and right edges under the image */}
+            <div
+              className="absolute left-0 z-40 flex items-center justify-between bg-white"
+              style={{
+                width: IMG_W, 
+                top: IMG_H, 
+                height: NAV_H,
+              }}
+            >
+              {/* LEFT BUTTON */}
+              <button
+                type="button"
+                aria-label="Previous testimonial"
+                onClick={handlePrev}
+                // 👇 Add -ml-2 to the left button
+                className="flex h-8 w-8 items-center justify-center -ml-2 text-[#01030b] transition hover:text-[#0D54CA]"
+              >
+                <ChevronLeft aria-hidden="true" className="h-5 w-5" />
+              </button>
+              
+              {/* RIGHT BUTTON */}
+              <button
+                type="button"
+                aria-label="Next testimonial"
+                onClick={handleNext}
+                // 👇 Add -mr-2 to the right button
+                className="flex h-8 w-8 items-center justify-center -mr-2 text-[#01030b] transition hover:text-[#0D54CA]"
+              >
+                <ChevronRight aria-hidden="true" className="h-5 w-5" />
+              </button>
+            </div>
+
+            {/* 1. Base Static Card */}
+            <div className={phase === "moving" ? "opacity-0" : "opacity-100"}>
               <MainCard card={activeCard} />
             </div>
 
-            {phase === "moving" && movingItem && (
+           {/* 2. Incoming Main Card */}
+            {phase === "moving" && (
               <motion.div
-                initial={{ x: 300, opacity: 0 }}
+                // FIX: Increased to 800 and -800 so it visibly flies in from far away
+                initial={{ x: direction === "next" ? 800 : -800, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
-                transition={{ duration: BASE_DURATION, ease: "easeOut" }}
-                className="absolute top-0 left-0"
+                transition={{ 
+                  duration: BASE_DURATION * 1.2, // Slightly slower smooth entrance
+                  ease: "easeOut" 
+                }}
+                className="absolute top-0 left-0 z-10 bg-white"
+                style={{ width: "100%" }}
               >
-                <MainCard
-                  card={testimonials[movingItem.testimonialIndex]}
-                  showControls={false}
-                />
+                <MainCard card={activeCard} />
+              </motion.div>
+            )}
+
+            {/* 3. Outgoing Main Card */}
+            {phase === "moving" && (
+              <motion.div
+                initial={{ x: 0, opacity: 1 }}
+                animate={
+                  direction === "next"
+                    ? { x: -1500, opacity: [1, 1, 0] } 
+                    : { x: Math.abs(travelX) + 800, opacity: 0 } 
+                }
+                transition={{ 
+                  // Total movement takes BASE_DURATION * 1.2
+                  duration: BASE_DURATION * 2, 
+                  ease: "easeInOut",             
+                  opacity: { 
+                    duration: direction === "prev" ? BASE_DURATION * 0.9 : BASE_DURATION * 1.2, 
+                    ease: "easeOut" 
+                  }
+                }}
+                className="absolute top-0 left-0 pointer-events-none origin-center"
+                style={{ width: "100%", zIndex: direction === "prev" ? 30 : 0 }}
+              >
+                <MainCard card={testimonials[prevActiveIndex]} showControls={false} />
               </motion.div>
             )}
           </div>
 
           <div className="hidden shrink-0 lg:flex">
             <div
+              ref={sideContainerRef}
               className="relative"
               style={{ width: SIDE_CONTAINER_W, height: SIDE_CARD_H }}
             >
               {sideStack.map((item, index) => {
                 const card = testimonials[item.testimonialIndex];
                 const isIncoming = incomingUid === item.uid;
+                const isIncomingPrev = isIncoming && direction === "prev";
+
+                let initialAnim: any = false;
+
+                if (isIncoming) {
+                  initialAnim = direction === "next" 
+                    ? { x: SIDE_CONTAINER_W, opacity: 0 } 
+                    : { x: travelX, opacity: 0 }; 
+                }
 
                 return (
                   <motion.div
                     key={item.uid}
-                    initial={
-                      isIncoming ? { x: SIDE_CONTAINER_W, opacity: 0 } : false
-                    }
+                    initial={initialAnim}
                     animate={{
                       x: index * SIDE_CARD_STEP,
-                      opacity: 1,
+                      opacity: isIncomingPrev ? [0, 0, 1] : 1,
+                      scale: 1
                     }}
                     transition={{
                       duration: BASE_DURATION,
-                      ease: "linear",
+                      ease: "easeInOut",
+                      opacity: isIncomingPrev ? { times: [0, 0.75, 1] } : undefined
                     }}
                     className="absolute top-0 rounded bg-[#f1f1f1]"
                     style={{ width: SIDE_CARD_W, height: SIDE_CARD_H }}
@@ -335,12 +412,24 @@ export default function TestimonialSection({
                 );
               })}
 
-              {phase === "moving" && movingItem && (
+              {/* OUTGOING SIDE CARD: The grey vertical card that lands on the left image */}
+              {phase === "moving" && movingItem && direction === "next" && (
                 <motion.div
-                  initial={{ x: 0 }}
-                  animate={{ x: -1000 }}
-                  transition={{ duration: BASE_DURATION, ease: "linear" }}
-                  className="absolute top-0 z-30 bg-[#e9e9e9]"
+                  initial={{ x: 0, y: 0, opacity: 1, scale: 1 }}
+                  animate={{
+                    x: [0, travelX, travelX, travelX - 1500],
+                    y: [0, 0, 0, -50],
+                    opacity: [1, 1, 1, 1],
+                    scale: [1, 1, 1, 0.8],
+                  }}
+                  transition={{
+                    duration: BASE_DURATION * 2, 
+                    
+                    // 👇 FIX: Arrives at 30%, stays paused until 85%, then flies out
+                    times: [0, 0.30, 0.85, 1], 
+                    ease: "easeInOut",
+                  }}
+                  className="absolute top-0 z-50 bg-[#e9e9e9] shadow-lg"
                   style={{ width: SIDE_CARD_W, height: SIDE_CARD_H }}
                 >
                   <SideCardInner

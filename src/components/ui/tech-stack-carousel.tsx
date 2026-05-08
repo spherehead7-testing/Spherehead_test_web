@@ -68,7 +68,8 @@ export default function TechStackCarousel({
   // Removed useSpring to fix the "rewind" reverse loop bug
   const x = useMotionValue(0);
 
-  // Auto-scroll effect only (No pause on hover)
+  const reducedTrackPadding = "px-2 md:px-3";
+
   useEffect(() => {
     const container = containerRef.current;
     const track = trackRef.current;
@@ -128,7 +129,8 @@ export default function TechStackCarousel({
           ref={trackRef}
           // Use raw 'x' value without the spring physics
           style={{ x }}
-          className="flex items-center gap-10 md:gap-14 px-4 w-max"
+          className={`flex items-center gap-10 md:gap-14 ${reducedTrackPadding} w-max`}
+
         >
           {[...items, ...items].map((tech, i) => (
             <div
@@ -140,7 +142,6 @@ export default function TechStackCarousel({
                 alt={tech.name}
                 width={120}
                 height={120}
-                // Reduced sizes from h-70/90 to h-55/75
                 className="object-contain h-[55px] w-auto md:h-[75px] pointer-events-none"
               />
             </div>

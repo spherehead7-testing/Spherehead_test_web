@@ -119,7 +119,6 @@ export default function LandingAboutSection({
       >
         <div className="flex h-full items-center px-10 pl-6 sm:px-14 lg:px-16 lg:pl-24">
           <div className="flex w-full max-w-[912px] items-start justify-start gap-12">
-            
             {/* Reduced code by mapping through the stats array */}
             {statsData.map((stat) => (
               <div key={stat.id} className="flex flex-col items-start w-min">
@@ -129,7 +128,6 @@ export default function LandingAboutSection({
                 </span>
               </div>
             ))}
-
           </div>
         </div>
       </motion.div>
@@ -151,22 +149,39 @@ export default function LandingAboutSection({
             building lasting partnerships through trust, innovation, and
             measurable results.
           </p>
-          
+
           {/* Changed gap-0 to gap-6 here to increase the space */}
           <div className="mt-6 -ml-3 flex items-center gap-6">
-            <Image
-              src="/images/landingPage/aboutsection.svg"
-              alt="About section team"
-              width={154}
-              height={57}
-              className="h-auto w-[154px] scale-[0.85]"
-            />
-            
+            <div className="flex items-center -space-x-3 scale-[0.85]">
+              <Image
+                src="https://res.cloudinary.com/dku9in8sb/image/upload/v1778214138/about_1_sxgz4t.png"
+                alt="Team member 1"
+                width={56}
+                height={56}
+                className="h-14 w-14 rounded-full border-2 border-white object-cover"
+              />
+
+              <Image
+                src="https://res.cloudinary.com/dku9in8sb/image/upload/v1778214138/about_2_bmvgxy.png"
+                alt="Team member 2"
+                width={56}
+                height={56}
+                className="h-14 w-14 rounded-full border-2 border-white object-cover"
+              />
+
+              <Image
+                src="https://res.cloudinary.com/dku9in8sb/image/upload/v1778214138/about_3_uhxoaz.png"
+                alt="Team member 3"
+                width={56}
+                height={56}
+                className="h-14 w-14 rounded-full border-2 border-white object-cover"
+              />
+            </div>
+
             <button className="group relative flex h-[54px] cursor-pointer items-center justify-center overflow-hidden bg-animated-gradient px-8 text-white scale-[0.75] origin-left transition-colors duration-300">
-              
               {/* Invisible placeholder to establish the button's natural width based on the text */}
               <span className="invisible body-large">About Us</span>
-              
+
               {/* The absolute sliding column */}
               <div className="absolute top-0 left-0 flex w-full flex-col transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-1/2">
                 <span className="flex h-[54px] w-full items-center justify-center body-large">
@@ -176,7 +191,6 @@ export default function LandingAboutSection({
                   About Us
                 </span>
               </div>
-              
             </button>
           </div>
         </div>
