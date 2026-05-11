@@ -6,11 +6,11 @@ import { Plus } from "lucide-react";
 import SiteContainer from "@/components/layout/site-container";
 import RotatingDots from "@/components/ui/rotating-dots";
 import TechStackCarousel from "@/components/ui/tech-stack-carousel";
-import { servicesData } from "@/data/services-list-data";
+import { ServiceCategoryData } from "@/data/service-categories";
 
 const plusIconColors = ["text-[#FD7624]", "text-[#0D54CA]", "text-[#92D9FF]"];
 
-export default function ServicesListSection() {
+export default function ServicesListSection({ data }: { data: ServiceCategoryData }) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -20,15 +20,13 @@ export default function ServicesListSection() {
   useEffect(() => {
     const openServiceFromHash = () => {
       const slug = window.location.hash.replace("#service-", "");
-      const targetIndex = servicesData.findIndex(
-        (service) => service.slug === slug,
-      );
+      const targetIndex = data.items.findIndex((service) => service.slug === slug);
       if (targetIndex === -1) return;
 
       setActiveIndex(targetIndex);
       window.setTimeout(() => {
         document
-          .getElementById(`service-${servicesData[targetIndex].slug}`)
+          .getElementById(`service-${data.items[targetIndex].slug}`)
           ?.scrollIntoView({ behavior: "smooth", block: "center" });
       }, 80);
     };
@@ -36,17 +34,18 @@ export default function ServicesListSection() {
     openServiceFromHash();
     window.addEventListener("hashchange", openServiceFromHash);
     return () => window.removeEventListener("hashchange", openServiceFromHash);
-  }, []);
+  }, [data.items]);
 
   useEffect(() => {
     const list = listRef.current;
     if (!list) return;
     let edgeAccumulator = 0;
     const EDGE_THRESHOLD = 150;
+    
     const handleWheel = (e: WheelEvent) => {
       const isAtTop = list.scrollTop <= 0;
-      const isAtBottom =
-        Math.ceil(list.scrollTop + list.clientHeight) >= list.scrollHeight - 1;
+      const isAtBottom = Math.ceil(list.scrollTop + list.clientHeight) >= list.scrollHeight - 1;
+      
       if (e.deltaY < 0 && isAtTop) {
         edgeAccumulator += Math.abs(e.deltaY);
         if (edgeAccumulator > EDGE_THRESHOLD) {
@@ -55,6 +54,7 @@ export default function ServicesListSection() {
         } else e.preventDefault();
         return;
       }
+      
       if (e.deltaY > 0 && isAtBottom) {
         edgeAccumulator += Math.abs(e.deltaY);
         if (edgeAccumulator > EDGE_THRESHOLD) {
@@ -65,6 +65,7 @@ export default function ServicesListSection() {
       }
       edgeAccumulator = 0;
     };
+    
     list.addEventListener("wheel", handleWheel, { passive: false });
     return () => list.removeEventListener("wheel", handleWheel);
   }, []);
@@ -82,25 +83,20 @@ export default function ServicesListSection() {
               <div className="hidden lg:flex flex-col sticky top-0">
                 <div className="flex items-center gap-4 mb-6">
                   <RotatingDots variant="light" />
-                  <span className="body-small tracking-[0.1em] text-[#0D54CA] uppercase font-bold">
-                    Digital Services
+                  <span className="body-small tracking-[0.1em] text-[#0D54CA] font-bold">
+                    {data.metaTitle}
                   </span>
                 </div>
 
                 <h2 className="heading-2 !text-[#01030B] !leading-[1.1] mb-2 max-w-md">
-                  Driving Enterprise Value Through Scalable Tech Innovation
+                  {data.listTitle}
                 </h2>
 
-                {/* Image box with gradient background matching the global site background */}
                 <AnimatePresence>
                   {activeIndex !== null && (
                     <motion.div
                       initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                      animate={{
-                        opacity: 1,
-                        height: "auto",
-                        marginTop: "2rem",
-                      }}
+                      animate={{ opacity: 1, height: "auto", marginTop: "2rem" }}
                       exit={{ opacity: 0, height: 0, marginTop: 0 }}
                       transition={{ duration: 0.6, ease: "easeInOut" }}
                       className="bg-animated-gradient !relative w-full max-w-[360px] overflow-hidden rounded-none"
@@ -116,8 +112,8 @@ export default function ServicesListSection() {
                             className="absolute inset-0"
                           >
                             <Image
-                              src={servicesData[activeIndex].image}
-                              alt={servicesData[activeIndex].title}
+                              src={data.items[activeIndex].image}
+                              alt={data.items[activeIndex].title}
                               fill
                               sizes="360px"
                               className="object-contain p-4"
@@ -135,15 +131,13 @@ export default function ServicesListSection() {
                 ref={listRef}
                 className="flex flex-col overflow-y-auto max-h-[60vh] lg:max-h-[70vh] pr-2 lg:pr-6 pb-20 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']"
                 style={{
-                  maskImage:
-                    "linear-gradient(to bottom, transparent 0%, black 15%, black 100%)",
-                  WebkitMaskImage:
-                    "linear-gradient(to bottom, transparent 0%, black 15%, black 100%)",
+                  maskImage: "linear-gradient(to bottom, transparent 0%, black 15%, black 100%)",
+                  WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 15%, black 100%)",
                 }}
               >
                 <div className="h-4 lg:h-8 shrink-0" />
 
-                {servicesData.map((service, index) => {
+                {data.items.map((service, index) => {
                   const isActive = activeIndex === index;
                   const currentPlusColor = plusIconColors[index % 3];
                   return (

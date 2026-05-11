@@ -39,7 +39,7 @@ export default function CyclicButton({
       className={`flex items-center gap-4 text-white transition-opacity hover:opacity-90 ${className}`}
     >
       <motion.div
-        className="relative flex items-center justify-center w-8 h-8"
+        className="relative flex items-center justify-center w-10 h-10"
         animate={isActive ? "hover" : "initial"}
         variants={{
           initial: { rotate: 0 },

@@ -187,11 +187,13 @@ export default function Navbar() {
           <MegaMenuColumn
             icon={<Box className="h-8 w-8 text-[#FD7624]" strokeWidth={3} />}
             title="Digital Services"
+            href="/services/digital-services"
+            onTitleClick={() => setServicesOpen(false)}
           >
             {servicesData.map((service) => (
               <Link
                 key={service.slug}
-                href={`/services#service-${service.slug}`}
+                href={`/services/digital-services#service-${service.slug}`}
                 className="block leading-5 transition-colors hover:text-[#0D54CA]"
                 onClick={() => setServicesOpen(false)}
               >
@@ -201,15 +203,15 @@ export default function Navbar() {
           </MegaMenuColumn>
 
           <MegaMenuColumn
-            icon={
-              <Compass className="h-8 w-8 text-[#0D54CA]" strokeWidth={3} />
-            }
+            icon={<Compass className="h-8 w-8 text-[#0D54CA]" strokeWidth={3} />}
             title="Digital Solutions"
+            href="/services/digital-solutions"
+            onTitleClick={() => setServicesOpen(false)}
           >
             {digitalSolutions.map((item) => (
               <Link
                 key={item}
-                href="/services"
+                href="/services/digital-solutions"
                 className="block leading-5 transition-colors hover:text-[#0D54CA]"
                 onClick={() => setServicesOpen(false)}
               >
@@ -219,15 +221,15 @@ export default function Navbar() {
           </MegaMenuColumn>
 
           <MegaMenuColumn
-            icon={
-              <Sparkles className="h-8 w-8 text-[#92D9FF]" strokeWidth={3} />
-            }
+            icon={<Sparkles className="h-8 w-8 text-[#92D9FF]" strokeWidth={3} />}
             title="Design & 3D Services"
+            href="/services/design-and-3d-services"
+            onTitleClick={() => setServicesOpen(false)}
           >
             {designServices.map((item) => (
               <Link
                 key={item}
-                href="/services"
+                href="/services/design-and-3d-services"
                 className="block leading-5 transition-colors hover:text-[#0D54CA]"
                 onClick={() => setServicesOpen(false)}
               >
@@ -310,22 +312,30 @@ export default function Navbar() {
   );
 }
 
+// UPDATE: Added href and onTitleClick props, and wrapped the header in a Link
 function MegaMenuColumn({
   icon,
   title,
+  href,
+  onTitleClick,
   children,
 }: {
   icon: React.ReactNode;
   title: string;
+  href: string;
+  onTitleClick: () => void;
   children: React.ReactNode;
 }) {
   return (
     <div>
-      <div className="mb-5 flex items-center gap-3 text-[#01030B]">
+      <Link 
+        href={href} 
+        onClick={onTitleClick}
+        className="mb-5 flex items-center gap-3 text-[#01030B] transition-colors hover:text-[#0D54CA]"
+      >
         {icon}
-
         <h3 className="text-[16px] font-medium leading-none">{title}</h3>
-      </div>
+      </Link>
 
       <div className="mb-3 h-px w-full bg-[#dbe6f5]" />
 
