@@ -4,7 +4,7 @@ import LandingIndustryCarousel from "./landing-industry-carousel";
 
 export default function LandingIndustriesSection() {
   return (
-    <div className="absolute inset-x-0 top-[110vh] z-[4] pointer-events-auto">
+    <div className="relative z-[4] pt-24 lg:pt-6">
       <SiteContainer>
         <div className="px-6 lg:px-10">
           <div className="mb-5 flex items-center gap-5">

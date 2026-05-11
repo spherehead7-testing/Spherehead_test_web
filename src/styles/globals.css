@@ -78,7 +78,7 @@ select {
   font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
   font-weight: 300;
   font-size: 72px;
-  line-height: 90px;
+  line-height: 80px;
   letter-spacing: 2px;
   color: #ffffff;
   text-align: left;
@@ -108,7 +108,7 @@ select {
   font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
   font-weight: 300;
   font-size: 20px;
-  line-height: 42px;
+  line-height: 36px;
   letter-spacing: 0;
   color: #ffffff;
   text-align: left;
@@ -176,7 +176,7 @@ select {
 /* desktop */
 @media (min-width: 1024px) {
   .inner-hero {
-    font-size: 72px;
+    font-size: 80px;
   }
 }
 
