@@ -1,6 +1,8 @@
 "use client";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
+// 1. IMPORT useRouter
+import { useRouter } from "next/router"; 
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus } from "lucide-react";
 import SiteContainer from "@/components/layout/site-container";
@@ -12,75 +14,60 @@ const plusIconColors = ["text-[#FD7624]", "text-[#0D54CA]", "text-[#92D9FF]"];
 
 export default function ServicesListSection({ data }: { data: ServiceCategoryData }) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
-  const listRef = useRef<HTMLDivElement>(null);
+  
+  // 2. INITIALIZE ROUTER
+  const router = useRouter(); 
 
   const toggleAccordion = (index: number) =>
     setActiveIndex((prev) => (prev === index ? null : index));
 
   useEffect(() => {
     const openServiceFromHash = () => {
-      const slug = window.location.hash.replace("#service-", "");
+      const hash = window.location.hash;
+      if (!hash) return;
+
+      const slug = hash.replace("#service-", "");
       const targetIndex = data.items.findIndex((service) => service.slug === slug);
+      
       if (targetIndex === -1) return;
 
+      // Expand the new item
       setActiveIndex(targetIndex);
+
+      // FIXED: Increased timeout to 250ms so the accordion finishes opening FIRST.
+      // FIXED: Changed block: "center" to block: "start" so it respects your scroll-mt-32 margin!
       window.setTimeout(() => {
         document
           .getElementById(`service-${data.items[targetIndex].slug}`)
-          ?.scrollIntoView({ behavior: "smooth", block: "center" });
-      }, 80);
+          ?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 250);
     };
 
     openServiceFromHash();
+    
+    // Listen to Next.js router events
+    router.events.on("hashChangeComplete", openServiceFromHash);
+    // Listen to native browser events
     window.addEventListener("hashchange", openServiceFromHash);
-    return () => window.removeEventListener("hashchange", openServiceFromHash);
-  }, [data.items]);
 
-  useEffect(() => {
-    const list = listRef.current;
-    if (!list) return;
-    let edgeAccumulator = 0;
-    const EDGE_THRESHOLD = 150;
-    
-    const handleWheel = (e: WheelEvent) => {
-      const isAtTop = list.scrollTop <= 0;
-      const isAtBottom = Math.ceil(list.scrollTop + list.clientHeight) >= list.scrollHeight - 1;
-      
-      if (e.deltaY < 0 && isAtTop) {
-        edgeAccumulator += Math.abs(e.deltaY);
-        if (edgeAccumulator > EDGE_THRESHOLD) {
-          window.scrollBy(0, e.deltaY);
-          edgeAccumulator = 0;
-        } else e.preventDefault();
-        return;
-      }
-      
-      if (e.deltaY > 0 && isAtBottom) {
-        edgeAccumulator += Math.abs(e.deltaY);
-        if (edgeAccumulator > EDGE_THRESHOLD) {
-          window.scrollBy(0, e.deltaY);
-          edgeAccumulator = 0;
-        } else e.preventDefault();
-        return;
-      }
-      edgeAccumulator = 0;
+    return () => {
+      router.events.off("hashChangeComplete", openServiceFromHash);
+      window.removeEventListener("hashchange", openServiceFromHash);
     };
-    
-    list.addEventListener("wheel", handleWheel, { passive: false });
-    return () => list.removeEventListener("wheel", handleWheel);
-  }, []);
+  }, [data.items, router]);
 
   return (
-    <section className="relative z-30 w-full min-h-[100vh] bg-transparent flex flex-col justify-start pt-[80px] lg:pt-[100px] snap-start">
+    <section className="relative z-30 w-full min-h-[100vh] bg-transparent flex flex-col justify-start pt-[80px] lg:pt-[100px]">
       <div
         className="relative z-20 w-full rounded-t-[12px] flex flex-col shadow-[0_-20px_50px_rgba(0,0,0,0.25)]"
         style={{ backgroundColor: "white" }}
       >
         <div className="w-full min-h-[calc(100vh-80px)] lg:min-h-[calc(100vh-100px)] flex flex-col pt-10 lg:pt-16 pb-10">
           <SiteContainer className="flex-grow">
-            <div className="grid grid-cols-1 lg:grid-cols-[4.5fr_5.5fr] gap-12 lg:gap-24 items-start h-full">
+            <div className="grid grid-cols-1 lg:grid-cols-[4.5fr_5.5fr] gap-12 lg:gap-24 items-start">
+              
               {/* LEFT COLUMN */}
-              <div className="hidden lg:flex flex-col sticky top-0">
+              <div className="hidden lg:flex flex-col sticky top-32 h-fit">
                 <div className="flex items-center gap-4 mb-6">
                   <RotatingDots variant="light" />
                   <span className="body-small tracking-[0.1em] text-[#0D54CA] font-bold">
@@ -126,15 +113,8 @@ export default function ServicesListSection({ data }: { data: ServiceCategoryDat
                 </AnimatePresence>
               </div>
 
-              {/* RIGHT: accordion list */}
-              <div
-                ref={listRef}
-                className="flex flex-col overflow-y-auto max-h-[60vh] lg:max-h-[70vh] pr-2 lg:pr-6 pb-20 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']"
-                style={{
-                  maskImage: "linear-gradient(to bottom, transparent 0%, black 15%, black 100%)",
-                  WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 15%, black 100%)",
-                }}
-              >
+              {/* RIGHT COLUMN: accordion list */}
+              <div className="flex flex-col pr-2 lg:pr-6 pb-20">
                 <div className="h-4 lg:h-8 shrink-0" />
 
                 {data.items.map((service, index) => {

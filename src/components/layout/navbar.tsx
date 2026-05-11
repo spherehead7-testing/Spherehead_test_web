@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Box, ChevronDown, Compass, Sparkles } from "lucide-react";
 import { servicesData } from "@/data/services-list-data";
+import { categoryData } from "@/data/service-categories";
 
 const digitalSolutions = [
   "Enterprise Resource Planning (ERP)",
@@ -190,14 +191,15 @@ export default function Navbar() {
             href="/services/digital-services"
             onTitleClick={() => setServicesOpen(false)}
           >
-            {servicesData.map((service) => (
+            {/* FIXED: Changed from servicesData to categoryData to ensure slugs match perfectly! */}
+            {categoryData["digital-services"].items.map((item) => (
               <Link
-                key={service.slug}
-                href={`/services/digital-services#service-${service.slug}`}
+                key={item.slug}
+                href={`/services/digital-services#service-${item.slug}`}
                 className="block leading-5 transition-colors hover:text-[#0D54CA]"
                 onClick={() => setServicesOpen(false)}
               >
-                {service.title}
+                {item.title}
               </Link>
             ))}
           </MegaMenuColumn>
@@ -208,14 +210,14 @@ export default function Navbar() {
             href="/services/digital-solutions"
             onTitleClick={() => setServicesOpen(false)}
           >
-            {digitalSolutions.map((item) => (
+            {categoryData["digital-solutions"].items.map((item) => (
               <Link
-                key={item}
-                href="/services/digital-solutions"
+                key={item.slug}
+                href={`/services/digital-solutions#service-${item.slug}`}
                 className="block leading-5 transition-colors hover:text-[#0D54CA]"
                 onClick={() => setServicesOpen(false)}
               >
-                {item}
+                {item.title}
               </Link>
             ))}
           </MegaMenuColumn>
@@ -226,14 +228,14 @@ export default function Navbar() {
             href="/services/design-and-3d-services"
             onTitleClick={() => setServicesOpen(false)}
           >
-            {designServices.map((item) => (
+            {categoryData["design-and-3d-services"].items.map((item) => (
               <Link
-                key={item}
-                href="/services/design-and-3d-services"
+                key={item.slug}
+                href={`/services/design-and-3d-services#service-${item.slug}`}
                 className="block leading-5 transition-colors hover:text-[#0D54CA]"
                 onClick={() => setServicesOpen(false)}
               >
-                {item}
+                {item.title}
               </Link>
             ))}
           </MegaMenuColumn>

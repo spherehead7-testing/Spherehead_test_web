@@ -58,7 +58,7 @@ export const categoryData: Record<string, ServiceCategoryData> = {
     },
     intro: {
       mainText: "We integrate advanced <span class='text-[#0D54CA]'>digital solutions</span> to streamline workflows, connect data, and transform how your business operates in a <span class='text-[#0D54CA]'>digital-first</span> world.",
-      image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1778233033/ServicesList_5_j4bbrh.png", // Update with solutions image
+      image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1778493730/Services_list_img1_u0kfo6.png", // Update with solutions image
       heading: "Building the digital infrastructure that modern businesses need to scale efficiently.",
       p1: "From enterprise resource planning to customer relationship management, we deploy solutions that centralize your data and automate routine tasks.",
       p2: "Our custom integrations ensure your software ecosystem works seamlessly together, eliminating silos and boosting overall productivity.",
@@ -69,9 +69,9 @@ export const categoryData: Record<string, ServiceCategoryData> = {
       { id: "02", title: "Smart CRM & POS Solutions", desc: "Intelligent platforms for managing customer relationships and sales.", image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1778233026/ServicesList_17_xeuzug.png", slug: "crm-pos" },
       { id: "03", title: "Digital Commerce Solutions", desc: "Robust e-commerce platforms built for conversion and scale.", image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1778233028/ServicesList_1_hrztyz.png", slug: "digital-commerce" },
       { id: "04", title: "Business Process Outsourcing (BPO)", desc: "Streamlining operations through strategic external processing.", image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1778233030/ServicesList_2_wxpzi7.png", slug: "bpo-services" },
-      { id: "05", title: "Augmented Reality (AR) Solutions", desc: "Immersive AR experiences for marketing and operations.", image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1778233031/ServicesList_3_fv6eew.png", slug: "ar-solutions" },
+      { id: "05", title: "Augmented Reality (AR) Solutions", desc: "Immersive AR experiences for marketing and operations.", image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1778493948/Services_list_img10_svmnfx.png", slug: "ar-solutions" },
       { id: "06", title: "eLearning Solutions", desc: "Custom educational platforms and digital learning environments.", image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1778233032/ServicesList_4_f39wiw.png", slug: "elearning" },
-      { id: "07", title: "SEO Optimization", desc: "Data-driven strategies to improve search visibility and traffic.", image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1778233033/ServicesList_5_j4bbrh.png", slug: "seo-optimization" },
+      { id: "07", title: "SEO Optimization", desc: "Data-driven strategies to improve search visibility and traffic.", image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1778493730/Services_list_img1_u0kfo6.png", slug: "seo-optimization" },
       { id: "08", title: "Virtual Reality (VR) Solutions", desc: "Fully immersive virtual environments for training and showcase.", image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1778233020/ServicesList_11_pq49pp.png", slug: "vr-solutions" },
     ],
   },
@@ -83,7 +83,7 @@ export const categoryData: Record<string, ServiceCategoryData> = {
     },
     intro: {
       mainText: "Merging creativity with strategy, our <span class='text-[#0D54CA]'>design experts</span> create compelling visual narratives and <span class='text-[#0D54CA]'>3D experiences</span> that captivate audiences.",
-      image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1778233031/ServicesList_3_fv6eew.png", // Update with design image
+      image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1778493948/Services_list_img10_svmnfx.png", // Update with design image
       heading: "We believe that great design is not just about aesthetics—it's about functionality, storytelling, and user engagement.",
       p1: "Through collaborative workshops and research, we uncover the visual language that best represents your brand's unique identity.",
       p2: "Whether it's a seamless user interface or photorealistic 3D rendering, our designs are engineered to leave a lasting impact.",
@@ -94,7 +94,7 @@ export const categoryData: Record<string, ServiceCategoryData> = {
       { id: "02", title: "UI/UX Services", desc: "Intuitive, user-centered interfaces for web and mobile apps.", image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1778233019/ServicesList_10_uafydq.png", slug: "ui-ux" },
       { id: "03", title: "Graphic Designing Service", desc: "Compelling visual assets for digital and print media.", image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1778233017/ServicesList_7_vrmppk.png", slug: "graphic-design" },
       { id: "04", title: "3D Rendering & Post Production", desc: "Photorealistic 3D visuals and professional post-editing.", image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1778233028/ServicesList_1_hrztyz.png", slug: "3d-rendering" },
-      { id: "05", title: "3D Modeling & Texturing", desc: "High-quality 3D assets for games, architecture, and marketing.", image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1778233031/ServicesList_3_fv6eew.png", slug: "3d-modeling" },
+      { id: "05", title: "3D Modeling & Texturing", desc: "High-quality 3D assets for games, architecture, and marketing.", image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1778493948/Services_list_img10_svmnfx.png", slug: "3d-modeling" },
       { id: "06", title: "Storyboarding & Concept Development", desc: "Visualizing ideas and planning narratives before production.", image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1778233032/ServicesList_4_f39wiw.png", slug: "storyboarding" },
     ],
   }
