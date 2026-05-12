@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
 import RotatingDots from "../ui/rotating-dots";
 import SiteContainer from "../layout/site-container";
 import { cn } from "@/lib/utils";
@@ -39,8 +39,8 @@ const testimonials = [
   },
 ];
 
-const IMG_W = 286;
-const IMG_H = 370;
+const IMG_W = 350;
+const IMG_H = 450;
 const NAV_H = 32;
 const CARD_H = IMG_H + NAV_H;
 
@@ -53,7 +53,7 @@ const SIDE_CARD_H = 429;
 const SIDE_CONTAINER_W =
   SIDE_CARD_COUNT * SIDE_CARD_W + (SIDE_CARD_COUNT - 1) * SIDE_CARD_GAP;
 
-const MAIN_CARD_W = 574;
+const MAIN_CARD_W = 650;
 
 const BASE_DURATION = 0.7;
 
@@ -224,8 +224,8 @@ export default function TestimonialSection({
       className="flex w-full flex-col gap-5 sm:flex-row sm:gap-0"
       style={{ maxWidth: MAIN_CARD_W, minHeight: CARD_H }}
     >
-      <div className="shrink-0" style={{ width: IMG_W }}>
-        <div className="relative" style={{ width: IMG_W, height: IMG_H }}>
+      <div className="shrink-0 relative" style={{ width: IMG_W }}>
+        <div className="relative overflow-hidden rounded-[6px] rounded-br-[18px]" style={{ width: IMG_W, height: IMG_H }}>
           <Image
             src={card.image}
             alt=""
@@ -234,15 +234,19 @@ export default function TestimonialSection({
             draggable={false}
           />
         </div>
+        {/* Quote Icon Box moved outside the rounded container */}
+        <div className="absolute top-0 right-0 z-10 flex h-10 w-10 items-center justify-center bg-[#0D54CA]">
+          <Quote className="h-5 w-5 fill-white text-white" />
+        </div>
       </div>
 
       <div className="flex min-h-[320px] flex-col justify-between pt-10 sm:min-h-0 sm:w-[288px] sm:pl-5 sm:pt-11 sm:pb-[74px]">
-        <p className="body-small max-w-[238px] whitespace-pre-line text-[#01030b]">
+        <p className="body-small max-w-[238px] whitespace-pre-line text-[#01030b] !text-[16px] !leading-[1.4]">
           {card.quote}
         </p>
         <div>
-          <h3 className="heading-3 !text-[#01030b]">{card.name}</h3>
-          <p className="body-small mt-0 text-[#01030b]">{card.role}</p>
+          <h3 className="heading-2 !text-[#01030b] !text-[32px]">{card.name}</h3>
+          <p className="body-medium mt-[-10px] text-[#01030b]">{card.role}</p>
         </div>
       </div>
     </div>
