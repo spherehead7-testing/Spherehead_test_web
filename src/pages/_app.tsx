@@ -2,7 +2,6 @@ import type { AppProps } from "next/app";
 import { Archivo, Inter_Tight } from "next/font/google";
 import "@/styles/globals.css";
 import Navbar from "@/components/layout/navbar";
-import Footer from "@/components/layout/footer";
 
 const archivo = Archivo({
   subsets: ["latin"],
