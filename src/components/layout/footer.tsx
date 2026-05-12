@@ -30,7 +30,7 @@ export default function Footer() {
             </div>
 
             {/* BOTTOM */}
-            <div className="body-small lg:mb-20">
+            <div className="body-extra-small lg:mb-20">
               {/* SOCIAL LINKS */}
               <div className="flex gap-6 mt-16">
                 <FaFacebookF className="hover:opacity-70 transition cursor-pointer" />

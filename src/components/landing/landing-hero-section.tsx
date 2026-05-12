@@ -29,7 +29,7 @@ export default function LandingHeroSection({ heroContentOpacity, subtextOpacity 
 
           <motion.p
             style={{ opacity: subtextOpacity }}
-            className="heading-4 mt-6 inline-block max-w-lg whitespace-nowrap text-white"
+            className="heading-3 mt-6 inline-block max-w-lg whitespace-nowrap text-white"
           >
             Smart Technology Operations for smoother and hassle-free Operations
           </motion.p>

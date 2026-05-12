@@ -15,21 +15,21 @@ const values = [
   {
     title: "On-Time Delivery",
     description:
-      "We prioritize efficiency and reliability, ensuring every project is delivered on time without compromising quality.",
+      "We prioritize efficiency and reliability, ensuring every project is delivered on time without compromising quality, enabling our clients to move forward with confidence.",
     image:
       "https://res.cloudinary.com/dku9in8sb/image/upload/v1776321150/About-Us-Rectangle-2_uiduew.webp",
   },
   {
     title: "After Service",
     description:
-      "Our relationship doesn’t end at delivery. We provide continuous support and guidance.",
+      "Our relationship doesn’t end at delivery. We provide continuous support, maintenance, and guidance to ensure long-term success and build lasting partnerships with our clients.",
     image:
       "https://res.cloudinary.com/dku9in8sb/image/upload/v1776322662/About-Us-Rectangle-3_e7k7jl.webp",
   },
   {
     title: "Innovation First",
     description:
-      "We embrace creativity and the latest technologies to build forward-thinking solutions.",
+      "We embrace creativity and the latest technologies to develop forward-thinking solutions, constantly evolving to meet changing industry demands and drive meaningful results.",
     image:
       "https://res.cloudinary.com/dku9in8sb/image/upload/v1776322672/About-Us-Rectangle-4_cwcghf.webp",
   },
@@ -39,7 +39,7 @@ export default function CoreValues() {
   const [active, setActive] = useState(0);
 
   return (
-    <section className="bg-gradient-to-r from-[#0b2a5b] to-[#2f5fbf] text-white py-12">
+    <section className="text-white py-12">
       {/* 🔹 HEADER (CONTAINER) */}
       <div className="max-w-[1400px] mx-auto px-6 lg:px-20">
         <div className="mb-10">
@@ -61,7 +61,7 @@ export default function CoreValues() {
       <div className="w-full">
         {/* LABELS (still aligned to container) */}
         <div className="w-full px-6 lg:px-20">
-          <div className="body-medium flex justify-between text-white/70 mb-6">
+          <div className="body-medium flex justify-between mb-6">
             {values.map((item, i) => (
               <button
                 key={i}
@@ -111,11 +111,11 @@ export default function CoreValues() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <h3 className="text-[28px] font-semibold mb-6">
+            <h3 className="body-large mb-6">
               {values[active].title}
             </h3>
 
-            <p className="text-white/80 leading-[1.8] max-w-[500px]">
+            <p className="body-small max-w-[500px]">
               {values[active].description}
             </p>
           </motion.div>
