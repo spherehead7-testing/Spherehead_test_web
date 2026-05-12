@@ -151,7 +151,7 @@ export default function ServicesApproachSection() {
         >
           <div className="flex items-center gap-4 mb-6">
             <RotatingDots />
-            <span className="body-small tracking-[0.1em] text-white/90 uppercase font-bold">
+            <span className="body-small tracking-[0.1em] text-white/90 font-bold">
               Strategic Approach
             </span>
           </div>

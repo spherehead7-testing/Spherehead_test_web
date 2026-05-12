@@ -420,6 +420,7 @@ export default function Navbar() {
     );
 }
 
+// UPDATE: Added href and onTitleClick props, and wrapped the header in a Link
 function MegaMenuColumn({
     icon,
     title,

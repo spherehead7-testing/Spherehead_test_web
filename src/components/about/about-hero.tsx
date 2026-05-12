@@ -12,14 +12,17 @@ export default function AboutHero() {
         {/* TOP LINE */}
         <div className="w-full h-[1px] bg-white/40 mb-8" />
 
-        {/* CONTENT AREA */}
-        <div className="relative">
-          {/* LEFT SIDE */}
-          <div className="max-w-[920px]">
-            <h1 className="heading-1">
-              Who We Are & <br />
-              What We Stand For
-            </h1>
+        {/* CONTENT WRAPPER */}
+        {/* Everything stays BELOW the line */}
+        <div className="relative z-20 flex h-full items-end pb-[50px]">
+          <div className="flex w-full items-end justify-between gap-6">
+            {/* LEFT CONTENT */}
+            <div className="max-w-[980px]">
+              {/* TITLE */}
+              <h1 className="inner-hero">
+                Who We Are & <br />
+                What We Stand For
+              </h1>
 
             {/* DESCRIPTION */}
             <div className="mt-6 flex items-end gap-8">
@@ -56,4 +59,4 @@ export default function AboutHero() {
       </SiteContainer>
     </section>
   );
-}
+}
