@@ -88,10 +88,10 @@ export default function PricingIntro() {
               style={{ opacity: contentOpacity, y: headingY }}
               className="mt-5 max-w-[790px]"
             >
-              <h2 className="text-[32px] sm:text-[36px] lg:text-[40px] font-[400] leading-[1.3]">
+              <h2 className="heading-2 !text-black">
                 At Spherehead, we offer{" "}
-                <span className="text-[#155ACD]">transparent</span> and{" "}
-                <span className="text-[#155ACD]">flexible pricing</span>{" "}
+                <span className="text-[#0D54CA]">transparent</span> and{" "}
+                <span className="text-[#0D54CA]">flexible pricing</span>{" "}
                 designed to match the unique needs of every business.
               </h2>
             </motion.div>

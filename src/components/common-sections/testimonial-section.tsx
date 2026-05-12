@@ -203,11 +203,11 @@ export default function TestimonialSection({
 
   const SideCardInner = ({ card }: { card: (typeof testimonials)[number] }) => (
     <>
-      <span className="body-small absolute top-5 left-1/2 [writing-mode:vertical-rl] [transform:translateX(-50%)_rotate(180deg)] text-[#8A8B8F]">
+      <span className="body-extra-small absolute top-5 left-1/2 [writing-mode:vertical-rl] [transform:translateX(-50%)_rotate(180deg)] text-[#8A8B8F]">
         {card.role}
       </span>
 
-      <span className="body-small absolute bottom-6 left-1/2 [writing-mode:vertical-rl] [transform:translateX(-50%)_rotate(180deg)] text-[#01030b]">
+      <span className="body-small absolute bottom-6 left-1/2 [writing-mode:vertical-rl] [transform:translateX(-50%)_rotate(180deg)] text-[#01030B]">
         {card.name}
       </span>
     </>
@@ -237,12 +237,12 @@ export default function TestimonialSection({
       </div>
 
       <div className="flex min-h-[320px] flex-col justify-between pt-10 sm:min-h-0 sm:w-[288px] sm:pl-5 sm:pt-11 sm:pb-[74px]">
-        <p className="body-small max-w-[238px] whitespace-pre-line text-[#01030b]">
+        <p className="body-small max-w-[238px] text-[#0A0D0F]">
           {card.quote}
         </p>
         <div>
-          <h3 className="heading-3 !text-[#01030b]">{card.name}</h3>
-          <p className="body-small mt-0 text-[#01030b]">{card.role}</p>
+          <h3 className="heading-3 !text-[#01030B]">{card.name}</h3>
+          <p className="body-extra-small mt-0 text-[#01030B]">{card.role}</p>
         </div>
       </div>
     </div>
@@ -260,17 +260,10 @@ export default function TestimonialSection({
       <SiteContainer>
         <div className="mb-4 flex items-center gap-3">
           <RotatingDots variant="light" />
-          <p className="text-[14px] leading-none text-[#01030b]">
-            Testimonials
-          </p>
+          <p className="body-small text-[#01030B">Testimonials</p>
         </div>
 
-        <h2
-          className={cn(
-            "heading-2 !text-[#01030B]",
-            snapToScreen && "!text-[32px] !leading-[1.2] lg:!text-[36px]",
-          )}
-        >
+        <h2 className={cn("heading-2 !text-[#0A0D0F]", snapToScreen)}>
           Building Lasting Relationships
           <br />
           Through Results Our Clients Value
