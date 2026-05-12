@@ -19,7 +19,7 @@ export default function AboutHero() {
             {/* LEFT CONTENT */}
             <div className="max-w-[980px]">
               {/* TITLE */}
-              <h1 className="heading-1">
+              <h1 className="inner-hero">
                 Who We Are & <br />
                 What We Stand For
               </h1>

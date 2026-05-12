@@ -1,0 +1,334 @@
+@import "tailwindcss";
+
+:root {
+  --c1: #06142e;
+  --c2: #0a2f76;
+  --c3: #184aa3;
+  --c4: #2666d2;
+  --c5: #0A0D0F;
+  /* Removed --c5: #a6c4fa; */
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html,
+body,
+#__next {
+  min-height: 100%;
+  overscroll-behavior: none;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background: linear-gradient(90deg, #2666D2 0%, #184AA3 15%, #0A2F76 50%, #06142E 100%);
+  background-size: 200% 200%;
+  animation: animated-gradient-flow 10s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+  color: var(--foreground);
+  font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+/* Background Animation Keyframes */
+@keyframes animated-gradient-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Accessibility for background animation */
+@media (prefers-reduced-motion: reduce) {
+  body {
+    animation: none;
+  }
+}
+
+/* Reusable utility for boxes that need the animated background */
+.bg-animated-gradient {
+  background: linear-gradient(90deg, #2666D2 0%, #184AA3 15%, #0A2F76 50%, #06142E 100%);
+  background-size: 200% 200%;
+  animation: animated-gradient-flow 10s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+}
+
+/* typography */
+.heading-1 {
+  font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
+  font-weight: 300;
+  font-size: 72px;
+  line-height: 80px;
+  letter-spacing: 2px;
+  color: #ffffff;
+  text-align: left;
+}
+
+.heading-2 {
+  font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
+  font-weight: 400;
+  font-size: 40px;
+  line-height: 50px;
+  letter-spacing: 0px;
+  color: #ffffff;
+  text-align: left;
+}
+
+.heading-3 {
+  font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
+  font-weight: 300;
+  font-size: 22px;
+  line-height: 30px;
+  letter-spacing: 0px;
+  color: #ffffff;
+  text-align: left;
+}
+
+.heading-4 {
+  font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
+  font-weight: 300;
+  font-size: 20px;
+  line-height: 30px;
+  letter-spacing: 0;
+  color: #ffffff;
+  text-align: left;
+}
+
+
+.body-large {
+  font-family: var(--font-inter-tight), Arial, Helvetica, sans-serif;
+  font-size: 24px;
+  font-weight: 350;
+  line-height: 34px;
+  letter-spacing: 0.02em;
+  /* text-transform: none; */
+}
+
+.body-medium {
+  font-family: var(--font-inter-tight), Arial, Helvetica, sans-serif;
+  font-size: 18px;
+  font-weight: 450;
+  line-height: 30px;
+  letter-spacing: 0.02em;
+}
+
+.body-small {
+  font-family: var(--font-inter-tight), Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: 0.02em;
+}
+
+.body-extra-small {
+  font-family: var(--font-inter-tight), Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: 0.02em;
+}
+
+.inner-tight {
+  font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
+  font-size: 20px;
+  font-weight: 200;
+  line-height: 42px;
+  letter-spacing: 2px;
+}
+
+.inner-hero {
+  font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
+  font-weight: 300;
+  line-height: 90px;
+  letter-spacing: 0px;
+  color: #ffffff;
+  text-align: left;
+  max-width: 980px;
+  font-size: 34px; /* mobile */
+}
+
+/* tablet */
+@media (min-width: 640px) {
+  .inner-hero {
+    font-size: 46px;
+  }
+}
+
+/* desktop */
+@media (min-width: 1024px) {
+  .inner-hero {
+    font-size: 83px;
+  }
+}
+
+.inter-tight {
+  font-family: var(--font-inter-tight), Arial, Helvetica, sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 18px;
+  letter-spacing: 1.2px;
+}
+
+.inter-tight-button {
+  font-family: var(--font-inter-tight), Arial, Helvetica, sans-serif;
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 28px;
+  letter-spacing: 0.02em;
+}
+
+/* GLOBAL WEBSITE BACKGROUND UTILITIES */
+.site-background-root {
+  position: relative;
+  min-height: 100vh;
+  isolation: isolate;
+  overflow-x: hidden;
+}
+
+/* .site-background-content {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+} */
+
+.site-background-content {
+  position: relative;
+  z-index: 10; /* stronger layer */
+  min-height: 100vh;
+}
+
+/* white large right arrow spin */
+@keyframes spinClockwise {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spinCounterClockwise {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+/*about us stat cards*/
+.about-stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.about-stat-number {
+  font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
+  font-size: 62px;
+  font-weight: 400;
+  line-height: 1;
+  color: #ffffff;
+}
+
+.about-stat-label {
+  font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
+  font-size: 18px;
+  font-weight: 200;
+  line-height: 1;
+  letter-spacing: 1px;
+  color: #e8e8e8;
+}
+
+/*landing - service white card content*/
+.service-whitecard-number {
+  margin: 0 0 34px 0;
+  font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
+  font-size: 44px;
+  font-weight: 400;
+  line-height: 1;
+    background: linear-gradient(100deg,
+      #0a2f76 0%,
+      #184aa3 10%,
+      #2666d2 20%,
+      #a6c4fa 30%);
+        -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.service-whitecard-hover-number {
+  margin: 0 0 34px 0;
+  font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
+  font-size: 30px;
+  font-weight: 400;
+  line-height: 1;
+  color: #ffffff;
+}
+
+/* UP scroll */
+@keyframes scrollUp {
+  0% {
+    transform: translateY(0%);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+.animate-scrollUp {
+  animation: scrollUp 30s linear infinite;
+}
+
+/* DOWN scroll */
+@keyframes scrollDown {
+  0% {
+    transform: translateY(-50%);
+  }
+  100% {
+    transform: translateY(0%);
+  }
+}
+
+.animate-scrollDown {
+  animation: scrollDown 30s linear infinite;
+}
+
+/* src/styles/globals.css */
+
+@keyframes scrollMarquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: scrollMarquee 40s linear infinite;
+}
+
+/* Optional: Pause on hover */
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
