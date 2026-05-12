@@ -16,63 +16,37 @@ interface ServiceCategoryPageProps {
 export default function ServiceCategoryPage({ data }: ServiceCategoryPageProps) {
   const router = useRouter();
 
-  // Custom Magnetic "Fall-in" Scroll Logic with Hash Pause
   useEffect(() => {
-    document.documentElement.style.scrollBehavior = "smooth";
-    let scrollTimeout: NodeJS.Timeout;
-    let isAutoScrolling = false;
+    const html = document.documentElement;
 
-    // This temporarily disables the magnetic snap so link-clicks can scroll freely
-    const disableMagneticSnapTemporarily = () => {
-      isAutoScrolling = true;
+    const enableSnap = () => html.classList.add("snap-y", "snap-mandatory");
+    const disableSnap = () => html.classList.remove("snap-y", "snap-mandatory");
+
+    // 1. Initially enable snapping and smooth scrolling
+    enableSnap();
+    html.style.scrollBehavior = "smooth";
+
+    // 2. Temporarily disable CSS snapping when clicking a link
+    const pauseSnapping = () => {
+      disableSnap();
+      
       setTimeout(() => {
-        isAutoScrolling = false;
-      }, 2000); // Pauses magnetism for 2 seconds
+        enableSnap();
+      }, 1500); 
     };
 
-    // 1. Pause magnetism if the page first loads with a hash
     if (window.location.hash) {
-      disableMagneticSnapTemporarily();
+      pauseSnapping();
     }
 
-    // 2. Pause magnetism whenever the user clicks a hash link
-    router.events.on("hashChangeStart", disableMagneticSnapTemporarily);
-    window.addEventListener("hashchange", disableMagneticSnapTemporarily);
-
-    const handleScroll = () => {
-      // If we are auto-scrolling to a link, ABORT the magnetic snap!
-      if (isAutoScrolling) return;
-
-      clearTimeout(scrollTimeout);
-      scrollTimeout = setTimeout(() => {
-        const sections = document.querySelectorAll("section");
-        let closestSection: HTMLElement | null = null;
-        let minDistance = Infinity;
-
-        sections.forEach((section) => {
-          const rect = section.getBoundingClientRect();
-          const distanceToTop = Math.abs(rect.top);
-
-          if (distanceToTop < minDistance && distanceToTop < window.innerHeight * 0.35) {
-            minDistance = distanceToTop;
-            closestSection = section;
-          }
-        });
-
-        if (closestSection) {
-          (closestSection as HTMLElement).scrollIntoView({ behavior: "smooth" });
-        }
-      }, 150);
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
+    router.events.on("hashChangeStart", pauseSnapping);
+    window.addEventListener("hashchange", pauseSnapping);
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("hashchange", disableMagneticSnapTemporarily);
-      router.events.off("hashChangeStart", disableMagneticSnapTemporarily);
-      clearTimeout(scrollTimeout);
-      document.documentElement.style.scrollBehavior = "auto";
+      disableSnap();
+      html.style.scrollBehavior = "auto";
+      router.events.off("hashChangeStart", pauseSnapping);
+      window.removeEventListener("hashchange", pauseSnapping);
     };
   }, [router]);
 
@@ -84,12 +58,15 @@ export default function ServiceCategoryPage({ data }: ServiceCategoryPageProps) 
         <title>{data.metaTitle} | Spherehead Technologies</title>
       </Head>
 
-      <ServicesHeroSection data={data.hero} />
-      <ServicesIntroSection data={data.intro} />
+      <div className="relative w-full">
+        <ServicesHeroSection data={data.hero} />
+        <ServicesIntroSection data={data.intro} />
+      </div>
+
       <ServicesApproachSection />
       <ServicesListSection data={data} />
       
-      <div className="w-full shrink-0">
+      <div className="w-full shrink-0 snap-start">
         <Footer />
       </div>
     </main>

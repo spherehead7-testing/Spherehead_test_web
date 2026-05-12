@@ -13,34 +13,36 @@ export default function ServicesIntroSection({ data }: { data: ServiceCategoryDa
   });
 
   const smoothProgress = useSpring(scrollYProgress, { 
-    stiffness: 45, 
-    damping: 25, 
+    stiffness: 80, 
+    damping: 40, 
     mass: 0.6 
   });
 
-  // 1. CURTAINS (Fast & Early)
-  // They start from 120% (further down) and finish completely by 0.6
-  const col1Y = useTransform(smoothProgress, [0.0, 0.4], ["120%", "0%"]);
-  const col2Y = useTransform(smoothProgress, [0.1, 0.5], ["120%", "0%"]);
-  const col3Y = useTransform(smoothProgress, [0.2, 0.6], ["120%", "0%"]);
+  // 1. CURTAINS (Full Span - No Dead Zones)
+  // Reaching all the way to 1.0 means the right column (col3) will IMMEDIATELY 
+  // start dropping the split second you scroll upwards.
+  const col1Y = useTransform(smoothProgress, [0.0, 0.8], ["120%", "0%"]);
+  const col2Y = useTransform(smoothProgress, [0.1, 0.9], ["120%", "0%"]);
+  const col3Y = useTransform(smoothProgress, [0.2, 1.0], ["120%", "0%"]);
 
-  // 2. MAIN TEXT (Delayed)
-  // Waits until Col 1 is fully up (0.4) before fading in
-  const content1Opacity = useTransform(smoothProgress, [0.4, 0.7], [0, 1]);
-  const content1Y = useTransform(smoothProgress, [0.4, 0.7], [30, 0]);
+  // 2. MAIN TEXT (Top Left)
+  // FIXED: We added a 150px Y-drop. When scrolling UP, this text now physically falls 
+  // downwards as it fades out, ensuring it never peeks over the top edge of the dropping columns!
+  const content1Opacity = useTransform(smoothProgress, [0.6, 0.9], [0, 1]);
+  const content1Y = useTransform(smoothProgress, [0.6, 0.9], [150, 0]);
 
-  // 3. DIVIDER (Delayed)
-  const content2Opacity = useTransform(smoothProgress, [0.5, 0.8], [0, 1]);
-  const content2Y = useTransform(smoothProgress, [0.5, 0.8], [30, 0]);
+  // 3. DIVIDER
+  const content2Opacity = useTransform(smoothProgress, [0.65, 0.95], [0, 1]);
+  const content2Y = useTransform(smoothProgress, [0.65, 0.95], [150, 0]);
 
-  // 4. BOTTOM TEXT & IMAGE BOX (Very Delayed)
-  // Waits until ALL columns are practically finished (0.6) before appearing
-  const content3Opacity = useTransform(smoothProgress, [0.6, 0.9], [0, 1]);
-  const content3Y = useTransform(smoothProgress, [0.6, 0.9], [30, 0]);
+  // 4. BOTTOM TEXT & IMAGE BOX
+  const content3Opacity = useTransform(smoothProgress, [0.7, 1.0], [0, 1]);
+  const content3Y = useTransform(smoothProgress, [0.7, 1.0], [150, 0]);
   
-  const boxOpacity = useTransform(smoothProgress, [0.6, 0.9], [0, 1]);
-  const boxY = useTransform(smoothProgress, [0.6, 1.0], [400, 0]);
-  const ringImageY = useTransform(smoothProgress, [0.6, 1.0], [120, 0]);
+  const boxOpacity = useTransform(smoothProgress, [0.7, 1.0], [0, 1]);
+  const boxY = useTransform(smoothProgress, [0.7, 1.0], [400, 0]);
+  const ringImageY = useTransform(smoothProgress, [0.7, 1.0], [150, 0]);
+  
   return (
     <section
       ref={containerRef}

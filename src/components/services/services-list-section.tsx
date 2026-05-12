@@ -1,8 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-// 1. IMPORT useRouter
-import { useRouter } from "next/router"; 
+import { useRouter } from "next/router";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus } from "lucide-react";
 import SiteContainer from "@/components/layout/site-container";
@@ -14,10 +13,10 @@ const plusIconColors = ["text-[#FD7624]", "text-[#0D54CA]", "text-[#92D9FF]"];
 
 export default function ServicesListSection({ data }: { data: ServiceCategoryData }) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
-  
-  // 2. INITIALIZE ROUTER
-  const router = useRouter(); 
+  const router = useRouter();
 
+  // ACCORDION LOGIC: If you click the open one, it closes (null). 
+  // If you click a new one, it opens the new one (index) and automatically closes the old one.
   const toggleAccordion = (index: number) =>
     setActiveIndex((prev) => (prev === index ? null : index));
 
@@ -31,11 +30,9 @@ export default function ServicesListSection({ data }: { data: ServiceCategoryDat
       
       if (targetIndex === -1) return;
 
-      // Expand the new item
+      // Expand the specific item from the URL
       setActiveIndex(targetIndex);
 
-      // FIXED: Increased timeout to 250ms so the accordion finishes opening FIRST.
-      // FIXED: Changed block: "center" to block: "start" so it respects your scroll-mt-32 margin!
       window.setTimeout(() => {
         document
           .getElementById(`service-${data.items[targetIndex].slug}`)
@@ -45,9 +42,7 @@ export default function ServicesListSection({ data }: { data: ServiceCategoryDat
 
     openServiceFromHash();
     
-    // Listen to Next.js router events
     router.events.on("hashChangeComplete", openServiceFromHash);
-    // Listen to native browser events
     window.addEventListener("hashchange", openServiceFromHash);
 
     return () => {
@@ -57,12 +52,12 @@ export default function ServicesListSection({ data }: { data: ServiceCategoryDat
   }, [data.items, router]);
 
   return (
-    <section className="relative z-30 w-full min-h-[100vh] bg-transparent flex flex-col justify-start pt-[80px] lg:pt-[100px]">
+    <section className="relative z-30 w-full flex flex-col justify-start pt-[60px] lg:pt-[80px] snap-start">
       <div
         className="relative z-20 w-full rounded-t-[12px] flex flex-col shadow-[0_-20px_50px_rgba(0,0,0,0.25)]"
         style={{ backgroundColor: "white" }}
       >
-        <div className="w-full min-h-[calc(100vh-80px)] lg:min-h-[calc(100vh-100px)] flex flex-col pt-10 lg:pt-16 pb-10">
+        <div className="w-full flex flex-col pt-10 lg:pt-16 pb-10">
           <SiteContainer className="flex-grow">
             <div className="grid grid-cols-1 lg:grid-cols-[4.5fr_5.5fr] gap-12 lg:gap-24 items-start">
               
@@ -127,19 +122,22 @@ export default function ServicesListSection({ data }: { data: ServiceCategoryDat
                       className="scroll-mt-32 border-b border-[#e8e8e8] py-5 lg:py-6 transition-colors duration-300"
                     >
                       <div
-                        className="flex items-center justify-between cursor-pointer"
+                        className="flex items-center justify-between cursor-pointer group"
                         onClick={() => toggleAccordion(index)}
                       >
                         <div className="flex items-center gap-6 lg:gap-10">
                           <span className="body-large text-[#0D54CA]">
                             {service.id}
                           </span>
-                          <h3 className="body-large text-[#01030B]">
+                          <h3 className="body-large text-[#01030B] transition-colors group-hover:text-[#0D54CA]">
                             {service.title}
                           </h3>
                         </div>
                         <button className="p-2 -mr-2 cursor-pointer focus:outline-none">
-                          <Plus className={`w-6 h-6 ${currentPlusColor}`} />
+                          {/* ADDED: Smooth rotation so the + turns into an x when open! */}
+                          <Plus 
+                            className={`w-6 h-6 transition-transform duration-300 ${isActive ? "rotate-45" : ""} ${currentPlusColor}`} 
+                          />
                         </button>
                       </div>
 
@@ -149,7 +147,7 @@ export default function ServicesListSection({ data }: { data: ServiceCategoryDat
                           height: isActive ? "auto" : 0,
                           opacity: isActive ? 1 : 0,
                         }}
-                        transition={{ duration: 0.2, ease: "easeInOut" }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
                         className="overflow-hidden"
                       >
                         <p className="body-small text-[#55565C] pt-4 pb-2 leading-relaxed max-w-lg ml-16 lg:ml-20">

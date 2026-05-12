@@ -6,7 +6,7 @@ import { ServiceCategoryData } from "@/data/service-categories";
 
 export default function ServicesHeroSection({ data }: { data: ServiceCategoryData["hero"] }) {
   return (
-    <section className="relative w-full h-[100svh] flex flex-col overflow-hidden snap-start">
+    <section className="sticky top-0 z-0 w-full h-[100svh] flex flex-col overflow-hidden snap-start">
       <SiteContainer className="relative z-10 flex flex-col h-full flex-grow justify-end pb-12 pt-32 lg:pb-20">
         <div className="w-full flex flex-col mt-auto">
           
