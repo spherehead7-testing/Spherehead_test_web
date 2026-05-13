@@ -3,522 +3,446 @@
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import {
-  ArrowUpRight,
-  Box,
-  ChevronDown,
-  Compass,
-  Sparkles,
-} from "lucide-react";
-import { categoryData } from "@/data/service-categories";
-import { blogPosts } from "@/data/blog-posts";
+import { useRouter } from "next/router";
+import { Box, ChevronDown, Compass, Sparkles } from "lucide-react";
+import { servicesData } from "@/data/services-list-data";
+import SiteContainer from "./site-container";
 
 const digitalSolutions = [
-  "Enterprise Resource Planning (ERP)",
-  "Smart CRM & POS Solutions",
-  "Digital Commerce Solutions",
-  "Business Process Outsourcing (BPO) Services",
-  "Augmented Reality (AR) Solutions",
-  "eLearning Solutions",
-  "SEO Optimization",
-  "Virtual Reality (VR) Solutions",
+    "Enterprise Resource Planning (ERP)",
+    "Smart CRM & POS Solutions",
+    "Digital Commerce Solutions",
+    "Business Process Outsourcing (BPO) Services",
+    "Augmented Reality (AR) Solutions",
+    "eLearning Solutions",
+    "SEO Optimization",
+    "Virtual Reality (VR) Solutions",
 ];
 
 const designServices = [
-  "Free Design Thinking Workshops",
-  "UI UX Services",
-  "Graphic Design Services",
-  "3D Rendering & Post Production",
-  "3D Modeling & Texturing",
-  "Storyboarding & Concept Development",
+    "Free Design Thinking Workshops",
+    "UI UX Services",
+    "Graphic Design Services",
+    "3D Rendering & Post Production",
+    "3D Modeling & Texturing",
+    "Storyboarding & Concept Development",
 ];
 
-type NavbarProps = {
-  scrollContainer?: React.RefObject<HTMLElement | null>;
-};
+export default function Navbar() {
+    const [scrolled, setScrolled] = useState(false);
+    const [isVisible, setIsVisible] = useState(true);
 
-export default function Navbar({ scrollContainer }: NavbarProps) {
-  const [scrolled, setScrolled] = useState(false);
-  const [isVisible, setIsVisible] = useState(true);
+    const [servicesOpen, setServicesOpen] = useState(false);
+    const [workOpen, setWorkOpen] = useState(false);
 
-  const [servicesOpen, setServicesOpen] = useState(false);
-  const [workOpen, setWorkOpen] = useState(false);
-  const [newsOpen, setNewsOpen] = useState(false);
+    const headerRef = useRef<HTMLElement>(null);
+    const router = useRouter();
 
-  const headerRef = useRef<HTMLElement>(null);
-  const lastScrollY = useRef(0);
+    const observerRef = useRef<IntersectionObserver | null>(null);
+    const scrollHandlerRef = useRef<(() => void) | null>(null);
 
-  // Get featured blog
-  const featuredBlog = blogPosts.find((post) => post.featured);
+    // Re-run on route changes to handle sentinel presence per page
+    useEffect(() => {
+        // Clean up any previous observer
+        if (observerRef.current) {
+            observerRef.current.disconnect();
+            observerRef.current = null;
+        }
+        // Clean up any previous scroll listener
+        if (scrollHandlerRef.current) {
+            window.removeEventListener("scroll", scrollHandlerRef.current);
+            scrollHandlerRef.current = null;
+        }
 
-  // SCROLL DETECTION
-  useEffect(() => {
-    const target = scrollContainer?.current || window;
+        // Small delay to let the new page render its DOM (including sentinel)
+        const timer = setTimeout(() => {
+            const sentinel = document.getElementById("navbar-sentinel");
 
-    const handleScroll = () => {
-      const currentScrollY =
-        scrollContainer?.current?.scrollTop || window.scrollY;
+            if (sentinel) {
+                // Home page: observe sentinel to show navbar only in hero section
+                const scrollContainer = sentinel.closest("main");
 
-      // NAVBAR BACKGROUND
-      setScrolled(currentScrollY > 20);
+                const observer = new IntersectionObserver(
+                    ([entry]) => {
+                        setIsVisible(entry.isIntersecting);
+                        setScrolled(
+                            !entry.isIntersecting ||
+                                entry.intersectionRatio < 0.95,
+                        );
+                    },
+                    {
+                        root: scrollContainer || null,
+                        threshold: [0, 0.1, 0.5, 0.95, 1],
+                    },
+                );
 
-      // HIDE / SHOW NAVBAR
-      if (currentScrollY > lastScrollY.current && currentScrollY > 50) {
-        setIsVisible(false);
-      } else {
-        setIsVisible(true);
-      }
+                observer.observe(sentinel);
+                observerRef.current = observer;
+            } else {
+                setIsVisible(true);
+                setScrolled(false);
 
-      lastScrollY.current = currentScrollY;
-    };
+                const handleScroll = () => {
+                    const currentScrollY = window.scrollY;
+                    const vh = window.innerHeight;
+                    setIsVisible(currentScrollY < vh * 0.5);
+                    setScrolled(currentScrollY > 20);
+                };
 
-    target.addEventListener("scroll", handleScroll, {
-      passive: true,
-    });
+                handleScroll();
 
-    return () => {
-      target.removeEventListener("scroll", handleScroll);
-    };
-  }, [scrollContainer]);
+                window.addEventListener("scroll", handleScroll, {
+                    passive: true,
+                });
+                scrollHandlerRef.current = handleScroll;
+            }
+        }, 50);
 
-  // OUTSIDE CLICK + ESC
-  useEffect(() => {
-    const handleDocumentClick = (event: MouseEvent) => {
-      if (!headerRef.current?.contains(event.target as Node)) {
-        setServicesOpen(false);
-        setWorkOpen(false);
-        setNewsOpen(false);
-      }
-    };
+        return () => {
+            clearTimeout(timer);
+            if (observerRef.current) {
+                observerRef.current.disconnect();
+                observerRef.current = null;
+            }
+            if (scrollHandlerRef.current) {
+                window.removeEventListener("scroll", scrollHandlerRef.current);
+                scrollHandlerRef.current = null;
+            }
+        };
+    }, [router.asPath]);
 
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setServicesOpen(false);
-        setWorkOpen(false);
-        setNewsOpen(false);
-      }
-    };
+    useEffect(() => {
+        const handleDocumentClick = (event: MouseEvent) => {
+            if (!headerRef.current?.contains(event.target as Node)) {
+                setServicesOpen(false);
+                setWorkOpen(false);
+            }
+        };
 
-    document.addEventListener("mousedown", handleDocumentClick);
-    document.addEventListener("keydown", handleEscape);
+        const handleEscape = (event: KeyboardEvent) => {
+            if (event.key === "Escape") {
+                setServicesOpen(false);
+                setWorkOpen(false);
+            }
+        };
 
-    return () => {
-      document.removeEventListener("mousedown", handleDocumentClick);
-      document.removeEventListener("keydown", handleEscape);
-    };
-  }, []);
+        document.addEventListener("mousedown", handleDocumentClick);
+        document.addEventListener("keydown", handleEscape);
 
-  return (
-    <header
-      ref={headerRef}
-      onMouseLeave={() => {
-        setServicesOpen(false);
-        setWorkOpen(false);
-        setNewsOpen(false);
-      }}
-      className={`fixed top-0 left-0 w-full z-[9999] will-change-transform transition-all duration-300 ease-in-out ${
-        isVisible ? "translate-y-0" : "-translate-y-full"
-      } ${
-        scrolled
-          ? "bg-[#0b2a5b]/90 backdrop-blur-md shadow-md"
-          : "bg-transparent"
-      }`}
-    >
-      {/* NAVBAR */}
-      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        {/* LOGO */}
-        <Link href="/" className="flex items-center">
-          <Image
-            src="https://res.cloudinary.com/dku9in8sb/image/upload/v1778040542/Layer_1_lp72bj.png"
-            alt="Spherehead Logo"
-            width={140}
-            height={40}
-            priority
-            className="h-auto"
-          />
-        </Link>
+        return () => {
+            document.removeEventListener("mousedown", handleDocumentClick);
+            document.removeEventListener("keydown", handleEscape);
+        };
+    }, []);
 
-        {/* MENU */}
-        <nav className="body-extra-small hidden md:flex items-center gap-8 text-white">
-          <Link href="/">Home</Link>
-
-          <Link href="/about-us">About Us</Link>
-
-          {/* SERVICES */}
-          <div
-            className="relative"
-            onMouseEnter={() => {
-              setServicesOpen(true);
-              setWorkOpen(false);
-              setNewsOpen(false);
+    return (
+        <header
+            ref={headerRef}
+            onMouseLeave={() => {
+                setServicesOpen(false);
+                setWorkOpen(false);
             }}
-          >
-            <button
-              type="button"
-              className="flex cursor-pointer items-center gap-1.5 text-white transition-opacity hover:opacity-80"
-              onClick={() => setServicesOpen((open) => !open)}
+            className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ease-in-out ${
+                isVisible ? "translate-y-0" : "-translate-y-full"
+            } ${
+                scrolled
+                    ? "bg-[#0b2a5b]/90 backdrop-blur-md shadow-md"
+                    : "bg-transparent"
+            }`}
+        >
+            {/* NAVBAR */}
+            <SiteContainer
+                className={`transition-all duration-300 flex items-center justify-between ${scrolled ? "py-4" : "py-8"}`}
             >
-              Services
-              <ChevronDown
-                className={`h-3.5 w-3.5 transition-transform duration-200 ${
-                  servicesOpen ? "rotate-180" : ""
+                {/* LOGO */}
+                <Link href="/" className="flex items-center">
+                    <Image
+                        src="https://res.cloudinary.com/dku9in8sb/image/upload/v1778040542/Layer_1_lp72bj.png"
+                        alt="Spherehead Logo"
+                        width={180}
+                        height={50}
+                        priority
+                        className="h-auto"
+                    />
+                </Link>
+
+                {/* MENU */}
+                <nav className="body-small !text-[15px] font-medium hidden md:flex items-center gap-10 text-white">
+                    <Link href="/">Home</Link>
+
+                    <Link href="/about-us">About Us</Link>
+
+                    {/* SERVICES */}
+                    <div
+                        className="relative"
+                        onMouseEnter={() => {
+                            setServicesOpen(true);
+                            setWorkOpen(false);
+                        }}
+                    >
+                        <button
+                            type="button"
+                            className="flex cursor-pointer items-center gap-1.5 text-white transition-opacity hover:opacity-80"
+                            onClick={() => setServicesOpen((open) => !open)}
+                        >
+                            Services
+                            <ChevronDown
+                                className={`h-4 w-4 transition-transform duration-200 ${
+                                    servicesOpen ? "rotate-180" : ""
+                                }`}
+                                strokeWidth={2}
+                            />
+                        </button>
+                    </div>
+
+                    {/* OUR WORK */}
+                    <div
+                        className="relative"
+                        onMouseEnter={() => {
+                            setWorkOpen(true);
+                            setServicesOpen(false);
+                        }}
+                    >
+                        <button
+                            type="button"
+                            className="flex cursor-pointer items-center gap-1.5 text-white transition-opacity hover:opacity-80"
+                            onClick={() => setWorkOpen((open) => !open)}
+                        >
+                            Our Work
+                            <ChevronDown
+                                className={`h-4 w-4 transition-transform duration-200 ${
+                                    workOpen ? "rotate-180" : ""
+                                }`}
+                                strokeWidth={2}
+                            />
+                        </button>
+                    </div>
+
+                    <Link href="/pricing">Pricing</Link>
+
+                    <Link href="/industries">Industries</Link>
+
+                    <Link href="/blogs">News & Insights</Link>
+
+                    <Link href="/careers">Careers</Link>
+
+                    <Link href="/contact-us">Contact Us</Link>
+                </nav>
+            </SiteContainer>
+
+            {/* SERVICES MEGA MENU */}
+            <div
+                id="services-mega-menu"
+                className={`absolute left-1/2 top-full hidden w-[min(1110px,calc(100vw-3rem))] -translate-x-1/2 transition-all duration-200 md:block ${
+                    servicesOpen
+                        ? "pointer-events-auto translate-y-0 opacity-100"
+                        : "pointer-events-none -translate-y-2 opacity-0"
                 }`}
-                strokeWidth={2}
-              />
-            </button>
-          </div>
-
-          {/* OUR WORK */}
-          <div
-            className="relative"
-            onMouseEnter={() => {
-              setWorkOpen(true);
-              setServicesOpen(false);
-              setNewsOpen(false);
-            }}
-          >
-            <button
-              type="button"
-              className="flex cursor-pointer items-center gap-1.5 text-white transition-opacity hover:opacity-80"
-              onClick={() => setWorkOpen((open) => !open)}
+                onMouseEnter={() => setServicesOpen(true)}
             >
-              Our Work
-              <ChevronDown
-                className={`h-3.5 w-3.5 transition-transform duration-200 ${
-                  workOpen ? "rotate-180" : ""
-                }`}
-                strokeWidth={2}
-              />
-            </button>
-          </div>
+                <div className="grid min-h-[320px] grid-cols-[1fr_1.05fr_1.25fr_280px] gap-12 bg-white px-12 py-12 text-[#777b84] shadow-[0_24px_70px_rgba(1,3,11,0.16)]">
+                    <MegaMenuColumn
+                        icon={
+                            <Box
+                                className="h-8 w-8 text-[#FD7624]"
+                                strokeWidth={3}
+                            />
+                        }
+                        title="Digital Services"
+                    >
+                        {servicesData.map((service) => (
+                            <Link
+                                key={service.slug}
+                                href={`/services#service-${service.slug}`}
+                                className="block leading-5 transition-colors hover:text-[#0D54CA]"
+                                onClick={() => setServicesOpen(false)}
+                            >
+                                {service.title}
+                            </Link>
+                        ))}
+                    </MegaMenuColumn>
 
-          <Link href="/pricing">Pricing</Link>
+                    <MegaMenuColumn
+                        icon={
+                            <Compass
+                                className="h-8 w-8 text-[#0D54CA]"
+                                strokeWidth={3}
+                            />
+                        }
+                        title="Digital Solutions"
+                    >
+                        {digitalSolutions.map((item) => (
+                            <Link
+                                key={item}
+                                href="/services"
+                                className="block leading-5 transition-colors hover:text-[#0D54CA]"
+                                onClick={() => setServicesOpen(false)}
+                            >
+                                {item}
+                            </Link>
+                        ))}
+                    </MegaMenuColumn>
 
-          <Link href="/industries">Industries</Link>
+                    <MegaMenuColumn
+                        icon={
+                            <Sparkles
+                                className="h-8 w-8 text-[#92D9FF]"
+                                strokeWidth={3}
+                            />
+                        }
+                        title="Design & 3D Services"
+                    >
+                        {designServices.map((item) => (
+                            <Link
+                                key={item}
+                                href="/services"
+                                className="block leading-5 transition-colors hover:text-[#0D54CA]"
+                                onClick={() => setServicesOpen(false)}
+                            >
+                                {item}
+                            </Link>
+                        ))}
+                    </MegaMenuColumn>
 
-          {/* NEWS & INSIGHTS */}
-          <div
-            className="relative"
-            onMouseEnter={() => {
-              setNewsOpen(true);
-              setServicesOpen(false);
-              setWorkOpen(false);
-            }}
-          >
-            <button
-              type="button"
-              className="flex cursor-pointer items-center gap-1.5 text-white transition-opacity hover:opacity-80"
-              onClick={() => setNewsOpen((open) => !open)}
-            >
-              News & Insights
-              <ChevronDown
-                className={`h-3.5 w-3.5 transition-transform duration-200 ${
-                  newsOpen ? "rotate-180" : ""
-                }`}
-                strokeWidth={2}
-              />
-            </button>
-          </div>
-
-          <Link href="/careers">Careers</Link>
-
-          <Link href="/contact-us">Contact Us</Link>
-        </nav>
-      </div>
-
-      {/* SERVICES MENU */}
-      <div
-        id="services-mega-menu"
-        className={`absolute left-1/2 top-full hidden w-[min(1110px,calc(100vw-3rem))] -translate-x-1/2 transition-all duration-200 md:block ${
-          servicesOpen
-            ? "pointer-events-auto translate-y-0 opacity-100"
-            : "pointer-events-none -translate-y-2 opacity-0"
-        }`}
-        onMouseEnter={() => {
-          setServicesOpen(true);
-          setWorkOpen(false);
-          setNewsOpen(false);
-        }}
-      >
-        <div className="grid min-h-[320px] grid-cols-[1fr_1.05fr_1.25fr_280px] gap-12 bg-white px-12 py-12 text-[#777b84] shadow-[0_24px_70px_rgba(1,3,11,0.16)]">
-          <MegaMenuColumn
-            icon={<Box className="h-8 w-8 text-[#FD7624]" strokeWidth={3} />}
-            title="Digital Services"
-            href="/services/digital-services"
-            onTitleClick={() => setServicesOpen(false)}
-          >
-            {/* FIXED: Changed from servicesData to categoryData to ensure slugs match perfectly! */}
-            {categoryData["digital-services"].items.map((item) => (
-              <Link
-                key={item.slug}
-                href={`/services/digital-services#service-${item.slug}`}
-                className="block leading-5 transition-colors hover:text-[#0D54CA]"
-                onClick={() => setServicesOpen(false)}
-              >
-                {item.title}
-              </Link>
-            ))}
-          </MegaMenuColumn>
-
-          <MegaMenuColumn
-            icon={<Compass className="h-8 w-8 text-[#0D54CA]" strokeWidth={3} />}
-            title="Digital Solutions"
-            href="/services/digital-solutions"
-            onTitleClick={() => setServicesOpen(false)}
-          >
-            {categoryData["digital-solutions"].items.map((item) => (
-              <Link
-                key={item.slug}
-                href={`/services/digital-solutions#service-${item.slug}`}
-                className="block leading-5 transition-colors hover:text-[#0D54CA]"
-                onClick={() => setServicesOpen(false)}
-              >
-                {item.title}
-              </Link>
-            ))}
-          </MegaMenuColumn>
-
-          <MegaMenuColumn
-            icon={<Sparkles className="h-8 w-8 text-[#92D9FF]" strokeWidth={3} />}
-            title="Design & 3D Services"
-            href="/services/design-and-3d-services"
-            onTitleClick={() => setServicesOpen(false)}
-          >
-            {categoryData["design-and-3d-services"].items.map((item) => (
-              <Link
-                key={item.slug}
-                href={`/services/design-and-3d-services#service-${item.slug}`}
-                className="block leading-5 transition-colors hover:text-[#0D54CA]"
-                onClick={() => setServicesOpen(false)}
-              >
-                {item.title}
-              </Link>
-            ))}
-          </MegaMenuColumn>
-
-          {/* RIGHT IMAGE */}
-          <div className="relative h-full min-h-[320px] overflow-hidden">
-            <Image
-              src="https://res.cloudinary.com/dku9in8sb/image/upload/v1778480245/Rectangle_34625272_raelut.webp"
-              alt="Spherehead digital services workshop"
-              fill
-              sizes="280px"
-              className="object-cover lg:pb-12"
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* OUR WORK MENU */}
-      <div
-        className={`absolute left-1/2 top-full hidden w-[min(900px,calc(100vw-3rem))] -translate-x-1/2 transition-all duration-300 md:block ${
-          workOpen
-            ? "pointer-events-auto translate-y-0 opacity-100"
-            : "pointer-events-none -translate-y-4 opacity-0"
-        }`}
-        onMouseEnter={() => {
-          setWorkOpen(true);
-          setServicesOpen(false);
-          setNewsOpen(false);
-        }}
-      >
-        <div className="grid grid-cols-[1fr_290px] overflow-hidden rounded-sm bg-[#f5f5f5] shadow-[0_24px_70px_rgba(1,3,11,0.18)]">
-          {/* LEFT */}
-          <div className="flex items-center gap-16 px-12">
-            {/* PORTFOLIO */}
-            <Link href="/portfolio" className="group flex items-center gap-4">
-              <div className="transition-transform duration-300 group-hover:scale-90">
-                <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
-                  <path d="M17 0L34 8.5L17 17L0 8.5L17 0Z" fill="#FD7624" />
-                  <path d="M17 12L34 20.5L17 29L0 20.5L17 12Z" fill="#FD7624" />
-                  <path d="M17 24L34 32.5L17 41L0 32.5L17 24Z" fill="#FD7624" />
-                </svg>
-              </div>
-
-              <span className="body-small text-black">Portfolio</span>
-            </Link>
-
-            {/* CASE STUDIES */}
-            <Link
-              href="/case-studies"
-              className="group flex items-center gap-4"
-            >
-              <div className="transition-transform duration-300 group-hover:scale-90">
-                <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
-                  <rect width="14" height="14" fill="#0D54CA" />
-                  <rect x="20" width="14" height="14" fill="#0D54CA" />
-                  <rect y="20" width="14" height="14" fill="#0D54CA" />
-                  <rect x="20" y="20" width="14" height="14" fill="#0D54CA" />
-                </svg>
-              </div>
-
-              <span className="body-small text-black">Case Studies</span>
-            </Link>
-          </div>
-
-          {/* RIGHT IMAGE */}
-          <div className="relative h-[210px] overflow-hidden ">
-            <Image
-              src="https://res.cloudinary.com/dku9in8sb/image/upload/v1778480700/Rectangle_34625273_tiviz0.webp"
-              alt="Portfolio preview"
-              fill
-              className="lg:pb-8"
-            />
-          </div>
-        </div>
-      </div>
-      {/* NEWS & INSIGHTS MENU */}
-      <div
-        className={`absolute left-1/2 top-full hidden w-[min(1020px,calc(100vw-3rem))] -translate-x-1/2 transition-all duration-300 md:block ${
-          newsOpen
-            ? "pointer-events-auto translate-y-0 opacity-100"
-            : "pointer-events-none -translate-y-2 opacity-0"
-        }`}
-        onMouseEnter={() => {
-          setNewsOpen(true);
-          setServicesOpen(false);
-          setWorkOpen(false);
-        }}
-      >
-        <div className="grid grid-cols-[1fr_340px] overflow-hidden rounded-sm bg-[#f3f3f3] shadow-[0_24px_70px_rgba(1,3,11,0.18)]">
-          {/* LEFT SIDE */}
-          <div className="flex items-start gap-8 px-12 pt-20">
-            {/* NEWS */}
-            <div>
-              <Link href="/news" className="group block">
-                {/* TOP */}
-                <div className="mb-5 flex items-center gap-4">
-                  {/* ICON */}
-                  <div className="relative h-[26px] w-[26px]">
-                    <div className="absolute bottom-0 left-0 h-[18px] w-[18px] border-b-[4px] border-l-[4px] border-[#0D54CA]" />
-
-                    <div className="absolute left-[14px] top-0 h-[18px] w-[2px] bg-[#0D54CA]" />
-                  </div>
-
-                  <h3 className="text-[16px] font-medium text-[#111]">News</h3>
+                    <div className="relative min-h-[260px] overflow-hidden">
+                        <Image
+                            src="https://res.cloudinary.com/dku9in8sb/image/upload/v1776313260/Services_y83dyy.png"
+                            alt="Spherehead digital services workshop"
+                            fill
+                            sizes="280px"
+                            className="object-cover"
+                        />
+                    </div>
                 </div>
-
-                {/* LINE */}
-                <div className="h-px w-[130px] bg-[#dbe3ee]" />
-
-                {/* LINKS */}
-                <div className="mt-5 space-y-2">
-                  <p className="text-[13px] text-[#8d8d8d] transition-colors duration-300 group-hover:text-[#0D54CA]">
-                    Latest & Trending News
-                  </p>
-
-                  <p className="text-[13px] text-[#8d8d8d] transition-colors duration-300 group-hover:text-[#0D54CA]">
-                    All News
-                  </p>
-                </div>
-              </Link>
             </div>
 
-            {/* BLOGS */}
-            <div>
-              <Link href="/blogs" className="group block">
-                {/* TOP */}
-                <div className="mb-5 flex items-center gap-4">
-                  {/* ICON */}
-                  <div className="grid grid-cols-3 gap-[2px]">
-                    <div className="h-[4px] w-[4px] bg-[#92D9FF]" />
-                    <div className="h-[4px] w-[4px] bg-[#92D9FF]" />
-                    <div className="h-[4px] w-[4px] bg-[#92D9FF]" />
-
-                    <div className="h-[4px] w-[4px] bg-[#92D9FF]" />
-                    <div className="h-[4px] w-[4px] bg-[#92D9FF]" />
-                    <div className="h-[4px] w-[4px] bg-transparent" />
-
-                    <div className="h-[4px] w-[4px] bg-[#92D9FF]" />
-                    <div className="h-[4px] w-[4px] bg-transparent" />
-                    <div className="h-[4px] w-[4px] bg-transparent" />
-                  </div>
-
-                  <h3 className="text-[16px] font-medium text-[#111]">Blogs</h3>
-                </div>
-
-                {/* LINE */}
-                <div className="h-px w-[130px] bg-[#dbe3ee]" />
-
-                {/* LINKS */}
-                <div className="mt-5 space-y-2">
-                  <p className="text-[13px] text-[#8d8d8d] transition-colors duration-300 group-hover:text-[#0D54CA]">
-                    Featured Blogs
-                  </p>
-
-                  <p className="text-[13px] text-[#8d8d8d] transition-colors duration-300 group-hover:text-[#0D54CA]">
-                    All Blogs
-                  </p>
-                </div>
-              </Link>
-            </div>
-          </div>
-
-          {/* RIGHT IMAGE CARD */}
-          {featuredBlog && (
-            <Link
-              href={`/blogs/${featuredBlog.slug}`}
-              className="group relative block h-[240px] overflow-hidden"
+            {/* OUR WORK MEGA MENU */}
+            <div
+                className={`absolute left-1/2 top-full hidden w-[min(900px,calc(100vw-3rem))] -translate-x-1/2 transition-all duration-300 md:block ${
+                    workOpen
+                        ? "pointer-events-auto translate-y-0 opacity-100"
+                        : "pointer-events-none -translate-y-4 opacity-0"
+                }`}
+                onMouseEnter={() => setWorkOpen(true)}
             >
-              <Image
-                src={featuredBlog.image}
-                alt={featuredBlog.title}
-                fill
-                className="object-cover transition-transform duration-700 group-hover:scale-105"
-              />
+                <div className="grid grid-cols-[1fr_290px] overflow-hidden rounded-sm bg-[#f5f5f5] shadow-[0_24px_70px_rgba(1,3,11,0.18)]">
+                    {/* LEFT */}
+                    <div className="flex items-center gap-16 px-12">
+                        {/* PORTFOLIO */}
+                        <Link
+                            href="/portfolio"
+                            className="group flex items-center gap-4"
+                        >
+                            <div className="transition-transform duration-300 group-hover:scale-90">
+                                <svg
+                                    width="34"
+                                    height="34"
+                                    viewBox="0 0 34 34"
+                                    fill="none"
+                                >
+                                    <path
+                                        d="M17 0L34 8.5L17 17L0 8.5L17 0Z"
+                                        fill="#FD7624"
+                                    />
+                                    <path
+                                        d="M17 12L34 20.5L17 29L0 20.5L17 12Z"
+                                        fill="#FD7624"
+                                    />
+                                    <path
+                                        d="M17 24L34 32.5L17 41L0 32.5L17 24Z"
+                                        fill="#FD7624"
+                                    />
+                                </svg>
+                            </div>
 
-              {/* OVERLAY */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
+                            <span className="text-[22px] font-light text-[#111]">
+                                Portfolio
+                            </span>
+                        </Link>
 
-              {/* ARROW */}
-              <div className="absolute right-5 top-5">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm transition-all duration-300 group-hover:rotate-45">
-                  <ArrowUpRight className="h-5 w-5 text-white" />
+                        {/* CASE STUDIES */}
+                        <Link
+                            href="/case-studies"
+                            className="group flex items-center gap-4"
+                        >
+                            <div className="transition-transform duration-300 group-hover:scale-90">
+                                <svg
+                                    width="34"
+                                    height="34"
+                                    viewBox="0 0 34 34"
+                                    fill="none"
+                                >
+                                    <rect
+                                        width="14"
+                                        height="14"
+                                        fill="#0D54CA"
+                                    />
+                                    <rect
+                                        x="20"
+                                        width="14"
+                                        height="14"
+                                        fill="#0D54CA"
+                                    />
+                                    <rect
+                                        y="20"
+                                        width="14"
+                                        height="14"
+                                        fill="#0D54CA"
+                                    />
+                                    <rect
+                                        x="20"
+                                        y="20"
+                                        width="14"
+                                        height="14"
+                                        fill="#0D54CA"
+                                    />
+                                </svg>
+                            </div>
+
+                            <span className="text-[22px] font-light text-[#111]">
+                                Case Studies
+                            </span>
+                        </Link>
+                    </div>
+
+                    {/* RIGHT IMAGE */}
+                    <div className="relative h-[210px] overflow-hidden">
+                        <Image
+                            src="https://res.cloudinary.com/dku9in8sb/image/upload/v1776313260/Services_y83dyy.png"
+                            alt="Portfolio preview"
+                            fill
+                            className="object-cover transition-transform duration-700 hover:scale-105"
+                        />
+                    </div>
                 </div>
-              </div>
-
-              {/* TEXT */}
-              <div className="absolute bottom-5 left-5 max-w-[280px]">
-                <h3 className="text-[17px] font-light leading-[1.45] text-white">
-                  {featuredBlog.title}
-                </h3>
-              </div>
-            </Link>
-          )}
-        </div>
-      </div>
-    </header>
-  );
+            </div>
+        </header>
+    );
 }
 
 // UPDATE: Added href and onTitleClick props, and wrapped the header in a Link
 function MegaMenuColumn({
-  icon,
-  title,
-  href,
-  onTitleClick,
-  children,
+    icon,
+    title,
+    children,
 }: {
-  icon: React.ReactNode;
-  title: string;
-  href: string;
-  onTitleClick: () => void;
-  children: React.ReactNode;
+    icon: React.ReactNode;
+    title: string;
+    children: React.ReactNode;
 }) {
-  return (
-    <div>
-      <Link 
-        href={href} 
-        onClick={onTitleClick}
-        className="mb-5 flex items-center gap-3 text-[#01030B] transition-colors hover:text-[#0D54CA]"
-      >
-        {icon}
-        <h3 className="text-[16px] font-medium leading-none">{title}</h3>
-      </Link>
+    return (
+        <div>
+            <div className="mb-5 flex items-center gap-3 text-[#01030B]">
+                {icon}
 
-      <div className="mb-3 h-px w-full bg-[#dbe6f5]" />
+                <h3 className="text-[16px] font-medium leading-none">
+                    {title}
+                </h3>
+            </div>
 
-      <div className="space-y-2 text-[12px] font-light">{children}</div>
-    </div>
-  );
+            <div className="mb-3 h-px w-full bg-[#dbe6f5]" />
+
+            <div className="space-y-2 text-[14px] font-light">{children}</div>
+        </div>
+    );
 }

@@ -59,11 +59,10 @@ export default function ContactCard({ variant = "flat" }: Props) {
   return (
     <form
       onSubmit={handleSubmit}
-      className={`w-full flex flex-col gap-8 ${
-        variant === "card"
-          ? "max-w-[480px] bg-[#f7f7f7] px-12 pt-14 pb-[52px]"
-          : "max-w-lg"
-      }`}
+      className={`w-full flex flex-col gap-8 ${variant === "card"
+        ? "max-w-[480px] bg-[#f7f7f7] px-12 pt-14 pb-[52px] rounded-t-[6px]"
+        : "max-w-lg"
+        }`}
     >
       <input
         value={name}
@@ -83,7 +82,7 @@ export default function ContactCard({ variant = "flat" }: Props) {
       />
 
       <input
-      value={phone}
+        value={phone}
         onChange={(e) => setPhone(e.target.value)}
         placeholder="Phone Number"
         className="w-full border-b border-[#BFBFBF] pb-3 pt-2 text-black outline-none transition-colors placeholder:text-[#BFBFBF] focus:border-blue-600"
@@ -101,11 +100,10 @@ export default function ContactCard({ variant = "flat" }: Props) {
       {/* THE FIX: Sleek custom status message UI */}
       {status && (
         <div
-          className={`px-4 py-3 text-sm rounded-md transition-opacity duration-300 ${
-            status.type === "success"
-              ? "bg-green-50 text-green-700 border border-green-200"
-              : "bg-red-50 text-red-700 border border-red-200"
-          }`}
+          className={`px-4 py-3 text-sm rounded-md transition-opacity duration-300 ${status.type === "success"
+            ? "bg-green-50 text-green-700 border border-green-200"
+            : "bg-red-50 text-red-700 border border-red-200"
+            }`}
         >
           {status.text}
         </div>
@@ -114,19 +112,23 @@ export default function ContactCard({ variant = "flat" }: Props) {
       <button
         type="submit"
         disabled={loading}
-        className="group relative mt-2 h-[38px] w-[88px] cursor-pointer overflow-hidden bg-[#164b9f] text-white transition-colors hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-50"
+        className="group relative flex w-[150px] h-[60px] cursor-pointer items-center justify-center overflow-hidden rounded-md bg-animated-gradient px-2 text-white scale-[0.60] origin-left transition-colors duration-300 disabled:cursor-not-allowed disabled:opacity-50 mt-2"
       >
-        <span className="invisible px-2">
+        {/* Invisible placeholder */}
+        <span className="invisible body-medium !text-3xl font-medium">
           {loading ? "Sending..." : "Submit"}
         </span>
 
-        <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 ease-in-out group-hover:-translate-y-full">
-          {loading ? "Sending..." : "Submit"}
-        </span>
+        {/* Sliding column */}
+        <div className="absolute top-0 left-0 flex w-full flex-col transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-1/2">
+          <span className="flex h-[60px] w-full items-center justify-center body-large !text-3xl font-medium">
+            {loading ? "Sending..." : "Submit"}
+          </span>
 
-        <span className="absolute inset-0 flex items-center justify-center translate-y-full transition-transform duration-300 ease-in-out group-hover:translate-y-0">
-          {loading ? "Sending..." : "Submit"}
-        </span>
+          <span className="flex h-[60px] w-full items-center justify-center body-large !text-3xl font-medium">
+            {loading ? "Sending..." : "Submit"}
+          </span>
+        </div>
       </button>
     </form>
   );

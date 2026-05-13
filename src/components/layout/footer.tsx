@@ -1,7 +1,7 @@
 "use client";
 
 import RotatingDots from "../ui/rotating-dots";
-import { FaFacebookF, FaInstagram, FaLinkedinIn } from "react-icons/fa";
+import { FaFacebook, FaInstagram, FaLinkedin } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import ContactCard from "@/components/forms/contact-form";
 import SiteContainer from "./site-container";
@@ -30,16 +30,16 @@ export default function Footer() {
             </div>
 
             {/* BOTTOM */}
-            <div className="body-extra-small lg:mb-20">
+            <div className="body-small lg:pb-[52px]">
               {/* SOCIAL LINKS */}
               <div className="flex gap-6 mt-16">
-                <FaFacebookF className="hover:opacity-70 transition cursor-pointer" />
-                <FaInstagram className="hover:opacity-70 transition cursor-pointer" />
-                <FaXTwitter className="hover:opacity-70 transition cursor-pointer" />
-                <FaLinkedinIn className="hover:opacity-70 transition cursor-pointer" />
+                <FaFacebook className="hover:opacity-70 transition cursor-pointer" size={24} />
+                <FaInstagram className="hover:opacity-70 transition cursor-pointer" size={24} />
+                <FaXTwitter className="hover:opacity-70 transition cursor-pointer" size={24} />
+                <FaLinkedin className="hover:opacity-70 transition cursor-pointer" size={24} />
               </div>
 
-              <p className="mb-2 mt-3">
+              <p className="mb-5 mt-5">
                 Legal Policies / Terms of Services / Privacy Policies
               </p>
 
