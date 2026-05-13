@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { ArrowUpRight, Search } from "lucide-react";
 import SiteContainer from "@/components/layout/site-container";
 import RotatingDots from "@/components/ui/rotating-dots";
+import { motion, AnimatePresence } from "motion/react";
 import {
   blogCategories,
   blogPosts,
@@ -71,80 +72,89 @@ export default function BlogsContent({
 
           <div className="grid gap-6 md:grid-cols-3">
             {featuredBlogPosts.slice(0, 3).map((post, index) => (
-              <Link
+              <motion.div
                 key={post.slug}
-                href={`/blogs/${post.slug}`}
-                className="group relative aspect-[1.48/1] min-h-[214px] overflow-hidden rounded-[2px] bg-[#0A2F76] p-4 text-white transition-transform duration-300 hover:-translate-y-1"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: index * 0.15 }}
               >
-                <Image
-                  src={post.image}
-                  alt=""
-                  fill
-                  priority={index === 0}
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  sizes="(min-width: 1024px) 33vw, 100vw"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#06142E]/78 via-[#06142E]/18 to-transparent" />
+                <Link
+                  href={`/blogs/${post.slug}`}
+                  className="group relative block aspect-[1.48/1] min-h-[214px] overflow-hidden rounded-[2px] bg-[#0A2F76] p-4 text-white transition-transform duration-300 hover:-translate-y-1"
+                >
+                  <Image
+                    src={post.image}
+                    alt=""
+                    fill
+                    priority={index === 0}
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    sizes="(min-width: 1024px) 33vw, 100vw"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#06142E]/78 via-[#06142E]/18 to-transparent" />
 
-                <ArrowUpRight className="absolute right-4 top-4 z-10 h-6 w-6 text-white transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
+                  <ArrowUpRight className="absolute right-4 top-4 z-10 h-6 w-6 text-white transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
 
-                <div className="absolute inset-x-0 bottom-0 z-10 p-4">
-                  <h3 className="max-w-[92%] text-[17px] font-[400] leading-[1.18] text-white sm:text-[18px]">
-                    {post.title}
-                  </h3>
-                </div>
-              </Link>
+                  <div className="absolute inset-x-0 bottom-0 z-10 p-4">
+                    <h3 className="max-w-[92%] text-[19px] font-[400] leading-[1.18] text-white sm:text-[22px]">
+                      {post.title}
+                    </h3>
+                  </div>
+                </Link>
+              </motion.div>
             ))}
           </div>
         </section>
 
         <section className="mt-14 lg:mt-16" aria-labelledby="latest-title">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-              <h2 id="latest-title" className="sr-only">
-                Latest insights
-              </h2>
+          <div className="-mx-4 mb-8 border-b border-[#e1e3e6] px-4 py-4 lg:-mx-8 lg:px-8">
+            <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+              <div>
+                <h2 id="latest-title" className="sr-only">
+                  Latest insights
+                </h2>
 
-              <div
-                className="flex flex-wrap gap-3"
-                aria-label="Filter blog categories"
-              >
-                {categoryFilters.map((category) => {
-                  const isSelected = selectedCategory === category;
+                <div
+                  className="flex flex-wrap gap-3"
+                  aria-label="Filter blog categories"
+                >
+                  {categoryFilters.map((category) => {
+                    const isSelected = selectedCategory === category;
 
-                  return (
-                    <button
-                      key={category}
-                      type="button"
-                      onClick={() => setSelectedCategory(category)}
-                      className={[
-                        "h-8 border px-4 text-[12px] transition-colors",
-                        isSelected
-                          ? "border-[#155ACD] bg-[#155ACD] text-white"
-                          : "border-[#aeb4bd] bg-white text-[#7c828c] hover:border-[#155ACD] hover:text-[#155ACD]",
-                      ].join(" ")}
-                    >
-                      {category === "All" ? "All Topics" : category}
-                    </button>
-                  );
-                })}
+                    return (
+                      <button
+                        key={category}
+                        type="button"
+                        onClick={() => setSelectedCategory(category)}
+                        className={[
+                          "h-8 border px-4 text-[12px] transition-colors",
+                          isSelected
+                            ? "border-[#155ACD] bg-[#155ACD] text-white"
+                            : "border-[#aeb4bd] bg-white text-[#7c828c] hover:border-[#155ACD] hover:text-[#155ACD]",
+                        ].join(" ")}
+                      >
+                        {category === "All" ? "All Topics" : category}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
 
-            <label className="relative w-full max-w-[316px] lg:mb-0">
-              <span className="sr-only">Search by keywords</span>
-              <input
-                type="search"
-                value={searchQuery}
-                onChange={(event) => setSearchQuery(event.target.value)}
-                placeholder="Search By Keywords"
-                className="h-8 w-full border-0 border-b border-[#6c7078] bg-transparent pr-9 text-[12px] text-[#01030B] outline-none placeholder:text-[#858b94] focus:border-[#155ACD]"
-              />
-              <Search
-                className="pointer-events-none absolute right-0 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6c7078]"
-                strokeWidth={1.7}
-              />
-            </label>
+              <label className="relative w-full max-w-[316px] lg:mb-0">
+                <span className="sr-only">Search by keywords</span>
+                <input
+                  type="search"
+                  value={searchQuery}
+                  onChange={(event) => setSearchQuery(event.target.value)}
+                  placeholder="Search By Keywords"
+                  className="h-8 w-full border-0 border-b border-[#6c7078] bg-transparent pr-9 text-[12px] text-[#01030B] outline-none placeholder:text-[#858b94] focus:border-[#155ACD]"
+                />
+                <Search
+                  className="pointer-events-none absolute right-0 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6c7078]"
+                  strokeWidth={1.7}
+                />
+              </label>
+            </div>
           </div>
 
           {filteredPosts.length === 0 ? (
@@ -153,44 +163,56 @@ export default function BlogsContent({
             </div>
           ) : null}
 
-          <div className="mt-5 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-            {filteredPosts.map((post) => (
-              <article
-                key={post.slug}
-                className="group relative min-h-[334px] overflow-hidden bg-[#f3f3f4] p-7 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_24px_70px_rgba(38,102,210,0.12)]"
-              >
-                <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#f8fbff] via-[#edf5ff] to-[#e4efff]" />
-                </div>
-
-                <div className="relative z-10 flex h-full flex-col">
-                  <div className="mb-4">
-                    <span className="inline-flex bg-white px-3 py-2 text-[12px] font-[400] leading-none text-[#2666D2]">
-                      {post.category}
-                    </span>
+          <motion.div layout className="mt-5 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+            <AnimatePresence mode="popLayout">
+              {filteredPosts.map((post, index) => (
+                <motion.article
+                  layout
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-50px" }}
+                  transition={{ 
+                    duration: 0.6, 
+                    ease: [0.22, 1, 0.36, 1],
+                    delay: (index % 3) * 0.1 
+                  }}
+                  exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
+                  key={post.slug}
+                  className="group relative min-h-[334px] overflow-hidden bg-[#f3f3f4] p-7 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_24px_70px_rgba(38,102,210,0.12)]"
+                >
+                  <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#f8fbff] via-[#edf5ff] to-[#e4efff]" />
                   </div>
 
-                  <h3 className="max-w-[92%] text-[22px] font-[400] leading-[1.22] text-[#01030B]">
-                    {post.title}
-                  </h3>
+                  <div className="relative z-10 flex h-full flex-col">
+                    <div className="mb-4">
+                      <span className="inline-flex bg-white px-3 py-2 text-[12px] font-[400] leading-none text-[#2666D2]">
+                        {post.category}
+                      </span>
+                    </div>
 
-                  <p className="mt-auto max-w-[82%] pb-0 text-[14px] leading-[1.32] text-[#8b8f98]">
-                    {post.excerpt}
-                  </p>
+                    <h3 className="max-w-[92%] text-[24px] font-[400] leading-[1.22] text-[#01030B]">
+                      {post.title}
+                    </h3>
 
-                  <div className="absolute bottom-0 right-0">
+                    <p className="mt-auto max-w-[82%] pb-0 text-[18px] leading-[1.32] text-[#8b8f98]">
+                      {post.excerpt}
+                    </p>
+                  </div>
+
+                  <div className="absolute bottom-0 right-0 z-20">
                     <Link
                       href={`/blogs/${post.slug}`}
                       aria-label={`Read full story: ${post.title}`}
-                      className="grid h-12 w-12 place-items-center bg-[#155ACD] text-white opacity-0 transition-all duration-300 group-hover:opacity-100"
+                      className="grid h-14 w-14 place-items-center bg-animated-gradient text-white opacity-0 transition-all duration-300 group-hover:opacity-100"
                     >
-                      <ArrowUpRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                      <ArrowUpRight className="h-7 w-7 text-white stroke-[2.5] transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                     </Link>
                   </div>
-                </div>
-              </article>
-            ))}
-          </div>
+                </motion.article>
+              ))}
+            </AnimatePresence>
+          </motion.div>
         </section>
       </SiteContainer>
     </div>
