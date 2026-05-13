@@ -274,7 +274,6 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
               src="https://res.cloudinary.com/dku9in8sb/image/upload/v1778655466/navbar_services_ztrzax.png"
               alt="Spherehead digital services workshop"
               fill
-              sizes="280px"
               className="object-cover"
             />
           </div>
@@ -341,7 +340,6 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
               src="https://res.cloudinary.com/dku9in8sb/image/upload/v1778480700/Rectangle_34625273_tiviz0.webp"
               alt="Portfolio preview"
               fill
-              sizes="280px"
               className="object-cover transition-transform duration-700 hover:scale-105"
             />
           </div>
