@@ -9,6 +9,7 @@ import {
     AnimatePresence,
     useInView,
 } from "motion/react";
+import { useScrollContainerContext } from "@/context/ScrollContainerContext";
 
 import SiteContainer from "@/components/layout/site-container";
 import Footer from "@/components/layout/footer";
@@ -101,6 +102,14 @@ function AnimatedFooterOverlay({
 export default function HomePage() {
     const scrollContainerRef = useRef<HTMLElement | null>(null);
     const measureRef = useRef<HTMLDivElement | null>(null);
+    const { setScrollContainerRef } = useScrollContainerContext();
+
+    useEffect(() => {
+        setScrollContainerRef(scrollContainerRef);
+        return () => {
+            setScrollContainerRef(null);
+        };
+    }, [scrollContainerRef, setScrollContainerRef]);
 
     const { viewportWidth, viewportHeight, containerWidth } =
         useViewportSizes(measureRef);

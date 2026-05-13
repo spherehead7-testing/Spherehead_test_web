@@ -3,7 +3,6 @@
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/router";
 import {
   ArrowUpRight,
   Box,
@@ -11,6 +10,7 @@ import {
   Compass,
   Sparkles,
 } from "lucide-react";
+import { useScrollContainerContext } from "@/context/ScrollContainerContext";
 import { categoryData } from "@/data/service-categories";
 import { blogPosts } from "@/data/blog-posts";
 import SiteContainer from "./site-container";
@@ -30,7 +30,7 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
   const headerRef = useRef<HTMLElement>(null);
   const lastScrollY = useRef(0);
 
-  const router = useRouter();
+  const { scrollContainerRef: contextScrollContainerRef } = useScrollContainerContext();
 
   const featuredBlog = blogPosts.find((post) => post.featured);
 
@@ -43,7 +43,8 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
 
   // SCROLL DOWN TO HIDE, SCROLL UP TO SHOW
   useEffect(() => {
-    const target = scrollContainer?.current || window;
+    const target =
+      scrollContainer?.current || contextScrollContainerRef?.current || window;
 
     const handleScroll = () => {
       const currentScrollY =
@@ -65,7 +66,7 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
     return () => {
       target.removeEventListener("scroll", handleScroll);
     };
-  }, [scrollContainer]);
+  }, [scrollContainer, contextScrollContainerRef]);
 
   // CLOSE MENUS ON OUTSIDE CLICK OR ESCAPE KEY
   useEffect(() => {
@@ -277,7 +278,7 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
 
           <div className="relative min-h-[260px] overflow-hidden">
             <Image
-              src="https://res.cloudinary.com/dku9in8sb/image/upload/v1776313260/Services_y83dyy.png"
+              src="https://res.cloudinary.com/dku9in8sb/image/upload/v1778480245/Rectangle_34625272_raelut.webp"
               alt="Spherehead digital services workshop"
               fill
               sizes="280px"
@@ -342,7 +343,7 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
           {/* RIGHT IMAGE */}
           <div className="relative h-[210px] overflow-hidden">
             <Image
-              src="https://res.cloudinary.com/dku9in8sb/image/upload/v1776313260/Services_y83dyy.png"
+              src="https://res.cloudinary.com/dku9in8sb/image/upload/v1778480700/Rectangle_34625273_tiviz0.webp"
               alt="Portfolio preview"
               fill
               className="object-cover transition-transform duration-700 hover:scale-105"
