@@ -51,9 +51,11 @@ select {
   0% {
     background-position: 0% 50%;
   }
+
   50% {
     background-position: 100% 50%;
   }
+
   100% {
     background-position: 0% 50%;
   }
@@ -164,7 +166,8 @@ select {
   color: #ffffff;
   text-align: left;
   max-width: 980px;
-  font-size: 34px; /* mobile */
+  font-size: 34px;
+  /* mobile */
 }
 
 /* tablet */
@@ -213,7 +216,8 @@ select {
 
 .site-background-content {
   position: relative;
-  z-index: 10; /* stronger layer */
+  z-index: 10;
+  /* stronger layer */
   min-height: 100vh;
 }
 
@@ -264,24 +268,24 @@ select {
 
 /*landing - service white card content*/
 .service-whitecard-number {
-  margin: 0 0 34px 0;
+  margin: 0 0 58px 0;
   font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
   font-size: 44px;
   font-weight: 400;
   line-height: 1;
-    background: linear-gradient(100deg,
+  background: linear-gradient(100deg,
       #0a2f76 0%,
       #184aa3 10%,
       #2666d2 20%,
       #a6c4fa 30%);
-        -webkit-background-clip: text;
+  -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
 }
 
 .service-whitecard-hover-number {
-  margin: 0 0 34px 0;
+  margin: 0 0 58px 0;
   font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
   font-size: 30px;
   font-weight: 400;
@@ -294,6 +298,7 @@ select {
   0% {
     transform: translateY(0%);
   }
+
   100% {
     transform: translateY(-50%);
   }
@@ -308,6 +313,7 @@ select {
   0% {
     transform: translateY(-50%);
   }
+
   100% {
     transform: translateY(0%);
   }
@@ -320,8 +326,13 @@ select {
 /* src/styles/globals.css */
 
 @keyframes scrollMarquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
 .animate-marquee {

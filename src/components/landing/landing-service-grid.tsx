@@ -65,7 +65,7 @@ export default function LandingServiceGrid() {
                         key={service.number}
                         className="group relative border-l border-[#c9c9c9] pl-4 min-h-[160px]"
                     >
-                        <div className="transition-all duration-500 ease-out group-hover:translate-x-3 group-hover:opacity-0">
+                        <div className="transition-all duration-500 ease-out group-hover:-translate-x-1 group-hover:-translate-y-1 group-hover:opacity-0">
                             <p className="service-whitecard-number">
                                 {service.number}
                             </p>
@@ -85,7 +85,7 @@ export default function LandingServiceGrid() {
                                 className="object-cover"
                             />
                             <div className="absolute inset-0 bg-black/28" />
-                            <div className="absolute inset-0 pl-4 pt-0 transition-transform duration-500 ease-out group-hover:translate-x-3">
+                            <div className="absolute inset-0 pl-4 pt-0 transition-transform duration-500 ease-out group-hover:-translate-x-1 group-hover:-translate-y-1">
                                 <p className="service-whitecard-hover-number pt-2">
                                     {service.number}
                                 </p>
