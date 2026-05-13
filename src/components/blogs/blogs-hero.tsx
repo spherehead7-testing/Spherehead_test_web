@@ -5,7 +5,11 @@ import SiteContainer from "@/components/layout/site-container";
 import RotatingDots from "@/components/ui/rotating-dots";
 import { featuredBlogPosts } from "@/data/blog-posts";
 
-export default function BlogsHero() {
+type BlogsHeroProps = {
+  asideRef?: React.RefObject<HTMLElement | null>;
+};
+
+export default function BlogsHero({ asideRef }: BlogsHeroProps) {
   return (
     <section className="relative min-h-screen overflow-hidden bg-gradient-to-r from-[#06142E] via-[#0A2F76] to-[#2666D2] text-white">
       <SiteContainer className="relative z-10 grid min-h-screen max-w-none gap-10 pt-28 pr-0 pb-12 sm:pr-0 md:pr-0 lg:grid-cols-[minmax(0,1fr)_370px] lg:items-stretch lg:pt-24 lg:pr-0 lg:pb-0 xl:grid-cols-[minmax(0,1fr)_420px] xl:pr-0">
@@ -21,7 +25,7 @@ export default function BlogsHero() {
           </p>
         </div>
 
-        <aside className="flex bg-white px-5 py-7 text-[#01030B] lg:min-h-[calc(100vh-104px)] lg:self-end lg:px-6 lg:py-8">
+        <aside ref={asideRef} className="flex bg-white px-5 py-7 text-[#01030B] lg:min-h-[calc(100vh-104px)] lg:self-end lg:px-6 lg:py-8">
           <div className="flex w-full flex-col">
             <div className="mb-6 flex items-center gap-3">
               <RotatingDots />
