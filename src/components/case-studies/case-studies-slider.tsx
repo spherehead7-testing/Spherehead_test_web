@@ -33,7 +33,7 @@ const CASE_STUDIES = [
   },
 ];
 
-const DURATION = 1.5;
+const DURATION = 1.0;
 const EASE: [number, number, number, number] = [0.76, 0, 0.24, 1];
 
 export default function CaseStudiesSlider() {
@@ -116,7 +116,8 @@ export default function CaseStudiesSlider() {
                 <AnimatePresence custom={direction} initial={false}>
                   <motion.div
                     key={`main-slide-${page}`}
-                    layoutId={`shared-slide-${page}`}
+                    layout
+                    layoutId={`case-study-hero-${activeStudy.slug}`}
                     custom={direction}
                     variants={mainVariants}
                     initial="enter"

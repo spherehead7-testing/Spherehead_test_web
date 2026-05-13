@@ -1,4 +1,6 @@
+import { useRouter } from "next/router";
 import type { AppProps } from "next/app";
+import { AnimatePresence } from "framer-motion";
 import { Archivo, Inter_Tight } from "next/font/google";
 import "@/styles/globals.css";
 import Navbar from "@/components/layout/navbar";

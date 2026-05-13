@@ -6,8 +6,8 @@ import { FiArrowLeft } from "react-icons/fi";
 import Footer from "@/components/layout/footer";
 import RotatingDots from "@/components/ui/rotating-dots";
 import {
-  motion,
   AnimatePresence,
+  motion,
   useScroll,
   useTransform,
 } from "framer-motion";
@@ -152,7 +152,6 @@ export default function CaseStudyDetail() {
   const router = useRouter();
   const { slug } = router.query;
   const [activeSection, setActiveSection] = useState("overview");
-  const [isExiting, setIsExiting] = useState(false);
 
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollY } = useScroll();
@@ -187,14 +186,11 @@ export default function CaseStudyDetail() {
 
   const handleBackClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    setIsExiting(true);
-    setTimeout(() => {
-      if (window.history.length > 1) {
-        router.back();
-      } else {
-        router.push("/case-studies");
-      }
-    }, 400);
+    if (window.history.length > 1) {
+      router.back();
+    } else {
+      router.push("/case-studies");
+    }
   };
 
   if (!router.isReady) {
@@ -226,16 +222,14 @@ export default function CaseStudyDetail() {
         <title>{study.title} | Spherehead</title>
       </Head>
 
-      <main
-        className={`w-full bg-white font-sans ${isExiting ? "h-screen overflow-hidden" : "min-h-screen"}`}
-      >
-        <AnimatePresence>
-          {!isExiting && (
-            <motion.div
-              key="page-content"
-              exit={{ opacity: 1, transition: { duration: 0.4 } }}
-              className="w-full"
-            >
+      <main className="w-full bg-white font-sans min-h-screen">
+        <motion.div
+          key="page-content"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1, transition: { duration: 0.35, ease: EASE } }}
+          exit={{ opacity: 0, transition: { duration: 0.25, ease: EASE } }}
+          className="w-full"
+        >
               {/* ── 1. BLUE HERO SECTION ── now applies the style={{ y: blueBarY }} for parallax */}
               <motion.section
                 style={{ y: blueBarY }}
@@ -251,13 +245,17 @@ export default function CaseStudyDetail() {
                 className="w-full bg-[#0A2F76] pt-32 pb-48 lg:pb-64 px-6 lg:px-16 text-white relative z-0"
               >
                 <motion.div
-                  initial={{ opacity: 0, y: -50 }}
+                  initial={{ opacity: 0, y: -20 }}
                   animate={{
                     opacity: 1,
                     y: 0,
                     transition: { duration: 0.6, delay: 0.2, ease: "easeOut" },
                   }}
-                  exit={{ opacity: 0, transition: { duration: 0.1 } }}
+                  exit={{
+                    opacity: 0,
+                    y: -25,
+                    transition: { duration: 0.45, ease: "easeInOut" },
+                  }}
                   className="max-w-[1400px] mx-auto"
                 >
                   <button
@@ -276,17 +274,12 @@ export default function CaseStudyDetail() {
               <div className="relative z-10 pointer-events-none -mt-32 lg:-mt-48">
                 <section className="max-w-[1400px] mx-auto px-6 lg:px-16">
                   <motion.div
-                    initial={{ opacity: 1, scale: 0.66 }}
-                    animate={{
-                      opacity: 1,
-                      scale: 1,
-                      transition: { duration: 0.8, ease: EASE },
-                    }}
-                    exit={{
-                      opacity: 1,
-                      scale: 0.66,
-                      transition: { duration: 0.4, ease: EASE },
-                    }}
+                    layout
+                    layoutId={`case-study-hero-${study.slug}`}
+                    initial={false}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 1 }}
+                    transition={{ duration: 1.00, ease: EASE, layout: { duration: 1.00, ease: EASE } }}
                     style={{ transformOrigin: "left top" }}
                     className="w-full relative pointer-events-auto"
                   >
@@ -482,8 +475,6 @@ export default function CaseStudyDetail() {
                 </div>
               </motion.section>
             </motion.div>
-          )}
-        </AnimatePresence>
       </main>
       <Footer />
     </>
