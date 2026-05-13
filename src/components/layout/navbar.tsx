@@ -10,28 +10,10 @@ import {
   Compass,
   Sparkles,
 } from "lucide-react";
-import { servicesData } from "@/data/services-list-data";
+import { useScrollContainerContext } from "@/context/ScrollContainerContext";
+import { categoryData } from "@/data/service-categories";
 import { blogPosts } from "@/data/blog-posts";
-
-const digitalSolutions = [
-  "Enterprise Resource Planning (ERP)",
-  "Smart CRM & POS Solutions",
-  "Digital Commerce Solutions",
-  "Business Process Outsourcing (BPO) Services",
-  "Augmented Reality (AR) Solutions",
-  "eLearning Solutions",
-  "SEO Optimization",
-  "Virtual Reality (VR) Solutions",
-];
-
-const designServices = [
-  "Free Design Thinking Workshops",
-  "UI UX Services",
-  "Graphic Design Services",
-  "3D Rendering & Post Production",
-  "3D Modeling & Texturing",
-  "Storyboarding & Concept Development",
-];
+import SiteContainer from "./site-container";
 
 type NavbarProps = {
   scrollContainer?: React.RefObject<HTMLElement | null>;
@@ -48,21 +30,26 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
   const headerRef = useRef<HTMLElement>(null);
   const lastScrollY = useRef(0);
 
-  // Get featured blog
+  const { scrollContainerRef: contextScrollContainerRef } = useScrollContainerContext();
+
   const featuredBlog = blogPosts.find((post) => post.featured);
 
-  // SCROLL DETECTION
+  const closeAllMenus = () => {
+    setServicesOpen(false);
+    setWorkOpen(false);
+    setNewsOpen(false);
+  };
+
   useEffect(() => {
-    const target = scrollContainer?.current || window;
+    const target =
+      scrollContainer?.current || contextScrollContainerRef?.current || window;
 
     const handleScroll = () => {
       const currentScrollY =
-        scrollContainer?.current?.scrollTop || window.scrollY;
+        (target as HTMLElement).scrollTop ?? window.scrollY;
 
-      // NAVBAR BACKGROUND
       setScrolled(currentScrollY > 20);
 
-      // HIDE / SHOW NAVBAR
       if (currentScrollY > lastScrollY.current && currentScrollY > 50) {
         setIsVisible(false);
       } else {
@@ -72,30 +59,23 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
       lastScrollY.current = currentScrollY;
     };
 
-    target.addEventListener("scroll", handleScroll, {
-      passive: true,
-    });
+    target.addEventListener("scroll", handleScroll, { passive: true });
 
     return () => {
       target.removeEventListener("scroll", handleScroll);
     };
-  }, [scrollContainer]);
+  }, [scrollContainer, contextScrollContainerRef]);
 
-  // OUTSIDE CLICK + ESC
   useEffect(() => {
     const handleDocumentClick = (event: MouseEvent) => {
       if (!headerRef.current?.contains(event.target as Node)) {
-        setServicesOpen(false);
-        setWorkOpen(false);
-        setNewsOpen(false);
+        closeAllMenus();
       }
     };
 
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        setServicesOpen(false);
-        setWorkOpen(false);
-        setNewsOpen(false);
+        closeAllMenus();
       }
     };
 
@@ -111,11 +91,7 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
   return (
     <header
       ref={headerRef}
-      onMouseLeave={() => {
-        setServicesOpen(false);
-        setWorkOpen(false);
-        setNewsOpen(false);
-      }}
+      onMouseLeave={closeAllMenus}
       className={`fixed top-0 left-0 w-full z-[9999] will-change-transform transition-all duration-300 ease-in-out ${
         isVisible ? "translate-y-0" : "-translate-y-full"
       } ${
@@ -124,25 +100,27 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
           : "bg-transparent"
       }`}
     >
-      {/* NAVBAR */}
-      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <SiteContainer
+        className={`transition-all duration-300 flex items-center justify-between ${
+          scrolled ? "py-4" : "py-8"
+        }`}
+      >
         {/* LOGO */}
         <Link href="/" className="flex items-center">
           <Image
             src="https://res.cloudinary.com/dku9in8sb/image/upload/v1778040542/Layer_1_lp72bj.png"
             alt="Spherehead Logo"
-            width={140}
-            height={40}
+            width={180}
+            height={50}
             priority
             className="h-auto"
           />
         </Link>
 
         {/* MENU */}
-        <nav className="body-extra-small hidden md:flex items-center gap-8 text-white">
-          <Link href="/">Home</Link>
-
-          <Link href="/about-us">About Us</Link>
+        <nav className="body-extra-small hidden md:flex items-center gap-10 text-white">
+          <Link href="/" onMouseEnter={closeAllMenus}>Home</Link>
+          <Link href="/about-us" onMouseEnter={closeAllMenus}>About Us</Link>
 
           {/* SERVICES */}
           <div
@@ -160,7 +138,7 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
             >
               Services
               <ChevronDown
-                className={`h-3.5 w-3.5 transition-transform duration-200 ${
+                className={`h-4 w-4 transition-transform duration-200 ${
                   servicesOpen ? "rotate-180" : ""
                 }`}
                 strokeWidth={2}
@@ -184,7 +162,7 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
             >
               Our Work
               <ChevronDown
-                className={`h-3.5 w-3.5 transition-transform duration-200 ${
+                className={`h-4 w-4 transition-transform duration-200 ${
                   workOpen ? "rotate-180" : ""
                 }`}
                 strokeWidth={2}
@@ -192,9 +170,8 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
             </button>
           </div>
 
-          <Link href="/pricing">Pricing</Link>
-
-          <Link href="/industries">Industries</Link>
+          <Link href="/pricing" onMouseEnter={closeAllMenus}>Pricing</Link>
+          <Link href="/industries" onMouseEnter={closeAllMenus}>Industries</Link>
 
           {/* NEWS & INSIGHTS */}
           <div
@@ -212,7 +189,7 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
             >
               News & Insights
               <ChevronDown
-                className={`h-3.5 w-3.5 transition-transform duration-200 ${
+                className={`h-4 w-4 transition-transform duration-200 ${
                   newsOpen ? "rotate-180" : ""
                 }`}
                 strokeWidth={2}
@@ -220,116 +197,108 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
             </button>
           </div>
 
-          <Link href="/careers">Careers</Link>
-
-          <Link href="/contact-us">Contact Us</Link>
+          <Link href="/careers" onMouseEnter={closeAllMenus}>Careers</Link>
+          <Link href="/contact-us" onMouseEnter={closeAllMenus}>Contact Us</Link>
         </nav>
-      </div>
+      </SiteContainer>
 
-      {/* SERVICES MENU */}
+      {/* SERVICES MEGA MENU */}
       <div
         id="services-mega-menu"
-        className={`absolute left-1/2 top-full hidden w-[min(1110px,calc(100vw-3rem))] -translate-x-1/2 transition-all duration-200 md:block ${
+        className={`absolute left-1/2 top-[calc(100%-1.25rem)] hidden w-[min(1110px,calc(100vw-3rem))] -translate-x-1/2 transition-all duration-200 md:block ${
           servicesOpen
             ? "pointer-events-auto translate-y-0 opacity-100"
             : "pointer-events-none -translate-y-2 opacity-0"
         }`}
-        onMouseEnter={() => {
-          setServicesOpen(true);
-          setWorkOpen(false);
-          setNewsOpen(false);
-        }}
+        onMouseEnter={() => setServicesOpen(true)}
       >
-        <div className="grid min-h-[320px] grid-cols-[1fr_1.05fr_1.25fr_280px] overflow-hidden rounded-sm bg-white text-[#777b84] shadow-[0_24px_70px_rgba(1,3,11,0.16)]">
-          {/* LEFT CONTENT AREA */}
-          <div className="col-span-3 grid grid-cols-[1fr_1.05fr_1.25fr] gap-12 px-12 py-12">
-            {/* COLUMN 1 */}
-            <MegaMenuColumn
-              icon={<Box className="h-8 w-8 text-[#FD7624]" strokeWidth={3} />}
-              title="Digital Services"
-            >
-              {servicesData.map((service) => (
-                <Link
-                  key={service.slug}
-                  href={`/services#service-${service.slug}`}
-                  className="block leading-5 transition-colors hover:text-[#0D54CA]"
-                  onClick={() => setServicesOpen(false)}
-                >
-                  {service.title}
-                </Link>
-              ))}
-            </MegaMenuColumn>
+        {/* FIX: Removed min-height, added pl-12 pb-12 to the grid */}
+        <div className="grid grid-cols-[1fr_1.05fr_1.25fr_300px] gap-8 rounded-b-sm bg-white pl-12 pb-12 text-[#8A8B8F] shadow-[0_24px_70px_rgba(1,3,11,0.16)]">
+          <MegaMenuColumn
+            icon={<Box className="h-8 w-8 text-[#FD7624]" strokeWidth={3} />}
+            title="Digital Services"
+            href="/services/digital-services"
+            onTitleClick={closeAllMenus}
+          >
+            {categoryData["digital-services"].items.map((item) => (
+              <Link
+                key={item.slug}
+                href={`/services/digital-services#service-${item.slug}`}
+                className="block transition-colors hover:text-[#0D54CA]"
+                onClick={closeAllMenus}
+              >
+                {item.title}
+              </Link>
+            ))}
+          </MegaMenuColumn>
 
-            {/* COLUMN 2 */}
-            <MegaMenuColumn
-              icon={
-                <Compass className="h-8 w-8 text-[#0D54CA]" strokeWidth={3} />
-              }
-              title="Digital Solutions"
-            >
-              {digitalSolutions.map((item) => (
-                <Link
-                  key={item}
-                  href="/services"
-                  className="block leading-5 transition-colors hover:text-[#0D54CA]"
-                  onClick={() => setServicesOpen(false)}
-                >
-                  {item}
-                </Link>
-              ))}
-            </MegaMenuColumn>
+          <MegaMenuColumn
+            icon={<Compass className="h-8 w-8 text-[#0D54CA]" strokeWidth={3} />}
+            title="Digital Solutions"
+            href="/services/digital-solutions"
+            onTitleClick={closeAllMenus}
+          >
+            {categoryData["digital-solutions"].items.map((item) => (
+              <Link
+                key={item.slug}
+                href={`/services/digital-solutions#service-${item.slug}`}
+                className="block leading-relaxed py-0.5 transition-colors hover:text-[#0D54CA]"
+                onClick={closeAllMenus}
+              >
+                {item.title}
+              </Link>
+            ))}
+          </MegaMenuColumn>
 
-            {/* COLUMN 3 */}
-            <MegaMenuColumn
-              icon={
-                <Sparkles className="h-8 w-8 text-[#92D9FF]" strokeWidth={3} />
-              }
-              title="Design & 3D Services"
-            >
-              {designServices.map((item) => (
-                <Link
-                  key={item}
-                  href="/services"
-                  className="block leading-5 transition-colors hover:text-[#0D54CA]"
-                  onClick={() => setServicesOpen(false)}
-                >
-                  {item}
-                </Link>
-              ))}
-            </MegaMenuColumn>
-          </div>
+          <MegaMenuColumn
+            icon={<Sparkles className="h-8 w-8 text-[#92D9FF]" strokeWidth={3} />}
+            title="Design & 3D Services"
+            href="/services/design-and-3d-services"
+            onTitleClick={closeAllMenus}
+          >
+            {categoryData["design-and-3d-services"].items.map((item) => (
+              <Link
+                key={item.slug}
+                href={`/services/design-and-3d-services#service-${item.slug}`}
+                className="block leading-relaxed py-0.5 transition-colors hover:text-[#0D54CA]"
+                onClick={closeAllMenus}
+              >
+                {item.title}
+              </Link>
+            ))}
+          </MegaMenuColumn>
 
-          {/* RIGHT IMAGE */}
-          <div className="relative h-full min-h-[320px] overflow-hidden">
+          {/* FIX: h-full w-full ensures it stretches perfectly to the edges without weird margins */}
+          <div className="relative h-full w-full overflow-hidden rounded-bl-sm">
             <Image
-              src="https://res.cloudinary.com/dku9in8sb/image/upload/v1778480245/Rectangle_34625272_raelut.webp"
+              src="https://res.cloudinary.com/dku9in8sb/image/upload/v1778655466/navbar_services_ztrzax.png"
               alt="Spherehead digital services workshop"
               fill
-              sizes="280px"
-              className="object-cover lg:pb-12"
+              className="object-cover"
             />
           </div>
         </div>
       </div>
 
-      {/* OUR WORK MENU */}
+      {/* OUR WORK MEGA MENU */}
       <div
-        className={`absolute left-1/2 top-full hidden w-[min(900px,calc(100vw-3rem))] -translate-x-1/2 transition-all duration-300 md:block ${
+        className={`absolute left-1/2 top-[calc(100%-1.25rem)] hidden w-[min(900px,calc(100vw-3rem))] -translate-x-1/2 transition-all duration-300 md:block ${
           workOpen
             ? "pointer-events-auto translate-y-0 opacity-100"
             : "pointer-events-none -translate-y-4 opacity-0"
         }`}
-        onMouseEnter={() => {
-          setWorkOpen(true);
-          setServicesOpen(false);
-          setNewsOpen(false);
-        }}
+        onMouseEnter={() => setWorkOpen(true)}
       >
-        <div className="grid grid-cols-[1fr_290px] overflow-hidden rounded-sm bg-[#f5f5f5] shadow-[0_24px_70px_rgba(1,3,11,0.18)]">
+        {/* CHANGED: Removed min-h-[320px] so the card can be naturally shorter! */}
+        <div className="grid grid-cols-[1fr_290px] overflow-hidden rounded-sm bg-[#f5f5f5] pl-12 pb-12 shadow-[0_24px_70px_rgba(1,3,11,0.18)]">
           {/* LEFT */}
-          <div className="flex items-center gap-16 px-12">
+          <div className="flex items-center gap-16 pr-12 pt-12">
             {/* PORTFOLIO */}
-            <Link href="/portfolio" className="group flex items-center gap-4">
+            <Link
+              href="/portfolio"
+              className="group flex items-center gap-4"
+              onClick={closeAllMenus}
+            >
               <div className="transition-transform duration-300 group-hover:scale-90">
                 <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
                   <path d="M17 0L34 8.5L17 17L0 8.5L17 0Z" fill="#FD7624" />
@@ -338,13 +307,16 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
                 </svg>
               </div>
 
-              <span className="body-small text-black">Portfolio</span>
+              <span className="body-extra-small font-semibold text-[#111]">
+                Portfolio
+              </span>
             </Link>
 
             {/* CASE STUDIES */}
             <Link
               href="/case-studies"
               className="group flex items-center gap-4"
+              onClick={closeAllMenus}
             >
               <div className="transition-transform duration-300 group-hover:scale-90">
                 <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
@@ -355,62 +327,57 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
                 </svg>
               </div>
 
-              <span className="body-small text-black">Case Studies</span>
+              <span className="body-extra-small font-semibold text-[#111]">
+                Case Studies
+              </span>
             </Link>
           </div>
 
           {/* RIGHT IMAGE */}
-          <div className="relative h-[210px] overflow-hidden ">
+          {/* CHANGED: Replaced h-full with h-[260px] to give it a controlled, shorter height! */}
+          <div className="relative -mt-12 h-[260px] w-full overflow-hidden rounded-bl-sm">
             <Image
               src="https://res.cloudinary.com/dku9in8sb/image/upload/v1778480700/Rectangle_34625273_tiviz0.webp"
               alt="Portfolio preview"
               fill
-              className="lg:pb-8"
+              className="object-cover transition-transform duration-700 hover:scale-105"
             />
           </div>
         </div>
       </div>
-      {/* NEWS & INSIGHTS MENU */}
+
+      {/* NEWS & INSIGHTS MEGA MENU */}
       <div
-        className={`absolute left-1/2 top-full hidden w-[min(1020px,calc(100vw-3rem))] -translate-x-1/2 transition-all duration-300 md:block ${
+        className={`absolute left-1/2 top-[calc(100%-1.25rem)] hidden w-[min(1020px,calc(100vw-3rem))] -translate-x-1/2 transition-all duration-300 md:block ${
           newsOpen
             ? "pointer-events-auto translate-y-0 opacity-100"
             : "pointer-events-none -translate-y-2 opacity-0"
         }`}
-        onMouseEnter={() => {
-          setNewsOpen(true);
-          setServicesOpen(false);
-          setWorkOpen(false);
-        }}
+        onMouseEnter={() => setNewsOpen(true)}
       >
-        <div className="grid grid-cols-[1fr_340px] overflow-hidden rounded-sm bg-[#f3f3f3] shadow-[0_24px_70px_rgba(1,3,11,0.18)]">
+        {/* FIX: Removed hardcoded min-height. pl-12 pb-12 applied directly to the grid. */}
+        <div className="grid grid-cols-[1fr_340px] overflow-hidden rounded-sm bg-[#f3f3f3] pl-12 pb-12 shadow-[0_24px_70px_rgba(1,3,11,0.18)]">
           {/* LEFT SIDE */}
-          <div className="flex items-start gap-8 px-12 pt-20">
+          {/* FIX: items-center perfectly centers the content vertically relative to the image! */}
+          <div className="flex items-center gap-12 pr-12 pt-12">
             {/* NEWS */}
             <div>
-              <Link href="/news" className="group block">
-                {/* TOP */}
+              <Link href="/news" className="group block" onClick={closeAllMenus}>
                 <div className="mb-5 flex items-center gap-4">
-                  {/* ICON */}
                   <div className="relative h-[26px] w-[26px]">
                     <div className="absolute bottom-0 left-0 h-[18px] w-[18px] border-b-[4px] border-l-[4px] border-[#0D54CA]" />
-
                     <div className="absolute left-[14px] top-0 h-[18px] w-[2px] bg-[#0D54CA]" />
                   </div>
-
-                  <h3 className="text-[16px] font-medium text-[#111]">News</h3>
+                  <h3 className="body-extra-small font-semibold text-[#111]">News</h3>
                 </div>
 
-                {/* LINE */}
                 <div className="h-px w-[130px] bg-[#dbe3ee]" />
 
-                {/* LINKS */}
                 <div className="mt-5 space-y-2">
-                  <p className="text-[13px] text-[#8d8d8d] transition-colors duration-300 group-hover:text-[#0D54CA]">
+                  <p className="body-extra-small text-[#8d8d8d] transition-colors duration-300 group-hover:text-[#0D54CA]">
                     Latest & Trending News
                   </p>
-
-                  <p className="text-[13px] text-[#8d8d8d] transition-colors duration-300 group-hover:text-[#0D54CA]">
+                  <p className="body-extra-small text-[#8d8d8d] transition-colors duration-300 group-hover:text-[#0D54CA]">
                     All News
                   </p>
                 </div>
@@ -419,37 +386,29 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
 
             {/* BLOGS */}
             <div>
-              <Link href="/blogs" className="group block">
-                {/* TOP */}
+              <Link href="/blogs" className="group block" onClick={closeAllMenus}>
                 <div className="mb-5 flex items-center gap-4">
-                  {/* ICON */}
                   <div className="grid grid-cols-3 gap-[2px]">
                     <div className="h-[4px] w-[4px] bg-[#92D9FF]" />
                     <div className="h-[4px] w-[4px] bg-[#92D9FF]" />
                     <div className="h-[4px] w-[4px] bg-[#92D9FF]" />
-
                     <div className="h-[4px] w-[4px] bg-[#92D9FF]" />
                     <div className="h-[4px] w-[4px] bg-[#92D9FF]" />
                     <div className="h-[4px] w-[4px] bg-transparent" />
-
                     <div className="h-[4px] w-[4px] bg-[#92D9FF]" />
                     <div className="h-[4px] w-[4px] bg-transparent" />
                     <div className="h-[4px] w-[4px] bg-transparent" />
                   </div>
-
-                  <h3 className="text-[16px] font-medium text-[#111]">Blogs</h3>
+                  <h3 className="body-extra-small font-semibold text-[#111]">Blogs</h3>
                 </div>
 
-                {/* LINE */}
                 <div className="h-px w-[130px] bg-[#dbe3ee]" />
 
-                {/* LINKS */}
                 <div className="mt-5 space-y-2">
-                  <p className="text-[13px] text-[#8d8d8d] transition-colors duration-300 group-hover:text-[#0D54CA]">
+                  <p className="body-extra-small text-[#8d8d8d] transition-colors duration-300 group-hover:text-[#0D54CA]">
                     Featured Blogs
                   </p>
-
-                  <p className="text-[13px] text-[#8d8d8d] transition-colors duration-300 group-hover:text-[#0D54CA]">
+                  <p className="body-extra-small text-[#8d8d8d] transition-colors duration-300 group-hover:text-[#0D54CA]">
                     All Blogs
                   </p>
                 </div>
@@ -461,7 +420,8 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
           {featuredBlog && (
             <Link
               href={`/blogs/${featuredBlog.slug}`}
-              className="group relative block h-[240px] overflow-hidden"
+              onClick={closeAllMenus}
+              className="group relative block h-full w-full overflow-hidden rounded-bl-sm"
             >
               <Image
                 src={featuredBlog.image}
@@ -469,20 +429,14 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
                 fill
                 className="object-cover transition-transform duration-700 group-hover:scale-105"
               />
-
-              {/* OVERLAY */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
-
-              {/* ARROW */}
               <div className="absolute right-5 top-5">
                 <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm transition-all duration-300 group-hover:rotate-45">
                   <ArrowUpRight className="h-5 w-5 text-white" />
                 </div>
               </div>
-
-              {/* TEXT */}
               <div className="absolute bottom-5 left-5 max-w-[280px]">
-                <h3 className="text-[17px] font-light leading-[1.45] text-white">
+                <h3 className="body-small font-light leading-[1.45] text-white">
                   {featuredBlog.title}
                 </h3>
               </div>
@@ -497,23 +451,35 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
 function MegaMenuColumn({
   icon,
   title,
+  href,
+  onTitleClick,
   children,
 }: {
   icon: React.ReactNode;
   title: string;
+  href: string;
+  onTitleClick: () => void;
   children: React.ReactNode;
 }) {
   return (
-    <div>
-      <div className="mb-5 flex items-center gap-3 text-[#01030B]">
+    // FIX: Replaced margin-hacks with pt-12 so the columns push down naturally.
+    <div className="group flex flex-col pt-12">
+      <Link
+        href={href}
+        onClick={onTitleClick}
+        className="mb-5 flex items-center gap-3 transition-colors hover:text-[#0D54CA]"
+      >
         {icon}
+        <h3 className="body-small font-semibold text-[#01030B] leading-none">
+          {title}
+        </h3>
+      </Link>
 
-        <h3 className="text-[16px] font-medium leading-none">{title}</h3>
+      <div className="mb-3 h-px w-full bg-[#dbe6f5] transition-colors duration-300 group-hover:bg-[#01030B]/20" />
+
+      <div className="flex flex-col gap-2 body-extra-small font-light text-[#8A8B8F] transition-colors duration-300 group-hover:text-[#01030B]">
+        {children}
       </div>
-
-      <div className="mb-3 h-px w-full bg-[#dbe6f5]" />
-
-      <div className="space-y-2 text-[12px] font-light">{children}</div>
     </div>
   );
 }

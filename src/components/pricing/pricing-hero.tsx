@@ -25,7 +25,7 @@ export default function PricingHero() {
               Every Digital Solution
             </h1>
 
-            <p className="heading-4">
+            <p className="heading-4 mt-6">
               Our transparent pricing and tailored service plans ensure
               businesses get maximum value, combining quality, innovation, and
               measurable results.

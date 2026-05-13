@@ -1,15 +1,15 @@
 import React from "react";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import SiteContainer from "@/components/layout/site-container";
 import CyclicButton from "@/components/ui/cyclic-button";
+import { ServiceCategoryData } from "@/data/service-categories";
 
-export default function ServicesHeroSection() {
+export default function ServicesHeroSection({ data }: { data: ServiceCategoryData["hero"] }) {
   return (
-    <section className="relative w-full h-[100svh] flex flex-col overflow-hidden snap-start">
+    <section className="sticky top-0 z-0 w-full h-[100svh] flex flex-col overflow-hidden snap-start">
       <SiteContainer className="relative z-10 flex flex-col h-full flex-grow justify-end pb-12 pt-32 lg:pb-20">
         <div className="w-full flex flex-col mt-auto">
           
-          {/* Animated Horizontal Line */}
           <motion.div 
             initial={{ opacity: 0, scaleX: 0 }}
             animate={{ opacity: 1, scaleX: 1 }}
@@ -24,13 +24,11 @@ export default function ServicesHeroSection() {
               transition={{ duration: 0.8, ease: "easeOut" }}
               className="flex flex-col gap-4 lg:gap-6"
             >
-              <h1 className="heading-1 !text-5xl lg:!text-[72px] lg:leading-[90px] text-white">
-                Digital Services
+              <h1 className="inner-hero text-white">
+                {data.title}
               </h1>
               <p className="heading-4 text-white/90 max-w-xl font-light leading-relaxed">
-                Transforming complex challenges into scalable digital realities. 
-                From custom software and IoT to advanced robotics, we build the 
-                technical foundations your business needs to lead the market.
+                {data.description}
               </p>
             </motion.div>
 

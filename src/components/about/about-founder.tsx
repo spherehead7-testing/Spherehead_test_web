@@ -48,7 +48,7 @@ export default function FounderMessage() {
             <h3 className="body-small">Artemii Garibov</h3>
             <p className="body-small mb-4">Co-Founder & CEO</p>
 
-            <p className="body-small mb-3">
+            <p className="body-small mb-3 !text-[16px] !leading-[1.4]">
               At Spherehead Technologies, our vision has always been to create
               more than just software, we craft solutions that solve real
               challenges and drive meaningful change. By blending advanced
@@ -56,7 +56,7 @@ export default function FounderMessage() {
               digitally, and deliver exceptional experiences.
             </p>
 
-            <p className="body-small">
+            <p className="body-small !text-[16px] !leading-[1.4]">
               Our foundation is built on trust, innovation, and collaboration.
               Every solution we deliver reflects our commitment to quality and
               our mission to empower clients with secure, scalable, and
