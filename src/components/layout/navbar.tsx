@@ -34,14 +34,12 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
 
   const featuredBlog = blogPosts.find((post) => post.featured);
 
-  // HELPER: Closes all open mega menus
   const closeAllMenus = () => {
     setServicesOpen(false);
     setWorkOpen(false);
     setNewsOpen(false);
   };
 
-  // SCROLL DOWN TO HIDE, SCROLL UP TO SHOW
   useEffect(() => {
     const target =
       scrollContainer?.current || contextScrollContainerRef?.current || window;
@@ -68,7 +66,6 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
     };
   }, [scrollContainer, contextScrollContainerRef]);
 
-  // CLOSE MENUS ON OUTSIDE CLICK OR ESCAPE KEY
   useEffect(() => {
     const handleDocumentClick = (event: MouseEvent) => {
       if (!headerRef.current?.contains(event.target as Node)) {
@@ -122,8 +119,6 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
 
         {/* MENU */}
         <nav className="body-extra-small hidden md:flex items-center gap-10 text-white">
-          
-          {/* FIX: Hovering simple links now explicitly closes the open dropdowns! */}
           <Link href="/" onMouseEnter={closeAllMenus}>Home</Link>
           <Link href="/about-us" onMouseEnter={closeAllMenus}>About Us</Link>
 
@@ -175,7 +170,6 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
             </button>
           </div>
 
-          {/* FIX: Closing dropdowns when hovering these static links */}
           <Link href="/pricing" onMouseEnter={closeAllMenus}>Pricing</Link>
           <Link href="/industries" onMouseEnter={closeAllMenus}>Industries</Link>
 
@@ -211,14 +205,15 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
       {/* SERVICES MEGA MENU */}
       <div
         id="services-mega-menu"
-        className={`absolute left-1/2 top-[calc(100%-1.50rem)] hidden w-[min(1110px,calc(100vw-3rem))] -translate-x-1/2 transition-all duration-200 md:block ${
+        className={`absolute left-1/2 top-[calc(100%-1.25rem)] hidden w-[min(1110px,calc(100vw-3rem))] -translate-x-1/2 transition-all duration-200 md:block ${
           servicesOpen
             ? "pointer-events-auto translate-y-0 opacity-100"
             : "pointer-events-none -translate-y-2 opacity-0"
         }`}
         onMouseEnter={() => setServicesOpen(true)}
       >
-        <div className="grid min-h-[320px] grid-cols-[1fr_1.05fr_1.25fr_280px] gap-12 bg-white px-12 py-12 text-[#8A8B8F] shadow-[0_24px_70px_rgba(1,3,11,0.16)]">
+        {/* FIX: Removed min-height, added pl-12 pb-12 to the grid */}
+        <div className="grid grid-cols-[1fr_1.05fr_1.25fr_300px] gap-8 rounded-b-sm bg-white pl-12 pb-12 text-[#8A8B8F] shadow-[0_24px_70px_rgba(1,3,11,0.16)]">
           <MegaMenuColumn
             icon={<Box className="h-8 w-8 text-[#FD7624]" strokeWidth={3} />}
             title="Digital Services"
@@ -229,7 +224,6 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
               <Link
                 key={item.slug}
                 href={`/services/digital-services#service-${item.slug}`}
-                // FIX: Increased line-height and padding for better spacing
                 className="block transition-colors hover:text-[#0D54CA]"
                 onClick={closeAllMenus}
               >
@@ -248,7 +242,6 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
               <Link
                 key={item.slug}
                 href={`/services/digital-solutions#service-${item.slug}`}
-                // FIX: Increased line-height and padding
                 className="block leading-relaxed py-0.5 transition-colors hover:text-[#0D54CA]"
                 onClick={closeAllMenus}
               >
@@ -267,7 +260,6 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
               <Link
                 key={item.slug}
                 href={`/services/design-and-3d-services#service-${item.slug}`}
-                // FIX: Increased line-height and padding
                 className="block leading-relaxed py-0.5 transition-colors hover:text-[#0D54CA]"
                 onClick={closeAllMenus}
               >
@@ -276,9 +268,10 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
             ))}
           </MegaMenuColumn>
 
-          <div className="relative min-h-[260px] overflow-hidden">
+          {/* FIX: h-full w-full ensures it stretches perfectly to the edges without weird margins */}
+          <div className="relative h-full w-full overflow-hidden rounded-bl-sm">
             <Image
-              src="https://res.cloudinary.com/dku9in8sb/image/upload/v1778480245/Rectangle_34625272_raelut.webp"
+              src="https://res.cloudinary.com/dku9in8sb/image/upload/v1778655466/navbar_services_ztrzax.png"
               alt="Spherehead digital services workshop"
               fill
               sizes="280px"
@@ -290,16 +283,17 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
 
       {/* OUR WORK MEGA MENU */}
       <div
-        className={`absolute left-1/2 top-[calc(100%-1.50rem)] hidden w-[min(900px,calc(100vw-3rem))] -translate-x-1/2 transition-all duration-300 md:block ${
+        className={`absolute left-1/2 top-[calc(100%-1.25rem)] hidden w-[min(900px,calc(100vw-3rem))] -translate-x-1/2 transition-all duration-300 md:block ${
           workOpen
             ? "pointer-events-auto translate-y-0 opacity-100"
             : "pointer-events-none -translate-y-4 opacity-0"
         }`}
         onMouseEnter={() => setWorkOpen(true)}
       >
-        <div className="grid grid-cols-[1fr_290px] overflow-hidden rounded-sm bg-[#f5f5f5] shadow-[0_24px_70px_rgba(1,3,11,0.18)]">
+        {/* CHANGED: Removed min-h-[320px] so the card can be naturally shorter! */}
+        <div className="grid grid-cols-[1fr_290px] overflow-hidden rounded-sm bg-[#f5f5f5] pl-12 pb-12 shadow-[0_24px_70px_rgba(1,3,11,0.18)]">
           {/* LEFT */}
-          <div className="flex items-center gap-16 px-12">
+          <div className="flex items-center gap-16 pr-12 pt-12">
             {/* PORTFOLIO */}
             <Link
               href="/portfolio"
@@ -341,11 +335,13 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
           </div>
 
           {/* RIGHT IMAGE */}
-          <div className="relative h-[210px] overflow-hidden">
+          {/* CHANGED: Replaced h-full with h-[260px] to give it a controlled, shorter height! */}
+          <div className="relative -mt-12 h-[260px] w-full overflow-hidden rounded-bl-sm">
             <Image
               src="https://res.cloudinary.com/dku9in8sb/image/upload/v1778480700/Rectangle_34625273_tiviz0.webp"
               alt="Portfolio preview"
               fill
+              sizes="280px"
               className="object-cover transition-transform duration-700 hover:scale-105"
             />
           </div>
@@ -354,16 +350,18 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
 
       {/* NEWS & INSIGHTS MEGA MENU */}
       <div
-        className={`absolute left-1/2 top-[calc(100%-1.50rem)] hidden w-[min(1020px,calc(100vw-3rem))] -translate-x-1/2 transition-all duration-300 md:block ${
+        className={`absolute left-1/2 top-[calc(100%-1.25rem)] hidden w-[min(1020px,calc(100vw-3rem))] -translate-x-1/2 transition-all duration-300 md:block ${
           newsOpen
             ? "pointer-events-auto translate-y-0 opacity-100"
             : "pointer-events-none -translate-y-2 opacity-0"
         }`}
         onMouseEnter={() => setNewsOpen(true)}
       >
-        <div className="grid grid-cols-[1fr_340px] overflow-hidden rounded-sm bg-[#f3f3f3] shadow-[0_24px_70px_rgba(1,3,11,0.18)]">
+        {/* FIX: Removed hardcoded min-height. pl-12 pb-12 applied directly to the grid. */}
+        <div className="grid grid-cols-[1fr_340px] overflow-hidden rounded-sm bg-[#f3f3f3] pl-12 pb-12 shadow-[0_24px_70px_rgba(1,3,11,0.18)]">
           {/* LEFT SIDE */}
-          <div className="flex items-start gap-8 px-12 pt-20">
+          {/* FIX: items-center perfectly centers the content vertically relative to the image! */}
+          <div className="flex items-center gap-12 pr-12 pt-12">
             {/* NEWS */}
             <div>
               <Link href="/news" className="group block" onClick={closeAllMenus}>
@@ -425,7 +423,7 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
             <Link
               href={`/blogs/${featuredBlog.slug}`}
               onClick={closeAllMenus}
-              className="group relative block h-[240px] overflow-hidden"
+              className="group relative block h-full w-full overflow-hidden rounded-bl-sm"
             >
               <Image
                 src={featuredBlog.image}
@@ -466,7 +464,8 @@ function MegaMenuColumn({
   children: React.ReactNode;
 }) {
   return (
-    <div className="group flex flex-col">
+    // FIX: Replaced margin-hacks with pt-12 so the columns push down naturally.
+    <div className="group flex flex-col pt-12">
       <Link
         href={href}
         onClick={onTitleClick}
@@ -480,8 +479,7 @@ function MegaMenuColumn({
 
       <div className="mb-3 h-px w-full bg-[#dbe6f5] transition-colors duration-300 group-hover:bg-[#01030B]/20" />
 
-      {/* CHANGED: Added font-light to make the text thinner */}
-      <div className="flex flex-col gap-3 body-extra-small font-light text-[#8A8B8F] transition-colors duration-300 group-hover:text-[#01030B]">
+      <div className="flex flex-col gap-2 body-extra-small font-light text-[#8A8B8F] transition-colors duration-300 group-hover:text-[#01030B]">
         {children}
       </div>
     </div>
