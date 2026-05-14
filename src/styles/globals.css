@@ -268,7 +268,7 @@ select {
 
 /*landing - service white card content*/
 .service-whitecard-number {
-  margin: 0 0 58px 0;
+  margin: 0 0 34px 0;
   font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
   font-size: 44px;
   font-weight: 400;
@@ -285,7 +285,7 @@ select {
 }
 
 .service-whitecard-hover-number {
-  margin: 0 0 58px 0;
+  margin: 0 0 34px 0;
   font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
   font-size: 30px;
   font-weight: 400;

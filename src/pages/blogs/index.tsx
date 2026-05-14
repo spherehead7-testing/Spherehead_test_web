@@ -19,6 +19,7 @@ export default function BlogsPage() {
     }, [scrollContainerRef, setScrollContainerRef]);
 
     const { scrollYProgress } = useScroll({
+        container: scrollContainerRef,
         target: containerRef,
         offset: ["start start", "end start"],
     });
@@ -51,10 +52,6 @@ export default function BlogsPage() {
                     className="relative min-h-[150vh] bg-[#06142E]"
                 >
                     <motion.div
-                        style={{
-                            opacity: heroOpacity,
-                            y: heroY,
-                        }}
                         className="sticky top-0 h-screen w-full overflow-hidden bg-gradient-to-r from-[#06142E] via-[#0A2F76] to-[#2666D2]"
                     >
                         <BlogsHero progress={smoothProgress} />
