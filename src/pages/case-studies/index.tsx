@@ -1,5 +1,6 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Head from "next/head";
+import { useScrollContainerContext } from "@/context/ScrollContainerContext";
 import CaseStudiesHero from "@/components/case-studies/case-studies-hero";
 import CaseStudiesSlider from "@/components/case-studies/case-studies-slider";
 import ClientsSection from "@/components/common-sections/testimonial-section";
@@ -10,7 +11,15 @@ const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 export default function CaseStudies() {
-  const scrollRef = useRef<HTMLElement>(null);
+  const scrollRef = useRef<HTMLElement | null>(null);
+  const { setScrollContainerRef } = useScrollContainerContext();
+
+  useEffect(() => {
+    setScrollContainerRef(scrollRef);
+    return () => {
+      setScrollContainerRef(null);
+    };
+  }, [scrollRef, setScrollContainerRef]);
 
   // State to control when smooth scrolling is turned on
   const [isSmooth, setIsSmooth] = useState(false);

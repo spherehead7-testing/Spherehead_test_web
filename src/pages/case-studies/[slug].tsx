@@ -260,7 +260,7 @@ export default function CaseStudyDetail() {
                 >
                   <button
                     onClick={handleBackClick}
-                    className="flex items-center gap-2 text-white/80 hover:text-white transition-colors w-fit mb-12"
+                    className="flex items-center gap-2 text-white/80 hover:text-white transition-colors w-fit mb-12 cursor-pointer"
                   >
                     <FiArrowLeft /> Back to Case Studies
                   </button>
@@ -294,10 +294,26 @@ export default function CaseStudyDetail() {
                       className="w-full h-[300px] lg:h-[600px] object-cover shadow-xl rounded-[2xl]"
                     />
 
-                    <div className="absolute bottom-0 right-0 bg-white pt-6 pl-8 rounded-tl-[2.5rem] z-20">
-                      <button className="bg-[#0A2F76] text-white px-8 py-3.5 font-medium hover:bg-[#184aa3] transition-colors rounded-sm">
-                        Contact Us
+                    <div className="absolute bottom-0 right-0 bg-white pt-6 pl-8 rounded-tl-[0.50rem] z-20">
+                     <div className="absolute bottom-0 right-0 bg-white pt-6 pl-8 rounded-tl-[0.50rem] z-20">
+                      {/* NEW SLIDING BUTTON */}
+                      <button className="group relative flex h-[54px] cursor-pointer items-center justify-center overflow-hidden rounded-sm bg-animated-gradient px-8 text-white transition-colors duration-300">
+                        {/* Invisible placeholder to set width */}
+                        <span className="invisible font-medium whitespace-nowrap">
+                          Contact Us
+                        </span>
+
+                        {/* Sliding column */}
+                        <div className="absolute top-0 left-0 flex w-full flex-col transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-1/2">
+                          <span className="flex h-[54px] w-full items-center justify-center font-medium whitespace-nowrap">
+                            Contact Us
+                          </span>
+                          <span className="flex h-[54px] w-full items-center justify-center font-medium whitespace-nowrap">
+                            Contact Us
+                          </span>
+                        </div>
                       </button>
+                    </div>
                     </div>
                   </motion.div>
                 </section>
@@ -317,7 +333,7 @@ export default function CaseStudyDetail() {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-start">
                   {/* LEFT: STICKY SIDEBAR */}
                   <div className="hidden lg:block lg:col-span-3 sticky top-32 self-start">
-                    <div className="flex items-center gap-4 mb-10">
+                    <div className="flex items-center gap-8 mb-10">
                       <div className="w-5 h-5">
                         <RotatingDots variant="light" />
                       </div>

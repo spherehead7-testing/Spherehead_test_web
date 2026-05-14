@@ -8,8 +8,8 @@ import CyclicButton from "@/components/ui/cyclic-button";
 export default function CaseStudiesHero() {
   return (
     // FIX: Removed 'snap-start' from here to prevent scroll-locking conflicts
-    <section className="relative w-full h-full flex flex-col justify-end overflow-hidden pb-32 lg:pb-56">
-      <SiteContainer className="relative z-10 flex flex-col w-full">
+    <section className="relative h-full flex flex-col justify-end overflow-hidden pb-32 lg:pb-56">
+      <SiteContainer className="relative z-10 flex flex-col">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end">
           
           <motion.div 
@@ -18,11 +18,11 @@ export default function CaseStudiesHero() {
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="lg:col-span-8 flex flex-col gap-6"
           >
-            <h1 className="inner-hero !leading-tight">
+            <h1 className="inner-hero">
               Success Stories That<br />
               Drive Innovation
             </h1>
-            <p className="body-large text-white/80 max-w-2xl">
+            <p className="body-large text-white max-w-2xl">
               Explore how we transform challenges into impactful digital 
               solutions through innovation and technology.
             </p>
