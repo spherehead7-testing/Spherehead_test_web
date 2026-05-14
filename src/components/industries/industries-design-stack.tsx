@@ -1,6 +1,12 @@
 "use client";
 
-import { motion, Variants } from "framer-motion";
+import { useRef } from "react";
+import {
+  motion,
+  useMotionValueEvent,
+  useScroll,
+  Variants,
+} from "framer-motion";
 import RotatingDots from "../ui/rotating-dots";
 
 // ── Icon Box (supports image URL) ──
@@ -24,7 +30,7 @@ function ToolRow({ icon, name }: { icon: React.ReactNode; name: string }) {
     <div className="group">
       {/* TOP LINE */}
       <div className="relative h-px w-full overflow-hidden bg-white/15">
-        <span className="absolute left-0 top-0 h-full w-0 bg-gradient-to-r from-blue-400 via-blue-500 to-blue-400 transition-all duration-500 group-hover:w-full" />
+        <span className="absolute left-0 top-0 h-full w-0 bg-white transition-all duration-500 group-hover:w-full" />
       </div>
 
       {/* CONTENT */}
@@ -34,14 +40,14 @@ function ToolRow({ icon, name }: { icon: React.ReactNode; name: string }) {
       >
         <div className="shrink-0">{icon}</div>
 
-        <span className="text-white/80 text-sm group-hover:text-white transition">
+        <span className="body-small text-white group-hover:text-white transition">
           {name}
         </span>
       </motion.div>
 
       {/* BOTTOM LINE */}
       <div className="relative h-px w-full overflow-hidden bg-white/15">
-        <span className="absolute left-0 top-0 h-full w-0 bg-gradient-to-r from-blue-400 via-blue-500 to-blue-400 transition-all duration-500 group-hover:w-full" />
+        <span className="absolute left-0 top-0 h-full w-0 bg-white transition-all duration-500 group-hover:w-full" />
       </div>
     </div>
   );
@@ -151,12 +157,46 @@ const fadeUp: Variants = {
 
 // ── MAIN ──
 export default function DesignStack() {
+  const ref = useRef<HTMLElement | null>(null);
+  const lastProgress = useRef(0);
+  const hasSnapped = useRef(false);
+
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "start start"],
+  });
+
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    const section = ref.current;
+    const isScrollingDown = latest > lastProgress.current;
+
+    lastProgress.current = latest;
+
+    if (!section || hasSnapped.current || !isScrollingDown || latest < 0.5) {
+      if (latest < 0.15) {
+        hasSnapped.current = false;
+      }
+
+      return;
+    }
+
+    hasSnapped.current = true;
+
+    window.scrollTo({
+      top: section.getBoundingClientRect().top + window.scrollY,
+      behavior: "smooth",
+    });
+  });
+
   return (
-    <section className="relative w-full min-h-screen overflow-hidden">
+    <section
+      ref={ref}
+      className="bg-animated-gradient relative h-screen w-full overflow-hidden"
+    >
       {/* Glow */}
       <div className="absolute top-0 right-0 w-[600px] h-[360px] pointer-events-none bg-[radial-gradient(ellipse_at_85%_10%,rgba(100,160,255,0.2)_0%,transparent_65%)]" />
 
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 py-16">
+      <div className="mx-auto flex h-full max-w-7xl flex-col justify-center px-6 lg:px-12">
         {/* Label */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -164,19 +204,17 @@ export default function DesignStack() {
           className="flex items-center gap-2 mb-6"
         >
           <RotatingDots />
-          <span className="text-white/70 text-sm">Design Stack</span>
+          <span className="body-small text-white">Design Stack</span>
         </motion.div>
 
         {/* Heading */}
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-white text-[28px] md:text-[24px] lg:text-[30px] max-w-[640px]"
+        <h1
+          className="heading-2 text-white"
         >
           Driving Innovation through Our Design
           <br />
           Tools and Technology Stack
-        </motion.h1>
+        </h1>
 
         {/* Grid */}
         <motion.div

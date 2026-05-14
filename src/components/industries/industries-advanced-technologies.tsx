@@ -21,13 +21,13 @@ export default function TechScrollSection() {
       <div className="min-h-screen flex flex-col items-center justify-start pt-12 text-center px-6">
         {/* Label */}
         <div className="flex items-center gap-2 mb-3">
-          <RotatingDots />
-          <span className="text-sm text-gray-500">Technologies</span>
+          <RotatingDots variant="light"/>
+          <span className="body-small !text-[#01030B]">Technologies</span>
         </div>
 
         {/* Heading */}
-        <h2 className="text-[30px] md:text-[28px] lg:text-[34px] text-[#0b0f19] max-w-[800px] mb-10">
-          We use advanced technologies to deliver smart, scalable solutions for
+        <h2 className="heading-2 !text-[#01030B] max-w-[900px] mb-10">
+          We use advanced technologies to <span className="text-[#0D54CA]">deliver smart</span>,scalable solutions for
           business growth.
         </h2>
 
@@ -43,18 +43,18 @@ export default function TechScrollSection() {
             {/* <div className="flex flex-col justify-start pt-12"> */}
               <div className="flex flex-col h-full pt-12">
               <div className="flex items-center gap-2 mb-6">
-                <RotatingDots />
-                <span className="text-sm text-gray-500">
+                <RotatingDots variant="light"/>
+                <span className="body-small !text-[#01030B]">
                   Advance Technologies
                 </span>
               </div>
 
-              <h2 className="text-[34px] lg:text-[30px] text-[#0b0f19] max-w-[520px]">
+              <h2 className="heading-2 !text-[#01030B] max-w-[520px]">
                 Driving Innovation and Impact through Advanced Technologies
                 Worldwide
               </h2>
 
-              <p className="text-gray-500 mt-auto max-w-[420px] text-sm">
+              <p className="body-small !text-[#8A8B8F] mt-auto max-w-[420px]">
                 Leveraging cutting-edge technologies and innovative tools, we
                 deliver digital solutions that solve complex challenges, drive
                 measurable impact, and empower businesses to thrive in a rapidly
