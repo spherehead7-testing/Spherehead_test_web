@@ -51,11 +51,9 @@ select {
   0% {
     background-position: 0% 50%;
   }
-
   50% {
     background-position: 100% 50%;
   }
-
   100% {
     background-position: 0% 50%;
   }
@@ -88,7 +86,7 @@ select {
 
 .heading-2 {
   font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
-  font-weight: 400;
+  font-weight: 300;
   font-size: 40px;
   line-height: 50px;
   letter-spacing: 0px;
@@ -119,35 +117,34 @@ select {
 
 .body-large {
   font-family: var(--font-inter-tight), Arial, Helvetica, sans-serif;
-  font-size: 24px;
-  font-weight: 350;
-  line-height: 34px;
+  font-size: 22px;
+  font-weight: 200;
+  line-height: 42px;
   letter-spacing: 0.02em;
-  /* text-transform: none; */
+  text-transform: none;
 }
 
 .body-medium {
   font-family: var(--font-inter-tight), Arial, Helvetica, sans-serif;
   font-size: 18px;
-  font-weight: 450;
-  line-height: 30px;
+  font-weight: 400;
+  line-height: 42px;
   letter-spacing: 0.02em;
 }
 
 .body-small {
   font-family: var(--font-inter-tight), Arial, Helvetica, sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 400;
   line-height: 24px;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.04em;
 }
 
 .body-extra-small {
   font-family: var(--font-inter-tight), Arial, Helvetica, sans-serif;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 20px;
-  letter-spacing: 0.02em;
+  font-size: 12px;
+  font-weight: 200;
+  text-transform: none;
 }
 
 .inner-tight {
@@ -166,8 +163,7 @@ select {
   color: #ffffff;
   text-align: left;
   max-width: 980px;
-  font-size: 34px;
-  /* mobile */
+  font-size: 34px; /* mobile */
 }
 
 /* tablet */
@@ -216,8 +212,7 @@ select {
 
 .site-background-content {
   position: relative;
-  z-index: 10;
-  /* stronger layer */
+  z-index: 10; /* stronger layer */
   min-height: 100vh;
 }
 
@@ -268,24 +263,24 @@ select {
 
 /*landing - service white card content*/
 .service-whitecard-number {
-  margin: 0 0 58px 0;
+  margin: 0 0 34px 0;
   font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
   font-size: 44px;
   font-weight: 400;
   line-height: 1;
-  background: linear-gradient(100deg,
+    background: linear-gradient(100deg,
       #0a2f76 0%,
       #184aa3 10%,
       #2666d2 20%,
       #a6c4fa 30%);
-  -webkit-background-clip: text;
+        -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
 }
 
 .service-whitecard-hover-number {
-  margin: 0 0 58px 0;
+  margin: 0 0 34px 0;
   font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
   font-size: 30px;
   font-weight: 400;
@@ -298,7 +293,6 @@ select {
   0% {
     transform: translateY(0%);
   }
-
   100% {
     transform: translateY(-50%);
   }
@@ -313,7 +307,6 @@ select {
   0% {
     transform: translateY(-50%);
   }
-
   100% {
     transform: translateY(0%);
   }
@@ -326,13 +319,8 @@ select {
 /* src/styles/globals.css */
 
 @keyframes scrollMarquee {
-  0% {
-    transform: translateX(0);
-  }
-
-  100% {
-    transform: translateX(-50%);
-  }
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
 .animate-marquee {

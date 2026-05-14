@@ -87,10 +87,10 @@ export default function FAQSection() {
         <div className="text-white">
           <div className="mb-4 flex items-center gap-2">
             <RotatingDots />
-            <span className="text-sm text-white/70">FAQ</span>
+            <span className="body-small text-white">FAQ</span>
           </div>
 
-          <h2 className="max-w-[520px] text-[28px] leading-[1.25] md:text-[34px] lg:text-[38px]">
+          <h2 className="heading-2 max-w-[520px]">
             Behind every question lies a commitment to clarity and understanding.
             Every answer is crafted to guide you and build lasting trust.
           </h2>
@@ -110,7 +110,7 @@ export default function FAQSection() {
                   onClick={() => toggle(index)}
                   className="flex w-full items-center justify-between gap-6 py-3.5 text-left"
                 >
-                  <span className="text-[16px] md:text-[18px] text-[#01030B]">
+                  <span className="body-medium text-black">
                     {faq.question}
                   </span>
 
@@ -129,7 +129,7 @@ export default function FAQSection() {
                     isOpen ? "max-h-[140px] pb-3" : "max-h-0"
                   }`}
                 >
-                  <p className="pr-6 text-sm leading-relaxed text-gray-500">
+                  <p className="pr-6 body-small text-[#55565C]">
                     {faq.answer}
                   </p>
                 </div>
@@ -139,10 +139,10 @@ export default function FAQSection() {
 
           {/* CONTACT CTA */}
           <div className="pt-8">
-            <p className="mb-3 text-sm text-gray-500">
+            <p className="mb-3 body-small text-[#01030B">
               My question is not here.
             </p>
-            <button className="rounded bg-[#155ACD] px-6 py-2 text-white hover:bg-[#0A2F76]">
+            <button className="body-medium rounded bg-animated-gradient px-6 py-2 text-white">
               Contact Us
             </button>
           </div>

@@ -29,7 +29,7 @@ export default function AboutHero() {
                 className="mt-12 flex items-end gap-10"
               >
                 {/* DESCRIPTION */}
-                <h4 className="heading-4 max-w-[720px] leading-[1.55] text-white/95">
+                <h4 className="heading-4 max-w-[720px] text-white/95">
                   We are a team driven by innovation, delivering<br/>
                   meaningful digital solutions that create real impact.
                 </h4>

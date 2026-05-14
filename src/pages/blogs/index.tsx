@@ -1,12 +1,23 @@
 import Head from "next/head";
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
+import { useScrollContainerContext } from "@/context/ScrollContainerContext";
 import BlogsHero from "@/components/blogs/blogs-hero";
 import BlogsContent from "@/components/blogs/blogs-content";
 import BlogsTransitionPanel from "@/components/blogs/blogs-transition-panel";
 
 export default function BlogsPage() {
   const sceneRef = useRef<HTMLElement | null>(null);
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+  const { setScrollContainerRef } = useScrollContainerContext();
+
+  useEffect(() => {
+    setScrollContainerRef(scrollContainerRef);
+    return () => {
+      setScrollContainerRef(null);
+    };
+  }, [scrollContainerRef, setScrollContainerRef]);
+
   const { scrollYProgress } = useScroll({
     target: sceneRef,
     offset: ["start start", "end end"],
@@ -38,10 +49,13 @@ export default function BlogsPage() {
         />
       </Head>
 
-      <main className="min-h-screen bg-white text-[#01030B]">
+      <main
+        ref={scrollContainerRef}
+        className="min-h-screen h-screen overflow-y-auto overflow-x-hidden bg-white text-[#01030B]"
+      >
         <section
           ref={sceneRef}
-          className="relative min-h-[220vh] overflow-clip bg-gradient-to-r from-[#06142E] via-[#0A2F76] to-[#2666D2]"
+          className="relative min-h-[220vh] bg-gradient-to-r from-[#06142E] via-[#0A2F76] to-[#2666D2]"
         >
           <div className="sticky top-0 h-screen overflow-hidden">
             <BlogsHero />

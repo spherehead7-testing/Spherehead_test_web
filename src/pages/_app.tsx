@@ -2,6 +2,7 @@ import type { AppProps } from "next/app";
 import { Archivo, Inter_Tight } from "next/font/google";
 import "@/styles/globals.css";
 import Navbar from "@/components/layout/navbar";
+import { ScrollContainerProvider } from "@/context/ScrollContainerContext";
 
 const archivo = Archivo({
   subsets: ["latin"],
@@ -18,8 +19,10 @@ const interTight = Inter_Tight({
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <main className={`${archivo.variable} ${interTight.variable}`}>
+      <ScrollContainerProvider>
         <Navbar />
         <Component {...pageProps} />
+      </ScrollContainerProvider>
     </main>
   );
 }

@@ -25,7 +25,7 @@ export default function ContactIntro() {
             </div>
             
             <h2 className="heading-2 !text-[#01030B] lg:whitespace-nowrap">
-              Located in the Heart of <span className="text-[#0D54CA]">Delaware USA</span>
+              Located in the Heart of <span className="text-[#0D54CA]">Colombo Sri Lanka</span>
             </h2>
           </motion.div>
 
@@ -39,7 +39,7 @@ export default function ContactIntro() {
             className="lg:col-span-7 lg:col-start-6 flex"
           >
             <p className="body-large text-[#8A8B8F] !leading-[1.4]">
-              Based in Delaware, USA, our company is committed to delivering innovative 
+              Based in Colombo, Sri Lanka, our company is committed to delivering innovative 
               and reliable solutions tailored to meet modern business needs. With a strong 
               focus on quality, integrity, and customer satisfaction, we strive to create 
               lasting value and build meaningful partnerships across industries.
