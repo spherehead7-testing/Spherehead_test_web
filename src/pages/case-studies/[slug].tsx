@@ -333,7 +333,7 @@ export default function CaseStudyDetail() {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-start">
                   {/* LEFT: STICKY SIDEBAR */}
                   <div className="hidden lg:block lg:col-span-3 sticky top-32 self-start">
-                    <div className="flex items-center gap-8 mb-10">
+                    <div className="flex items-center gap-4 mb-10">
                       <div className="w-5 h-5">
                         <RotatingDots variant="light" />
                       </div>

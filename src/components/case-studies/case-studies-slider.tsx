@@ -115,8 +115,9 @@ export default function CaseStudiesSlider() {
               <div className="w-full h-[250px] sm:h-[300px] lg:h-[380px] relative overflow-visible rounded-sm">
                 <AnimatePresence custom={direction} initial={false}>
                   <motion.div
-                    key={activeStudy.slug}
-                    layoutId={`shared-slide-${activeStudy.slug}`}
+                    key={`main-slide-${page}`}
+                    layout
+                    layoutId={`case-study-hero-${activeStudy.slug}`}
                     custom={direction}
                     variants={mainVariants}
                     initial="enter"
@@ -210,7 +211,7 @@ export default function CaseStudiesSlider() {
                     <AnimatePresence custom={direction} initial={false}>
                       <motion.div
                         key={`preview-slide-${page}`}
-                        layoutId={`shared-slide-${nextStudy.slug}`} 
+                        layoutId={`shared-slide-${page + 1}`} 
                         custom={direction}
                         variants={previewVariants}
                         initial="enter"
