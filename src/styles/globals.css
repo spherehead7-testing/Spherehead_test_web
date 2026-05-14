@@ -169,20 +169,6 @@ select {
   font-size: 34px;
   /* mobile */
 }
-
-/* tablet */
-@media (min-width: 640px) {
-  .inner-hero {
-    font-size: 46px;
-  }
-}
-
-/* desktop */
-@media (min-width: 1024px) {
-  .inner-hero {
-    font-size: 83px;
-  }
-}
  
 /* tablet */
 @media (min-width: 640px) {

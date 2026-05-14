@@ -283,7 +283,7 @@ export default function CaseStudyDetail() {
                     style={{ transformOrigin: "left top" }}
                     className="w-full relative pointer-events-auto"
                   >
-                    <div className="absolute top-6 right-6 bg-white px-4 py-1.5 body-Extrasmall text-[#0A2F76] shadow-sm rounded-sm z-20">
+                    <div className="absolute top-6 right-6 bg-white px-4 py-1.5 body-extra-small text-[#0A2F76] shadow-sm rounded-sm z-20">
                       {study.category}
                     </div>
 

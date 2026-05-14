@@ -105,7 +105,7 @@ export default function CaseStudiesSlider() {
   return (
     <SiteContainer>
       <LayoutGroup>
-        <div className="w-full flex flex-col gap-8 pb-12">
+        <div className="flex flex-col gap-8 pb-12">
           
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
 
@@ -175,7 +175,7 @@ export default function CaseStudiesSlider() {
                       transition={{ duration: 0.4 }}
                     >
                       <h2 className="heading-2 !text-[#01030B] mb-6">{activeStudy.title}</h2>
-                      <p className="body-small text-[#8A8B8F] leading-[1.6] mb-8">{activeStudy.description}</p>
+                      <p className="body-small text-[#8A8B8F] mb-8">{activeStudy.description}</p>
                     </motion.div>
                   </AnimatePresence>
                 </div>
@@ -183,7 +183,7 @@ export default function CaseStudiesSlider() {
                 <div className="pt-2">
                   <Link 
                     href={`/case-studies/${activeStudy.slug}`} 
-                    className="body-Extrasmall border border-[#0D54CA] !text-[#0D54CA] px-6 py-2.5 transition-colors w-fit block text-center"
+                    className="body-extra-small border border-[#0D54CA] !text-[#0D54CA] px-6 py-2.5 transition-colors w-fit block text-center"
                   >
                     View Full Case Study
                   </Link>
