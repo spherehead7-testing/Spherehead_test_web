@@ -169,21 +169,21 @@ select {
   font-size: 34px;
   /* mobile */
 }
-
+ 
 /* tablet */
 @media (min-width: 640px) {
   .inner-hero {
     font-size: 46px;
   }
 }
-
+ 
 /* desktop */
 @media (min-width: 1024px) {
   .inner-hero {
     font-size: 83px;
   }
 }
-
+ 
 .inter-tight {
   font-family: var(--font-inter-tight), Arial, Helvetica, sans-serif;
   font-size: 15px;
