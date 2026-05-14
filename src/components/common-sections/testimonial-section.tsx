@@ -44,7 +44,7 @@ const SIDE_CARD_COUNT = 4;
 const SIDE_CARD_W = 68;
 const SIDE_CARD_GAP = 8;
 const SIDE_CARD_STEP = SIDE_CARD_W + SIDE_CARD_GAP;
-const SIDE_CARD_H = 429;
+const SIDE_CARD_H = 450;
 
 const SIDE_CONTAINER_W =
     SIDE_CARD_COUNT * SIDE_CARD_W + (SIDE_CARD_COUNT - 1) * SIDE_CARD_GAP;
@@ -406,7 +406,7 @@ export default function TestimonialSection({
                         )}
                     </div>
 
-                    <div className="hidden shrink-0 lg:flex">
+                    <div className="hidden shrink-0 lg:flex mt-[27px]">
                         <div
                             ref={sideContainerRef}
                             className="relative"

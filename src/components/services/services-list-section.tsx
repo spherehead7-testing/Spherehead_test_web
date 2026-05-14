@@ -125,8 +125,11 @@ export default function ServicesListSection({ data }: { data: ServiceCategoryDat
                         className="flex items-center justify-between cursor-pointer group"
                         onClick={() => toggleAccordion(index)}
                       >
-                        <div className="flex items-center gap-6 lg:gap-10">
-                          <span className="body-large text-[#0D54CA]">
+                        <div className="flex items-center gap-4 lg:gap-6">
+                          <span 
+                            className="body-large text-[#0D54CA]"
+                            style={{ fontFamily: "var(--font-archivo)" }}
+                          >
                             {service.id}
                           </span>
                           <h3 className="body-large text-[#01030B] transition-colors group-hover:text-[#0D54CA]">

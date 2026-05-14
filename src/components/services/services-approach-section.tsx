@@ -113,21 +113,23 @@ export default function ServicesApproachSection() {
   const renderCard = (item: any, idx: number) => (
     <div
       key={item.num}
-      className={`flex flex-col gap-4 ${
-        idx === 0
-          ? "md:pr-8 lg:pr-12 md:border-r border-white/20"
-          : idx === 1
-            ? "md:px-8 lg:px-12 md:border-r border-white/20"
-            : "md:pl-8 lg:pl-12"
-      }`}
+      className={`flex flex-col gap-1 py-12 lg:py-12 ${idx === 0
+        ? "md:pr-8 lg:pr-12 md:border-r border-white/20"
+        : idx === 1
+          ? "md:px-8 lg:px-12 md:border-r border-white/20"
+          : "md:pl-8 lg:pl-12"
+        }`}
     >
-      <span className="text-[48px] lg:text-[64px] font-light text-white/90 leading-none mb-2">
+      <span
+        className="text-[48px] lg:text-[64px] font-light text-white/90 leading-none mb-3"
+        style={{ fontFamily: "var(--font-archivo)" }}
+      >
         {item.num}
       </span>
       <h3 className="body-large whitespace-pre-line text-white leading-snug">
         {item.title}
       </h3>
-      <p className="body-small text-white/70 leading-[1.75] mt-4 max-w-[340px]">
+      <p className="body-extra-small text-white leading-[1.75] mt-12 max-w-[300px]">
         {item.desc}
       </p>
     </div>
@@ -141,7 +143,7 @@ export default function ServicesApproachSection() {
     >
       {/* Top overlap bar mimicking the bottom of the previous section */}
       <div className="absolute top-0 left-0 w-full h-[30px] md:h-[90px] bg-white rounded-b-[12px] z-30" />
-      <SiteContainer className="flex flex-col gap-12 lg:gap-16">
+      <SiteContainer className="flex flex-col gap-12 lg:gap-16 pt-32 lg:pt-30">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -170,7 +172,7 @@ export default function ServicesApproachSection() {
         >
           <motion.div
             animate={{ x: page === 0 ? "0%" : "-50%" }}
-            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 4, ease: [0.16, 1, 0.3, 1] }}
             className="flex w-[200%] gap-0 will-change-transform"
           >
             {/* PANEL 1 */}
