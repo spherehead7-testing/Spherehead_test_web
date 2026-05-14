@@ -42,7 +42,7 @@ export default function TechScrollSection() {
           <div className="mx-auto grid h-full w-full max-w-7xl grid-cols-1 gap-12 px-6 lg:grid-cols-2 lg:px-12">
             {/* LEFT TEXT */}
             {/* <div className="flex flex-col justify-start pt-12"> */}
-            <div className="flex h-full flex-col pb-12 pt-24">
+            <div className="flex h-full flex-col pb-20 pt-24">
               <div className="flex items-center gap-2 mb-6">
                 <RotatingDots variant="light" />
                 <span className="body-small !text-[#01030B]">
