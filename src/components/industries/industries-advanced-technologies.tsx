@@ -21,14 +21,15 @@ export default function TechScrollSection() {
       <div className="min-h-screen flex flex-col items-center justify-start pt-12 text-center px-6">
         {/* Label */}
         <div className="flex items-center gap-2 mb-3">
-          <RotatingDots variant="light"/>
+          <RotatingDots variant="light" />
           <span className="body-small !text-[#01030B]">Technologies</span>
         </div>
 
         {/* Heading */}
         <h2 className="heading-2 !text-[#01030B] max-w-[900px] mb-10">
-          We use advanced technologies to <span className="text-[#0D54CA]">deliver smart</span>,scalable solutions for
-          business growth.
+          We use advanced technologies to{" "}
+          <span className="text-[#0D54CA]">deliver smart</span>,scalable
+          solutions for business growth.
         </h2>
 
         {/* Icons Row */}
@@ -36,14 +37,14 @@ export default function TechScrollSection() {
       </div>
 
       {/* ================= SCROLL SECTION ================= */}
-      <section className="relative h-[100vh] -mt-42">
-        <div className="sticky top-0 h-screen flex items-start pt-8">
-          <div className="max-w-7xl mx-auto w-full px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-2 gap-12">
+      <section className="relative -mt-42 h-screen overflow-hidden">
+        <div className="sticky top-0 h-screen overflow-hidden">
+          <div className="mx-auto grid h-full w-full max-w-7xl grid-cols-1 gap-12 px-6 lg:grid-cols-2 lg:px-12">
             {/* LEFT TEXT */}
             {/* <div className="flex flex-col justify-start pt-12"> */}
-              <div className="flex flex-col h-full pt-12">
+            <div className="flex h-full flex-col pb-20 pt-24">
               <div className="flex items-center gap-2 mb-6">
-                <RotatingDots variant="light"/>
+                <RotatingDots variant="light" />
                 <span className="body-small !text-[#01030B]">
                   Advance Technologies
                 </span>
@@ -54,7 +55,7 @@ export default function TechScrollSection() {
                 Worldwide
               </h2>
 
-              <p className="body-small !text-[#8A8B8F] mt-auto max-w-[420px]">
+              <p className="body-small !text-[#8A8B8F] mt-auto max-w-[320px]">
                 Leveraging cutting-edge technologies and innovative tools, we
                 deliver digital solutions that solve complex challenges, drive
                 measurable impact, and empower businesses to thrive in a rapidly
@@ -63,21 +64,31 @@ export default function TechScrollSection() {
             </div>
 
             {/* RIGHT SCROLL AREA */}
-            <div className="grid grid-cols-2 gap-6 h-[80vh] overflow-hidden">
+            <div className="grid h-full grid-cols-2 gap-6 overflow-hidden">
               {/* LEFT COLUMN (scroll up) */}
-              <div className="relative overflow-hidden">
+              <div className="relative overflow-hidden [mask-image:linear-gradient(to_bottom,transparent_0%,black_14%,black_86%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,transparent_0%,black_14%,black_86%,transparent_100%)]">
                 <div className="animate-scrollUp flex flex-col gap-6">
                   {[...leftCards, ...leftCards].map((src, i) => (
-                    <img key={i} src={src} className="rounded-xl shadow-md" />
+                    <img
+                      key={i}
+                      src={src}
+                      alt=""
+                      className="rounded-xl shadow-md"
+                    />
                   ))}
                 </div>
               </div>
 
               {/* RIGHT COLUMN (scroll down) */}
-              <div className="relative overflow-hidden">
+              <div className="relative overflow-hidden [mask-image:linear-gradient(to_bottom,transparent_0%,black_14%,black_86%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,transparent_0%,black_14%,black_86%,transparent_100%)]">
                 <div className="animate-scrollDown flex flex-col gap-6">
                   {[...rightCards, ...rightCards].map((src, i) => (
-                    <img key={i} src={src} className="rounded-xl shadow-md" />
+                    <img
+                      key={i}
+                      src={src}
+                      alt=""
+                      className="rounded-xl shadow-md"
+                    />
                   ))}
                 </div>
               </div>

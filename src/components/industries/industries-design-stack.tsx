@@ -15,11 +15,11 @@ type IconBoxProps = {
 };
 
 const IconBox = ({ src }: IconBoxProps) => (
-  <div className="w-11 h-11 flex items-center justify-center">
+  <div className="w-16 h-16 flex items-center justify-center">
     {src ? (
-      <img src={src} alt="icon" className="w-7 h-7 object-contain" />
+      <img src={src} alt="icon" className="w-11 h-11 object-contain" />
     ) : (
-      <div className="w-4 h-4 bg-white/20 rounded-sm" />
+      <div className="w-7 h-7 bg-white rounded-sm" />
     )}
   </div>
 );
@@ -208,9 +208,7 @@ export default function DesignStack() {
         </motion.div>
 
         {/* Heading */}
-        <h1
-          className="heading-2 text-white"
-        >
+        <h1 className="heading-2 text-white">
           Driving Innovation through Our Design
           <br />
           Tools and Technology Stack

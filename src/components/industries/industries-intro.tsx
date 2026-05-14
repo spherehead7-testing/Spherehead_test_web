@@ -74,7 +74,7 @@ export default function IndustriesIntro() {
             w-screen
             -translate-x-1/2
             overflow-hidden
-            bg-[#F5F7FB]
+            bg-white
             origin-bottom
             shadow-[0_-20px_80px_rgba(0,0,0,0.16)]
           "
