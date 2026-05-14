@@ -12,7 +12,7 @@ export default function ContactFooter() {
         
         {/* Bottom Bar: Copyright & Links */}
         <div className="w-full flex flex-col md:flex-row justify-between items-end gap-6 pt-6">
-          <p className="body-extra-small opacity-60 text-white">
+          <p className="body-extra-small text-white">
             © 2026 All Rights Reserved. Designed and Developed by Spherehead
           </p>
 
