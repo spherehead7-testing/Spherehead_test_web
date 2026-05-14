@@ -43,6 +43,7 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
   useEffect(() => {
     const target =
       scrollContainer?.current || contextScrollContainerRef?.current || window;
+    const isCustomTarget = target !== window;
 
     const handleScroll = () => {
       const currentScrollY =
@@ -59,10 +60,24 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
       lastScrollY.current = currentScrollY;
     };
 
+    const handleWheel: EventListener = (event) => {
+      const e = event as WheelEvent;
+      if (e.deltaY > 10) {
+        setIsVisible(false);
+      } else if (e.deltaY < -10) {
+        setIsVisible(true);
+        if (isCustomTarget) {
+          setScrolled(true);
+        }
+      }
+    };
+
     target.addEventListener("scroll", handleScroll, { passive: true });
+    target.addEventListener("wheel", handleWheel, { passive: true });
 
     return () => {
       target.removeEventListener("scroll", handleScroll);
+      target.removeEventListener("wheel", handleWheel);
     };
   }, [scrollContainer, contextScrollContainerRef]);
 

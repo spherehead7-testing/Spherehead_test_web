@@ -154,7 +154,7 @@ export default function CaseStudiesSlider() {
                   </AnimatePresence>
                 </div>
 
-                <div className="flex items-center gap-4 text-gray-500 relative z-10 ml-auto">
+                <div className="flex items-center gap-8 text-gray-500 relative z-10 ml-auto">
                   <button onClick={handlePrev} className="hover:text-[#0D54CA] transition-colors p-1">
                     <FiChevronLeft className="w-6 h-6" />
                   </button>

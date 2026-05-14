@@ -20,7 +20,7 @@ export default function PortfolioPage() {
       className="relative w-full h-screen overflow-y-auto"
     >
       <PortfolioHeroSection />
-      <WorkShowcaseSection />
+      <WorkShowcaseSection outerScrollContainerRef={scrollContainerRef} />
       <div className="h-screen" /> {/* Dummy scrollable content */}
     </div>
   );

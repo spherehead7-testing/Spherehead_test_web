@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useRef, useState, useEffect, useCallback } from "react";
+import { useScrollContainerContext } from "@/context/ScrollContainerContext";
 import { motion, AnimatePresence } from "framer-motion";
 import SiteContainer from "@/components/layout/site-container";
 import { ProjectListItemHeader, ProjectDetailView } from "./portfolio-accordion-section";
@@ -14,7 +15,14 @@ const EXIT_DURATION = 0.7;
 const ENTER_MS = ENTER_DURATION * 1000;
 const EXIT_MS = EXIT_DURATION * 1000;
 
-export default function WorkShowcaseSection() {
+type PortfolioWorkShowcaseSectionProps = {
+  outerScrollContainerRef: React.RefObject<HTMLElement | null>;
+};
+
+export default function WorkShowcaseSection({
+  outerScrollContainerRef,
+}: PortfolioWorkShowcaseSectionProps) {
+  const { setScrollContainerRef } = useScrollContainerContext();
   const [isVisible, setIsVisible] = useState(false);
   const isAnimatingRef = useRef(false); // ← ref instead of state, avoids stale closure
   const animTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -49,6 +57,14 @@ export default function WorkShowcaseSection() {
       wheelAcc.current = 0;
     }
   }, [isVisible]);
+
+  useEffect(() => {
+    if (!isVisible) return;
+    setScrollContainerRef(showcaseRef);
+    return () => {
+      setScrollContainerRef(outerScrollContainerRef);
+    };
+  }, [isVisible, outerScrollContainerRef, setScrollContainerRef]);
 
   useEffect(() => {
     const container = showcaseRef.current;

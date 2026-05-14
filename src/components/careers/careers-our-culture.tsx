@@ -36,10 +36,12 @@ const cards = [
 export default function WhyWorkWithUs() {
   return (
     <section className="w-full relative bg-white snap-start">
-      <SiteContainer className="w-full grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8 items-start relative pt-32 lg:pt-40 pb-24 lg:pb-32">
+      
+      {/* FIX 1: Reduced pt-32 lg:pt-40 down to pt-16 lg:pt-20 */}
+      <SiteContainer className="w-full grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8 items-start relative pt-16 lg:pt-20 pb-24 lg:pb-32">
 
-        {/* LEFT COLUMN: Sticky Text */}
-        <div className="lg:col-span-6 sticky top-32 lg:top-40 flex flex-col justify-start items-start gap-6">
+        {/* FIX 2: Reduced the sticky offset to match the new padding (top-20 lg:top-24) */}
+        <div className="lg:col-span-6 sticky top-20 lg:top-24 flex flex-col justify-start items-start gap-6">
           <div className="flex items-center gap-4 inter-tight">
             <RotatingDots variant="light" />
             <span className="tracking-[0.1em]">
