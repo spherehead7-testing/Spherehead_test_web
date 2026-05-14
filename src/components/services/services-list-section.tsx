@@ -70,7 +70,7 @@ export default function ServicesListSection({ data }: { data: ServiceCategoryDat
                   </span>
                 </div>
 
-                <h2 className="heading-2 !text-[#01030B] !leading-[1.1] mb-2 max-w-md">
+                <h2 className="heading-2 !text-[#01030B] mb-2 max-w-md">
                   {data.listTitle}
                 </h2>
 
