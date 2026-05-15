@@ -22,6 +22,7 @@ type NavbarProps = {
 export default function Navbar({ scrollContainer }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
+  const [scrollbarInset, setScrollbarInset] = useState(0);
 
   const [servicesOpen, setServicesOpen] = useState(false);
   const [workOpen, setWorkOpen] = useState(false);
@@ -39,6 +40,45 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
     setWorkOpen(false);
     setNewsOpen(false);
   };
+
+  useEffect(() => {
+    const target =
+      scrollContainer?.current || contextScrollContainerRef?.current || window;
+
+    if (target !== window) {
+      const scrollElement = target as HTMLElement;
+      let frameId: number | null = null;
+
+      const updateScrollbarInset = () => {
+        if (frameId !== null) {
+          cancelAnimationFrame(frameId);
+        }
+
+        frameId = requestAnimationFrame(() => {
+          setScrollbarInset(
+            scrollElement.offsetWidth - scrollElement.clientWidth,
+          );
+        });
+      };
+
+      updateScrollbarInset();
+
+      const resizeObserver = new ResizeObserver(updateScrollbarInset);
+      resizeObserver.observe(scrollElement);
+      window.addEventListener("resize", updateScrollbarInset);
+
+      return () => {
+        if (frameId !== null) {
+          cancelAnimationFrame(frameId);
+        }
+        resizeObserver.disconnect();
+        window.removeEventListener("resize", updateScrollbarInset);
+      };
+    }
+
+    const frameId = requestAnimationFrame(() => setScrollbarInset(0));
+    return () => cancelAnimationFrame(frameId);
+  }, [scrollContainer, contextScrollContainerRef]);
 
   useEffect(() => {
     const target =
@@ -92,7 +132,8 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
     <header
       ref={headerRef}
       onMouseLeave={closeAllMenus}
-      className={`fixed top-0 left-0 w-full z-[9999] will-change-transform transition-all duration-300 ease-in-out ${
+      style={{ right: scrollbarInset }}
+      className={`fixed top-0 left-0 z-[9999] will-change-transform transition-all duration-300 ease-in-out ${
         isVisible ? "translate-y-0" : "-translate-y-full"
       } ${
         scrolled

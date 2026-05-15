@@ -1,80 +1,71 @@
 import Head from "next/head";
 import { useRef, useEffect } from "react";
-import { motion, useScroll, useTransform } from "motion/react";
+import { motion, useScroll, useTransform, useSpring } from "motion/react";
 import { useScrollContainerContext } from "@/context/ScrollContainerContext";
 import BlogsHero from "@/components/blogs/blogs-hero";
 import BlogsContent from "@/components/blogs/blogs-content";
-import BlogsTransitionPanel from "@/components/blogs/blogs-transition-panel";
+import Footer from "@/components/layout/footer";
 
 export default function BlogsPage() {
-  const sceneRef = useRef<HTMLElement | null>(null);
-  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
-  const { setScrollContainerRef } = useScrollContainerContext();
+    const containerRef = useRef<HTMLElement | null>(null);
+    const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+    const { setScrollContainerRef } = useScrollContainerContext();
 
-  useEffect(() => {
-    setScrollContainerRef(scrollContainerRef);
-    return () => {
-      setScrollContainerRef(null);
-    };
-  }, [scrollContainerRef, setScrollContainerRef]);
+    useEffect(() => {
+        setScrollContainerRef(scrollContainerRef);
+        return () => {
+            setScrollContainerRef(null);
+        };
+    }, [scrollContainerRef, setScrollContainerRef]);
 
-  const { scrollYProgress } = useScroll({
-    target: sceneRef,
-    offset: ["start start", "end end"],
-  });
+    const { scrollYProgress } = useScroll({
+        container: scrollContainerRef,
+        target: containerRef,
+        offset: ["start start", "end start"],
+    });
 
-  const panelLeft = useTransform(
-    scrollYProgress,
-    [0, 0.06, 0.2, 0.74, 1],
-    ["100vw", "66vw", "50vw", "12vw", "0vw"],
-  );
-  const panelTop = useTransform(
-    scrollYProgress,
-    [0, 0.18, 0.72, 1],
-    ["104px", "64px", "24px", "0px"],
-  );
-  const panelHeight = useTransform(
-    scrollYProgress,
-    [0, 0.18, 0.72, 1],
-    ["calc(100vh - 104px)", "calc(100vh - 64px)", "calc(100vh - 24px)", "100vh"],
-  );
+    const smoothProgress = useSpring(scrollYProgress, {
+        stiffness: 100,
+        damping: 30,
+        restDelta: 0.001,
+    });
 
-  return (
-    <>
-      <Head>
-        <title>Blogs | Spherehead Technologies</title>
-        <meta
-          name="description"
-          content="Technology, innovation, design, and tech stack insights from Spherehead Technologies."
-        />
-      </Head>
+    const heroOpacity = useTransform(smoothProgress, [0.7, 1], [1, 0]);
+    const heroY = useTransform(smoothProgress, [0, 1], ["0%", "5%"]);
 
-      <main
-        ref={scrollContainerRef}
-        className="min-h-screen h-screen overflow-y-auto overflow-x-hidden bg-white text-[#01030B]"
-      >
-        <section
-          ref={sceneRef}
-          className="relative min-h-[220vh] bg-gradient-to-r from-[#06142E] via-[#0A2F76] to-[#2666D2]"
-        >
-          <div className="sticky top-0 h-screen overflow-hidden">
-            <BlogsHero />
+    return (
+        <>
+            <Head>
+                <title>Blogs | Spherehead Technologies</title>
+                <meta
+                    name="description"
+                    content="Technology, innovation, design, and tech stack insights from Spherehead Technologies."
+                />
+            </Head>
 
-            <motion.div
-              style={{
-                left: panelLeft,
-                top: panelTop,
-                height: panelHeight,
-              }}
-              className="pointer-events-none absolute right-0 z-20 overflow-hidden bg-white shadow-[0_0_80px_rgba(0,0,0,0.08)]"
+            <main
+                ref={scrollContainerRef}
+                className="w-full h-screen overflow-y-auto overflow-x-hidden bg-[#01030B] text-[#01030B]"
             >
-              <BlogsTransitionPanel />
-            </motion.div>
-          </div>
-        </section>
+                <section
+                    ref={containerRef}
+                    className="relative min-h-[150vh] bg-[#06142E]"
+                >
+                    <motion.div
+                        className="sticky top-0 h-screen w-full overflow-hidden bg-gradient-to-r from-[#06142E] via-[#0A2F76] to-[#2666D2]"
+                    >
+                        <BlogsHero progress={smoothProgress} />
+                    </motion.div>
+                </section>
 
-        <BlogsContent />
-      </main>
-    </>
-  );
+                <section className="relative z-20 -mt-[50vh] rounded-t-[40px] bg-white shadow-[0_-40px_100px_rgba(0,0,0,0.25)] sm:rounded-t-[60px]">
+                    <BlogsContent />
+                </section>
+
+                <section className="relative z-20 bg-animated-gradient">
+                    <Footer />
+                </section>
+            </main>
+        </>
+    );
 }
