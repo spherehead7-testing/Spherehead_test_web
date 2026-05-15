@@ -9,22 +9,21 @@ export default function ContactForm() {
   return (
     <section className="w-full relative z-10 pt-8 lg:pt-12 pb-0 snap-start">
       <div className="absolute inset-0 -z-10 flex flex-col lg:flex-row">
-        <div className="w-full lg:w-1/2 h-full bg-white" />
-        <div className="w-full lg:w-1/2 h-[400px] lg:h-[450px] bg-white" />
+        {/* Replaced h-full with h-[90%] on mobile and lg:h-[90%] on desktop */}
+        <div className="w-full lg:w-1/2 h-[95%] lg:h-[95%] bg-white rounded-b-[2px] lg:rounded-none lg:rounded-b-[4px]" />
+        <div className="w-full lg:w-1/2 h-[350px] lg:h-[400px] bg-white rounded-b-[2px] lg:rounded-none lg:rounded-br-[4px]" />
       </div>
 
       <SiteContainer>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-start">
           {/* LEFT: Form Side */}
-          {/* THE FIX: Removed 'self-end' so the form naturally aligns to the left */}
           <div className="flex flex-col gap-8 w-full max-w-lg pb-24 pt-16 lg:pt-24">
-            {/* THE FIX: Tell the form to use the flat, background-free styling */}
             <ContactCard variant="flat" />
           </div>
 
           {/* RIGHT: Map & Contact Info Side */}
           <div className="flex flex-col w-full">
-            <div className="w-full h-[300px] lg:h-[350px] relative overflow-hidden bg-gray-100 rounded-sm">
+            <div className="w-full h-[250px] lg:h-[300px] relative overflow-hidden bg-gray-100 rounded-sm">
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2831.870750612708!2d-106.94455072383755!3d44.78344027860213!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x5335f0099be92b1f%3A0x27e6c8e7587a9694!2s1309%20Coffeen%20Ave%20STE%201200%2C%20Sheridan%2C%20WY%2082801%2C%20USA!5e0!3m2!1sen!2slk!4v1778755740481!5m2!1sen!2slk"
                 width="100%"
@@ -37,7 +36,6 @@ export default function ContactForm() {
               />
             </div>
 
-            {/* FIX: Changed text-[#01030B]/90 to text-white */}
             <div className="flex flex-col gap-6 text-white lg:pl-4 pt-16 lg:pt-24">
               <div className="flex items-center gap-4">
                 <FiMapPin className="w-5 h-5 shrink-0" />

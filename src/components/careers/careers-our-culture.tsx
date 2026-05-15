@@ -36,21 +36,17 @@ const cards = [
 export default function WhyWorkWithUs() {
   return (
     <section className="w-full relative bg-white snap-start">
-      
-      {/* FIX 1: Reduced pt-32 lg:pt-40 down to pt-16 lg:pt-20 */}
-      <SiteContainer className="w-full grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8 items-start relative pt-16 lg:pt-20 pb-24 lg:pb-32">
 
-        {/* FIX 2: Reduced the sticky offset to match the new padding (top-20 lg:top-24) */}
+      <SiteContainer className="w-full grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8 items-start relative pt-16 lg:pt-20 pb-24 lg:pb-32">
         <div className="lg:col-span-6 sticky top-20 lg:top-24 flex flex-col justify-start items-start gap-6">
           <div className="flex items-center gap-4 inter-tight">
             <RotatingDots variant="light" />
-            <span className="tracking-[0.1em]">
-              Why Work With Us
-            </span>
+            <span className="body-small">Why Work With Us</span>
           </div>
 
           <h2 className="heading-2 !text-[#01030B] max-w-[530px]">
-            Empowering Careers through Growth, Innovation, and Collaborative Culture
+            Empowering Careers through Growth, Innovation, and Collaborative
+            Culture
           </h2>
 
           <p className="body-small text-[#55565C] max-w-md">
@@ -72,19 +68,16 @@ export default function WhyWorkWithUs() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: false, margin: "-10%" }}
                 transition={{ duration: 0.6, ease: "easeOut" }}
-                className="w-full bg-[#F6F6F6] p-6 lg:p-8 flex flex-col gap-5 shadow-sm"
+                className="w-full bg-[#F6F6F6] p-6 lg:p-8 flex flex-col gap-5"
               >
-                <div className="w-full aspect-[2/1] bg-white rounded-xl overflow-hidden flex items-center justify-center">
-                  <div className="relative w-[85%] h-[85%]">
-                    <Image
-                      src={card.image}
-                      alt={card.title}
-                      fill
-                      className="object-contain"
-                    />
-                  </div>
+                <div className="relative w-full aspect-[2.8/1]">
+                  <Image
+                    src={card.image}
+                    alt={card.title}
+                    fill
+                    className="object-contain object-center"
+                  />
                 </div>
-
                 <div className="flex flex-col gap-3">
                   <h3 className="body-large font-medium !text-[#01030B]">
                     {card.title}
