@@ -92,7 +92,7 @@ function StatItem({
         {label}
       </p>
 
-      <h3 className="heading-1 !font-normal !text-[#0B2A5B] text-transparent">
+      <h3 className="heading-1 !text-[#0B2A5B] text-transparent">
         <span ref={displayRef}>0</span>
         {suffix}
       </h3>
