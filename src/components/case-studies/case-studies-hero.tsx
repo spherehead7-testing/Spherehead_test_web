@@ -22,7 +22,7 @@ export default function CaseStudiesHero() {
               Success Stories That<br />
               Drive Innovation
             </h1>
-            <p className="body-large text-white max-w-2xl">
+            <p className="heading-4 text-white max-w-xl mb-4 lg:mb-8">
               Explore how we transform challenges into impactful digital 
               solutions through innovation and technology.
             </p>

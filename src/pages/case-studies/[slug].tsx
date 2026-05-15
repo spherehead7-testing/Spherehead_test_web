@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
@@ -13,7 +15,6 @@ import {
 } from "framer-motion";
 
 const CASE_STUDY_DETAILS = [
-  // ... (Keep your existing CASE_STUDY_DETAILS array here)
   {
     slug: "transforming-ecommerce",
     title: "Transforming E-Commerce: From Concept to 300% Growth",
@@ -201,7 +202,8 @@ export default function CaseStudyDetail() {
     );
   }
 
-  const study = CASE_STUDY_DETAILS.find((s) => s.slug === slug);
+  const studyIndex = CASE_STUDY_DETAILS.findIndex((s) => s.slug === slug);
+  const study = CASE_STUDY_DETAILS[studyIndex];
 
   if (!study) {
     return (
@@ -227,65 +229,69 @@ export default function CaseStudyDetail() {
           key="page-content"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1, transition: { duration: 0.35, ease: EASE } }}
-          exit={{ opacity: 0, transition: { duration: 0.25, ease: EASE } }}
+          exit={{ opacity: 0, transition: { duration: 1.0, ease: EASE } }}
           className="w-full"
         >
-              {/* ── 1. BLUE HERO SECTION ── now applies the style={{ y: blueBarY }} for parallax */}
-              <motion.section
-                style={{ y: blueBarY }}
-                initial={{ clipPath: "inset(0 0 100% 0)" }}
-                animate={{
-                  clipPath: "inset(0 0 0% 0)",
-                  transition: { duration: 0.5, ease: EASE },
-                }}
-                exit={{
-                  clipPath: "inset(0 0 100% 0)",
-                  transition: { duration: 0.3, ease: EASE },
-                }}
-                className="w-full bg-[#0A2F76] pt-32 pb-48 lg:pb-64 px-6 lg:px-16 text-white relative z-0"
+          {/* ── 1. BLUE HERO SECTION ── */}
+          <motion.section
+            style={{ y: blueBarY }}
+            initial={{ clipPath: "inset(0 0 100% 0)" }}
+            animate={{
+              clipPath: "inset(0 0 0% 0)",
+              transition: { duration: 0.5, ease: EASE },
+            }}
+            exit={{
+              clipPath: "inset(0 0 100% 0)",
+              transition: { duration: 0.6, ease: EASE },
+            }}
+            className="w-full bg-[#0A2F76] pt-32 pb-48 lg:pb-64 px-6 lg:px-16 text-white relative z-0"
+          >
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{
+                opacity: 1,
+                y: 0,
+                transition: { duration: 0.6, delay: 0.2, ease: "easeOut" },
+              }}
+              exit={{
+                opacity: 0,
+                y: -40,
+                transition: { duration: 0.45, ease: "easeInOut" },
+              }}
+              className="max-w-[1400px] mx-auto"
+            >
+              <button
+                onClick={handleBackClick}
+                className="flex items-center gap-2 text-white/80 hover:text-white transition-colors w-fit mb-12 cursor-pointer"
               >
-                <motion.div
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{
-                    opacity: 1,
-                    y: 0,
-                    transition: { duration: 0.6, delay: 0.2, ease: "easeOut" },
-                  }}
-                  exit={{
-                    opacity: 0,
-                    y: -25,
-                    transition: { duration: 0.45, ease: "easeInOut" },
-                  }}
-                  className="max-w-[1400px] mx-auto"
-                >
-                  <button
-                    onClick={handleBackClick}
-                    className="flex items-center gap-2 text-white/80 hover:text-white transition-colors w-fit mb-12 cursor-pointer"
-                  >
-                    <FiArrowLeft /> Back to Case Studies
-                  </button>
-                  <h1 className="heading-2 lg:!text-5xl max-w-4xl">
-                    {study.title}
-                  </h1>
-                </motion.div>
-              </motion.section>
+                <FiArrowLeft /> Back to Case Studies
+              </button>
+              <h1 className="heading-2 lg:!text-5xl max-w-4xl">
+                {study.title}
+              </h1>
+            </motion.div>
+          </motion.section>
 
-              {/* ── 2. HERO IMAGE ── */}
-              <div className="relative z-10 pointer-events-none -mt-32 lg:-mt-48">
-                <section className="max-w-[1400px] mx-auto px-6 lg:px-16">
-                  <motion.div
-                    layout
-                    layoutId={`case-study-hero-${study.slug}`}
-                    initial={false}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 1 }}
-                    transition={{ duration: 1.00, ease: EASE, layout: { duration: 1.00, ease: EASE } }}
-                    style={{ transformOrigin: "left top" }}
-                    className="w-full relative pointer-events-auto"
-                  >
-                    <div className="absolute top-6 right-6 bg-white px-4 py-1.5 body-extra-small text-[#0A2F76] shadow-sm rounded-sm z-20">
-                      {study.category}
-                    </div>
+          {/* ── 2. HERO IMAGE ── */}
+          <div className="relative z-10 pointer-events-none -mt-32 lg:-mt-48">
+            <section className="max-w-[1400px] mx-auto px-6 lg:px-16">
+              <motion.div
+                layout
+                layoutId={`shared-slide-${studyIndex}`}
+                initial={false}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 1 }}
+                transition={{
+                  duration: 1.0,
+                  ease: EASE,
+                  layout: { duration: 1.0, ease: EASE },
+                }}
+                style={{ transformOrigin: "left top" }}
+                className="w-full relative pointer-events-auto"
+              >
+                <div className="absolute top-6 right-6 bg-white px-4 py-1.5 body-extra-small text-[#0A2F76] shadow-sm rounded-sm z-20">
+                  {study.category}
+                </div>
 
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
@@ -295,42 +301,50 @@ export default function CaseStudyDetail() {
                     />
 
                     <div className="absolute bottom-0 right-0 bg-white pt-6 pl-8 rounded-tl-[0.50rem] z-20">
-                     <div className="absolute bottom-0 right-0 bg-white pt-6 pl-8 rounded-tl-[0.50rem] z-20">
-                      {/* NEW SLIDING BUTTON */}
-                      <button className="group relative flex h-[54px] cursor-pointer items-center justify-center overflow-hidden rounded-sm bg-animated-gradient px-8 text-white transition-colors duration-300">
-                        {/* Invisible placeholder to set width */}
-                        <span className="invisible font-medium whitespace-nowrap">
-                          Contact Us
-                        </span>
+                      <div className="absolute bottom-0 right-0 bg-white pt-6 pl-8 rounded-tl-[0.50rem] z-20">
+                        {/* NEW SLIDING BUTTON */}
+                        <Link
+                          href="/contact-us"
+                          className="group relative inline-flex h-[44px] items-center justify-center overflow-hidden rounded-sm bg-animated-gradient px-6 !text-white transition duration-300"
+                        >
+                          {/* Invisible placeholder to set width */}
+                          <span className="invisible font-medium whitespace-nowrap">
+                            Contact Us
+                          </span>
 
-                        {/* Sliding column */}
-                        <div className="absolute top-0 left-0 flex w-full flex-col transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-1/2">
-                          <span className="flex h-[54px] w-full items-center justify-center font-medium whitespace-nowrap">
-                            Contact Us
-                          </span>
-                          <span className="flex h-[54px] w-full items-center justify-center font-medium whitespace-nowrap">
-                            Contact Us
-                          </span>
-                        </div>
-                      </button>
-                    </div>
+                          {/* Sliding column */}
+                          <div className="absolute top-0 left-0 flex w-full flex-col transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-1/2">
+                            <span className="flex h-[44px] w-full items-center justify-center font-medium whitespace-nowrap">
+                              Contact Us
+                            </span>
+                            <span className="flex h-[44px] w-full items-center justify-center font-medium whitespace-nowrap">
+                              Contact Us
+                            </span>
+                          </div>
+                        </Link>
+                      </div>
                     </div>
                   </motion.div>
                 </section>
               </div>
 
-              {/* ── 3. CONTENT GRID ── */}
-              <motion.section
-                initial={{ opacity: 0, y: 30 }}
-                animate={{
-                  opacity: 1,
-                  y: 0,
-                  transition: { duration: 0.8, delay: 0.5, ease: "easeOut" },
-                }}
-                exit={{ opacity: 0, transition: { duration: 0.2 } }}
-                className="relative z-20 bg-white max-w-[1400px] mx-auto px-6 lg:px-16 pt-24 pb-32"
-              >
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-start">
+          {/* ── 3. CONTENT GRID ── */}
+          <motion.section
+            initial={{ opacity: 0, y: 30 }}
+            animate={{
+              opacity: 1,
+              y: 0,
+              transition: { duration: 0.8, delay: 0.5, ease: "easeOut" },
+            }}
+            // 5. CARD CHOREOGRAPHY: Added y: 80 to make the white card slide DOWN on exit
+            exit={{ 
+              opacity: 0, 
+              y: 80, 
+              transition: { duration: 0.5, ease: "easeIn" } 
+            }}
+            className="relative z-20 bg-white max-w-[1400px] mx-auto px-6 lg:px-16 pt-24 pb-32"
+          >
+           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-start">
                   {/* LEFT: STICKY SIDEBAR */}
                   <div className="hidden lg:block lg:col-span-3 sticky top-32 self-start">
                     <div className="flex items-center gap-4 mb-10">
