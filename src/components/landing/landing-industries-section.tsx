@@ -21,7 +21,7 @@ export default function LandingIndustriesSection() {
                             for Sustainable Growth
                         </h2>
 
-                        <p className="body-small max-w-[460px] !text-[#01030B] lg:pt-40 !text-[16px] !leading-[1.4]">
+                        <p className="body-small max-w-[460px] !text-[#01030B] lg:pt-24 !text-[16px] !leading-[1.4]">
                             Delivering tailored digital solutions across a wide
                             range of industries, we help businesses of all kinds
                             innovate, adapt, and grow enabling them to stay

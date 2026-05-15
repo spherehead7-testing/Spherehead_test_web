@@ -33,7 +33,7 @@ export default function BlogsTransitionPanel() {
             <div className="absolute inset-0 bg-gradient-to-t from-[#06142E]/78 via-[#06142E]/18 to-transparent" />
             <ArrowUpRight className="absolute right-4 top-4 z-10 h-6 w-6 text-white transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
 
-            <h3 className="absolute inset-x-0 bottom-0 z-10 max-w-[92%] p-4 text-[17px] font-[400] leading-[1.18] text-white sm:text-[18px]">
+            <h3 className="absolute inset-x-0 bottom-0 z-10 max-w-[92%] p-4 text-[19px] font-[400] leading-[1.18] text-white sm:text-[22px]">
               {post.title}
             </h3>
           </Link>

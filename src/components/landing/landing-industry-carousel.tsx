@@ -35,7 +35,7 @@ const loopCards = [...industryCards, ...industryCards];
 
 export default function LandingIndustryCarousel() {
     return (
-        <div className="relative left-1/2 mt-12 w-screen -translate-x-1/2 overflow-hidden lg:mt-14">
+        <div className="relative left-1/2 mt-8 w-screen -translate-x-1/2 overflow-hidden lg:mt-10">
             <motion.div
                 className="flex w-max gap-4 px-6 lg:px-10"
                 animate={{ x: ["0%", "-50%"] }}
@@ -44,9 +44,9 @@ export default function LandingIndustryCarousel() {
                 {loopCards.map((card, index) => (
                     <div
                         key={`${card.title}-${index}`}
-                        className="w-[450px] flex-none rounded-[8px] bg-[#EAEAEA] p-[15px]"
+                        className="w-[clamp(19rem,29vw,28rem)] flex-none rounded-[8px] bg-[#EAEAEA] p-[15px]"
                     >
-                        <div className="relative h-[175px] w-full overflow-hidden rounded-[6px]">
+                        <div className="relative h-[clamp(9rem,12vw,10rem)] w-full overflow-hidden rounded-[6px]">
                             <Image
                                 src={card.image}
                                 alt={card.title}
@@ -54,7 +54,7 @@ export default function LandingIndustryCarousel() {
                                 className="object-cover"
                             />
                         </div>
-                        <h3 className="heading-3 !text-[#01030B] mt-4">
+                        <h3 className="heading-3 !text-[#01030B] mt-3">
                             {card.title}
                         </h3>
                         <p className="body-small !text-[#01030B] opacity-70">
