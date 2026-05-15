@@ -1,4 +1,5 @@
-import React from "react";  
+import React, { useEffect, useRef } from "react";  
+import { useScrollContainerContext } from "@/context/ScrollContainerContext";
 import CareersHero from "@/components/careers/careers-hero";
 import OurCulture from "@/components/careers/careers-our-culture";
 import StayConnected from "@/components/careers/careers-stay-connected";
@@ -7,10 +8,23 @@ import Footer from "@/components/layout/footer";
 // import useAutoScroll from "@/hooks/useAutoScroll"; 
 
 export default function CareersPage() {
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+  const { setScrollContainerRef } = useScrollContainerContext();
+
+  useEffect(() => {
+    setScrollContainerRef(scrollContainerRef);
+    return () => {
+      setScrollContainerRef(null);
+    };
+  }, [scrollContainerRef, setScrollContainerRef]);
+
   // useAutoScroll();
   return (
     // <main className="w-full flex flex-col bg-transparent">
-      <main className="w-full snap-y snap-mandatory h-screen overflow-y-auto">
+      <main
+        ref={scrollContainerRef}
+        className="w-full snap-y snap-mandatory h-screen overflow-y-auto"
+      >
       {/* Hero section on the global animated background */}
       <CareersHero />
 

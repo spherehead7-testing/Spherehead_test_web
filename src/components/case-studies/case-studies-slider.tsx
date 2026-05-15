@@ -37,8 +37,22 @@ const DURATION = 1.5;
 const EASE: [number, number, number, number] = [0.76, 0, 0.24, 1];
 
 export default function CaseStudiesSlider() {
-  const [[page, direction], setPage] = useState([0, 0]);
+  // 1. MEMORY FIX: Initialize state from sessionStorage so it remembers where we left off!
+  const getInitialPage = () => {
+    if (typeof window !== "undefined") {
+      const saved = sessionStorage.getItem("spherehead_slider_page");
+      return saved !== null ? parseInt(saved, 10) : 0;
+    }
+    return 0;
+  };
+
+  const [[page, direction], setPage] = useState([getInitialPage(), 0]);
   const [isLg, setIsLg] = useState(true);
+
+  // 2. SAVE STATE: Update sessionStorage whenever the slide changes
+  useEffect(() => {
+    sessionStorage.setItem("spherehead_slider_page", page.toString());
+  }, [page]);
 
   useEffect(() => {
     setIsLg(window.innerWidth >= 1024);
@@ -63,21 +77,21 @@ export default function CaseStudiesSlider() {
       x: direction > 0 ? "0%" : "-100%", 
       opacity: direction > 0 ? 1 : 0,
       scale: direction > 0 ? 1 : 0.8,
-      filter: "grayscale(100%)", // Always enter as gray, animates to color
+      filter: "grayscale(100%)",
     }),
     center: {
       zIndex: 20,
       x: "0%",
       opacity: 1,
       scale: 1,
-      filter: "grayscale(0%)", // Natural color in the center
+      filter: "grayscale(0%)",
     },
     exit: (direction: number) => ({
       zIndex: 0,
       x: direction > 0 ? "-100%" : "0%", 
       opacity: 0, 
       scale: direction > 0 ? 0.7 : 1, 
-      filter: "grayscale(100%)", // Animates to gray as it exits
+      filter: "grayscale(100%)",
     })
   };
 
@@ -85,14 +99,13 @@ export default function CaseStudiesSlider() {
     enter: (direction: number) => ({
       x: direction > 0 ? "100%" : "0%", 
       opacity: direction > 0 ? 0 : 1,
-      // FIX: If going backward (direction < 0), it comes from the Main Slot, so it starts with natural color (0%) and fades to gray!
       filter: direction > 0 ? "grayscale(100%)" : "grayscale(0%)"
     }),
     center: {
       zIndex: 10,
       x: "0%",
       opacity: 1,
-      filter: "grayscale(100%)" // Stays gray in preview
+      filter: "grayscale(100%)"
     },
     exit: (direction: number) => ({
       zIndex: 0,
@@ -105,7 +118,7 @@ export default function CaseStudiesSlider() {
   return (
     <SiteContainer>
       <LayoutGroup>
-        <div className="flex flex-col gap-8 pb-12">
+        <div className="w-full flex flex-col gap-8 pb-12" suppressHydrationWarning>
           
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
 
@@ -116,8 +129,7 @@ export default function CaseStudiesSlider() {
                 <AnimatePresence custom={direction} initial={false}>
                   <motion.div
                     key={`main-slide-${page}`}
-                    layout
-                    layoutId={`case-study-hero-${activeStudy.slug}`}
+                    layoutId={`shared-slide-${currentIndex}`}
                     custom={direction}
                     variants={mainVariants}
                     initial="enter"
@@ -154,7 +166,7 @@ export default function CaseStudiesSlider() {
                   </AnimatePresence>
                 </div>
 
-                <div className="flex items-center gap-4 text-gray-500 relative z-10 ml-auto">
+                <div className="flex items-center gap-8 text-gray-500 relative z-10 ml-auto">
                   <button onClick={handlePrev} className="hover:text-[#0D54CA] transition-colors p-1">
                     <FiChevronLeft className="w-6 h-6" />
                   </button>
@@ -211,7 +223,7 @@ export default function CaseStudiesSlider() {
                     <AnimatePresence custom={direction} initial={false}>
                       <motion.div
                         key={`preview-slide-${page}`}
-                        layoutId={`shared-slide-${page + 1}`} 
+                        layoutId={`shared-slide-${nextIndex}`} 
                         custom={direction}
                         variants={previewVariants}
                         initial="enter"
