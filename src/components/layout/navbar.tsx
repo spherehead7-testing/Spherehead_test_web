@@ -84,6 +84,7 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
   useEffect(() => {
     const target =
       scrollContainer?.current || contextScrollContainerRef?.current || window;
+    const isCustomTarget = target !== window;
 
     const handleScroll = () => {
       const currentScrollY =
