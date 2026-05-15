@@ -46,53 +46,61 @@ export default function CoreValues() {
     const section = sectionRef.current;
     if (!section) return;
 
+    // Accumulate trackpad delta — only step once threshold is crossed.
+    // This prevents rapid-fire inertia scrolling from skipping multiple values.
+    let accumulated = 0;
+    const THRESHOLD = 60;   // px of total delta before a step fires
+    const COOLDOWN_MS = 850; // ms lockout after each step
+
     const handleWheel = (e: WheelEvent) => {
       const rect = section.getBoundingClientRect();
-
-      // Section is considered "in view" when its top edge is at or above viewport top
-      // and its bottom edge is still below the viewport bottom
       const sectionInView = rect.top <= 0 && rect.bottom >= window.innerHeight;
 
       if (!sectionInView) {
+        accumulated = 0;
         isLocked.current = false;
         return;
       }
 
-      // Section is in view — lock scrolling
       isLocked.current = true;
 
       if (isAnimating.current) {
+        // Swallow scroll while animating so inertia can't queue up steps
+        e.preventDefault();
+        accumulated = 0;
+        return;
+      }
+
+      accumulated += e.deltaY;
+
+      if (Math.abs(accumulated) < THRESHOLD) {
+        // Not enough delta yet — block page scroll but don't step
         e.preventDefault();
         return;
       }
 
-      if (e.deltaY > 0) {
-        // Scroll DOWN
-        if (active < values.length - 1) {
-          e.preventDefault();
-          isAnimating.current = true;
-          setActive((prev) => prev + 1);
-          setTimeout(() => {
-            isAnimating.current = false;
-          }, 700);
-        }
-        // Last value reached — allow natural scroll to continue (don't preventDefault)
-      } else if (e.deltaY < 0) {
-        // Scroll UP
-        if (active > 0) {
-          e.preventDefault();
-          isAnimating.current = true;
-          setActive((prev) => prev - 1);
-          setTimeout(() => {
-            isAnimating.current = false;
-          }, 700);
-        }
-        // First value reached — allow natural scroll upward
+      const direction = accumulated > 0 ? "down" : "up";
+      accumulated = 0; // consume
+
+      if (direction === "down" && active < values.length - 1) {
+        e.preventDefault();
+        isAnimating.current = true;
+        setActive((prev) => prev + 1);
+        setTimeout(() => { isAnimating.current = false; }, COOLDOWN_MS);
+      } else if (direction === "up" && active > 0) {
+        e.preventDefault();
+        isAnimating.current = true;
+        setActive((prev) => prev - 1);
+        setTimeout(() => { isAnimating.current = false; }, COOLDOWN_MS);
       }
+      // At first/last item — fall through so page scrolls naturally past the section
     };
 
     window.addEventListener("wheel", handleWheel, { passive: false });
-    return () => window.removeEventListener("wheel", handleWheel);
+    return () => {
+      window.removeEventListener("wheel", handleWheel);
+      accumulated = 0;
+    };
   }, [active]);
 
   return (
@@ -103,6 +111,7 @@ export default function CoreValues() {
     >
       {/* Sticky panel — stays in view while parent scrolls */}
       <div className="sticky top-0 flex h-screen w-full flex-col py-12 overflow-hidden">
+
         {/* HEADER */}
         <div className="max-w-[1400px] mx-auto w-full px-6 lg:px-20">
           <div className="mb-10">
@@ -129,9 +138,7 @@ export default function CoreValues() {
                   key={i}
                   onClick={() => setActive(i)}
                   className={`transition-opacity duration-300 ${
-                    active === i
-                      ? "text-white opacity-100"
-                      : "text-white/50 opacity-70"
+                    active === i ? "text-white opacity-100" : "text-white/50 opacity-70"
                   }`}
                 >
                   {item.title}
@@ -148,7 +155,7 @@ export default function CoreValues() {
            * Each tab occupies 25% of the width; its centre is at:
            *   i * 25 + 12.5  (%)
            */}
-          <div className="relative w-full h-[2px] bg-white/30">
+          <div className="relative w-full h-[3px] bg-white/25">
             {/* Growing white highlight */}
             <motion.div
               className="absolute left-0 top-0 h-full bg-white"
@@ -166,7 +173,8 @@ export default function CoreValues() {
 
         {/* CONTENT */}
         <div className="max-w-[1440px] mx-auto w-full px-6 lg:px-20 flex-1 flex items-center">
-          <div className="grid lg:grid-cols-2 gap-6 items-center w-full pt-10">
+          <div className="grid lg:grid-cols-2 gap-16 items-center w-full">
+
             {/* IMAGE */}
             <motion.div
               key={values[active].image}
@@ -190,9 +198,7 @@ export default function CoreValues() {
               transition={{ duration: 0.4 }}
             >
               <h3 className="body-large mb-6">{values[active].title}</h3>
-              <p className="body-small max-w-[500px]">
-                {values[active].description}
-              </p>
+              <p className="body-small max-w-[500px]">{values[active].description}</p>
             </motion.div>
           </div>
         </div>
