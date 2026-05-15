@@ -68,14 +68,15 @@ export default function WhyWorkWithUs() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: false, margin: "-10%" }}
                 transition={{ duration: 0.6, ease: "easeOut" }}
-                className="w-full bg-[#F6F6F6] p-6 lg:p-8 flex flex-col gap-5"
+                className="w-full bg-[#F6F6F6] rounded-t-[6px] p-6 lg:p-8 flex flex-col gap-5"
               >
-                <div className="relative w-full aspect-[2.8/1]">
+                {/* CHANGED: Added overflow-hidden and rounded-[4px] to the image wrapper so the cover image has slightly rounded edges */}
+                <div className="relative w-full aspect-[2.8/1] overflow-hidden rounded-[4px]">
                   <Image
                     src={card.image}
                     alt={card.title}
                     fill
-                    className="object-contain object-center"
+                    className="object-cover object-center scale-[1.15]"
                   />
                 </div>
                 <div className="flex flex-col gap-3">
