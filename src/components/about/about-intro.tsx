@@ -5,7 +5,7 @@ import { useEffect, useRef } from "react";
 
 export default function AboutIntro() {
   return (
-    <section className="bg-[#f5f7fb] pt-12 pb-6 lg:pb-10">
+    <section className="bg-white pt-12 pb-6 lg:pb-10">
       <div className=" mx-auto px-6 lg:px-20">
         {/* TEXT */}
         <p className="heading-2 max-w-[1100px] !text-[#01030B]">
@@ -92,7 +92,7 @@ function StatItem({
         {label}
       </p>
 
-      <h3 className="heading-1 !text-[#0B2A5B] text-transparent">
+      <h3 className="heading-1 !font-normal !text-[#0B2A5B] text-transparent">
         <span ref={displayRef}>0</span>
         {suffix}
       </h3>
