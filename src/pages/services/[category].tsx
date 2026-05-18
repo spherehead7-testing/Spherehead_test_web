@@ -8,6 +8,7 @@ import ServicesApproachSection from "@/components/services/services-approach-sec
 import ServicesListSection from "@/components/services/services-list-section";
 import Footer from "@/components/layout/footer";
 import { categoryData, ServiceCategoryData } from "@/data/service-categories";
+import TechStackCarousel from "@/components/ui/tech-stack-carousel";
 
 interface ServiceCategoryPageProps {
   data: ServiceCategoryData;
@@ -19,8 +20,8 @@ export default function ServiceCategoryPage({ data }: ServiceCategoryPageProps) 
   useEffect(() => {
     const html = document.documentElement;
 
-    const enableSnap = () => html.classList.add("snap-y", "snap-mandatory");
-    const disableSnap = () => html.classList.remove("snap-y", "snap-mandatory");
+    const enableSnap = () => html.classList.add("snap-y", "snap-proximity");
+    const disableSnap = () => html.classList.remove("snap-y", "snap-proximity");
 
     // 1. Initially enable snapping and smooth scrolling
     enableSnap();
@@ -29,10 +30,10 @@ export default function ServiceCategoryPage({ data }: ServiceCategoryPageProps) 
     // 2. Temporarily disable CSS snapping when clicking a link
     const pauseSnapping = () => {
       disableSnap();
-      
+
       setTimeout(() => {
         enableSnap();
-      }, 1500); 
+      }, 1500);
     };
 
     if (window.location.hash) {
@@ -65,7 +66,11 @@ export default function ServiceCategoryPage({ data }: ServiceCategoryPageProps) 
 
       <ServicesApproachSection />
       <ServicesListSection data={data} />
-      
+
+      <div className="w-full snap-start bg-white py-6 z-50">
+        <TechStackCarousel />
+      </div>
+
       <div className="w-full shrink-0 snap-start">
         <Footer />
       </div>
