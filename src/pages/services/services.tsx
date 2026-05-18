@@ -1,23 +1,20 @@
 "use client";
 
-import { useEffect } from "react";
 import Head from "next/head";
 import ServicesHeroSection from "@/components/services/services-hero-section";
 import ServicesIntroSection from "@/components/services/services-intro-section";
 import ServicesApproachSection from "@/components/services/services-approach-section";
 import ServicesListSection from "@/components/services/services-list-section";
+import TechStackCarousel from "@/components/ui/tech-stack-carousel";
 import Footer from "@/components/layout/footer";
 
 // 1. Import your centralized data
 import { categoryData } from "@/data/service-categories";
 
 export default function ServicesPage() {
-  useEffect(() => {
-    document.documentElement.classList.add("snap-y", "snap-mandatory");
-    return () => {
-      document.documentElement.classList.remove("snap-y", "snap-mandatory");
-    };
-  }, []);
+  // No snap scrolling — the custom wheel handlers in intro/approach sections
+  // manage the controlled scroll behaviour for the top sections.
+  // Everything else scrolls freely.
 
   // 2. Select the data you want to display on this main overview page
   const data = categoryData["digital-services"];
@@ -34,8 +31,12 @@ export default function ServicesPage() {
       <ServicesIntroSection data={data.intro} />
       <ServicesApproachSection />
       <ServicesListSection data={data} />
-      
-      <div className="w-full shrink-0 snap-start">
+
+      <div className="w-full bg-white py-6">
+        <TechStackCarousel />
+      </div>
+
+      <div className="w-full shrink-0">
         <Footer />
       </div>
     </main>
