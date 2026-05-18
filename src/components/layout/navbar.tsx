@@ -149,7 +149,7 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
       ref={headerRef}
       onMouseLeave={closeAllMenus}
       style={{ right: scrollbarInset }}
-      className={`fixed top-0 left-0 w-full z-[9999] will-change-transform transition-transform duration-300 ease-in-out ${
+      className={`fixed top-0 left-0 z-[9999] will-change-transform transition-transform duration-300 ease-in-out ${
         isVisible ? "translate-y-0" : "-translate-y-full"
       }`}
     >

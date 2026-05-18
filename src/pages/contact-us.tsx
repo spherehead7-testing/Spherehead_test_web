@@ -1,6 +1,5 @@
-import React, { useRef, useEffect } from "react";
+import React, { useEffect } from "react";
 import Head from "next/head";
-import { useScrollContainerContext } from "@/context/ScrollContainerContext";
 
 import ContactHero from "@/components/contact-us/contact-hero";
 import ContactIntro from "@/components/contact-us/contact-intro";
@@ -9,22 +8,17 @@ import ContactForm from "@/components/contact-us/contact-form";
 import ContactFooter from "@/components/contact-us/contact-footer";
 
 export default function ContactUsPage() {
-  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
-  const { setScrollContainerRef } = useScrollContainerContext();
-
   useEffect(() => {
-    setScrollContainerRef(scrollContainerRef);
+    // Enable scroll snapping for full-page sections
+    document.documentElement.classList.add("snap-y", "snap-mandatory");
     return () => {
-      setScrollContainerRef(null);
+      document.documentElement.classList.remove("snap-y", "snap-mandatory");
     };
-  }, [scrollContainerRef, setScrollContainerRef]);
+  }, []);
 
   return (
-    <main 
-      ref={scrollContainerRef}
-      // Added snap-y and snap-mandatory here instead of document.documentElement
-      className="relative w-full h-screen overflow-y-auto overflow-x-hidden snap-y snap-mandatory"
-    >
+    <main className="w-full">
+      
       {/* Page SEO title */}
       <Head>
         <title>Contact Us | Spherehead Technologies</title>
@@ -41,6 +35,7 @@ export default function ContactUsPage() {
       <section className="w-full snap-start">
         <ContactFooter />
       </section>
+
     </main>
   );
 }

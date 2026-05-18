@@ -1,9 +1,7 @@
 "use client";
 
-import React, { useRef, useEffect } from "react";
+import { useEffect } from "react";
 import Head from "next/head";
-import { useScrollContainerContext } from "@/context/ScrollContainerContext";
-
 import ServicesHeroSection from "@/components/services/services-hero-section";
 import ServicesIntroSection from "@/components/services/services-intro-section";
 import ServicesApproachSection from "@/components/services/services-approach-section";
@@ -14,25 +12,19 @@ import Footer from "@/components/layout/footer";
 import { categoryData } from "@/data/service-categories";
 
 export default function ServicesPage() {
-  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
-  const { setScrollContainerRef } = useScrollContainerContext();
-
   useEffect(() => {
-    setScrollContainerRef(scrollContainerRef);
+    document.documentElement.classList.add("snap-y", "snap-mandatory");
     return () => {
-      setScrollContainerRef(null);
+      document.documentElement.classList.remove("snap-y", "snap-mandatory");
     };
-  }, [scrollContainerRef, setScrollContainerRef]);
+  }, []);
 
   // 2. Select the data you want to display on this main overview page
   const data = categoryData["digital-services"];
 
   return (
-    <main
-      ref={scrollContainerRef}
-      // Note: Added snap-y and snap-mandatory directly to the container
-      className="relative w-full h-screen overflow-y-auto overflow-x-hidden snap-y snap-mandatory"
-    >
+    // THE FIX: Removed 'h-screen' and 'overflow-y-auto' so the window handles the scrolling normally!
+    <main className="w-full">
       <Head>
         <title>{data.metaTitle} | Spherehead Technologies</title>
       </Head>
