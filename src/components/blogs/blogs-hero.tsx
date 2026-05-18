@@ -6,7 +6,11 @@ import RotatingDots from "@/components/ui/rotating-dots";
 import { featuredBlogPosts } from "@/data/blog-posts";
 import { motion, useTransform, type MotionValue } from "motion/react";
 
-export default function BlogsHero({ progress }: { progress: MotionValue<number> }) {
+export default function BlogsHero({
+    progress,
+}: {
+    progress: MotionValue<number>;
+}) {
     // Suddenly move the white aside panel to the right as scroll begins
     // It moves 120% to the right within the first 20% of the transition range
     const asideX = useTransform(progress || 0, [0, 0.2], ["0%", "120%"]);

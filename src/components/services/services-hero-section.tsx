@@ -27,7 +27,7 @@ export default function ServicesHeroSection({ data }: { data: ServiceCategoryDat
               <h1 className="inner-hero text-white">
                 {data.title}
               </h1>
-              <p className="body-small text-white/70 leading-[1.75] mt-6 max-w-[340px] font-light leading-relaxed">
+              <p className="header-4 text-white leading-[1.75] mt-6 max-w-[610px] font-light leading-relaxed">
                 {data.description}
               </p>
             </motion.div>
