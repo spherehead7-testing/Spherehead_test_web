@@ -8,10 +8,12 @@ import SiteContainer from "@/components/layout/site-container";
 import RotatingDots from "@/components/ui/rotating-dots";
 import TechStackCarousel from "@/components/ui/tech-stack-carousel";
 import { ServiceCategoryData } from "@/data/service-categories";
+import { useIsMobile } from "@/hooks/use-is-mobile";
 
 const plusIconColors = ["text-[#FD7624]", "text-[#0D54CA]", "text-[#92D9FF]"];
 
 export default function ServicesListSection({ data }: { data: ServiceCategoryData }) {
+  const isMobile = useIsMobile();
   const containerRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const listWrapperRef = useRef<HTMLDivElement>(null);
@@ -73,7 +75,7 @@ export default function ServicesListSection({ data }: { data: ServiceCategoryDat
     return () => window.removeEventListener("resize", measureMaxTranslate);
   }, [measureMaxTranslate, activeIndex]);
 
-  // SCROLL PINNING LOGIC
+  // SCROLL PINNING LOGIC — only used on desktop
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"]
@@ -82,11 +84,46 @@ export default function ServicesListSection({ data }: { data: ServiceCategoryDat
   // Translate the list by exactly the overflow amount so the last item stops at the wrapper bottom
   const yPx = useTransform(scrollYProgress, [0, 1], [0, -maxTranslate]);
 
+  // Mobile: simple flat layout with no pinning
+  if (isMobile) {
+    return (
+      <section className="relative w-full">
+        <div className="relative z-20 w-full rounded-[6px] flex flex-col bg-white pt-10 pb-10 shadow-[0_-10px_30px_rgba(0,0,0,0.1)]">
+          <SiteContainer>
+            <div className="flex items-center gap-4 mb-6">
+              <RotatingDots variant="light" />
+              <span className="body-small tracking-[0.1em] text-[#0D54CA] font-bold">
+                {data.metaTitle}
+              </span>
+            </div>
+
+            <h2 className="heading-2 !text-[#01030B] mb-8 max-w-md">
+              {data.listTitle}
+            </h2>
+
+            <div className="flex flex-col">
+              {data.items.map((service, index) => (
+                <ServiceListItem
+                  key={service.id}
+                  service={service}
+                  index={index}
+                  isActive={activeIndex === index}
+                  toggleAccordion={toggleAccordion}
+                  currentPlusColor="text-[#0D54CA]"
+                />
+              ))}
+            </div>
+          </SiteContainer>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section
       ref={containerRef}
       className="relative w-full"
-      style={{ height: `${data.items.length * 40 + 100}vh` }}
+      style={{ height: `${data.items.length * 1 + 90}vh` }}
     >
       <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-start bg-animated-gradient pt-[60px] lg:pt-[80px]">
         <div

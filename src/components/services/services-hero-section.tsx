@@ -3,8 +3,31 @@ import { motion } from "framer-motion";
 import SiteContainer from "@/components/layout/site-container";
 import CyclicButton from "@/components/ui/cyclic-button";
 import { ServiceCategoryData } from "@/data/service-categories";
+import { useIsMobile } from "@/hooks/use-is-mobile";
 
 export default function ServicesHeroSection({ data }: { data: ServiceCategoryData["hero"] }) {
+  const isMobile = useIsMobile();
+
+  if (isMobile) {
+    return (
+      <section className="relative w-full min-h-[70svh] flex flex-col overflow-hidden bg-animated-gradient">
+        <SiteContainer className="relative z-10 flex flex-col h-full flex-grow justify-end pb-12 pt-24">
+          <div className="w-full flex flex-col mt-auto">
+            <div className="w-full h-[1px] bg-white/20 mb-8 origin-left" />
+            <h1 className="inner-hero text-white">
+              {data.title}
+            </h1>
+            <div className="flex items-start justify-start mt-6">
+              <CyclicButton onClick={() => console.log("Start Project Clicked!")}>
+                Start A Project
+              </CyclicButton>
+            </div>
+          </div>
+        </SiteContainer>
+      </section>
+    );
+  }
+
   return (
     <section className="sticky top-0 z-0 w-full h-[100svh] flex flex-col overflow-hidden snap-start">
       <SiteContainer className="relative z-10 flex flex-col h-full flex-grow justify-end pb-12 pt-32 lg:pb-20">
@@ -27,7 +50,7 @@ export default function ServicesHeroSection({ data }: { data: ServiceCategoryDat
               <h1 className="inner-hero text-white">
                 {data.title}
               </h1>
-              <p className="header-4 text-white leading-[1.75] mt-6 max-w-[610px] font-light leading-relaxed">
+              <p className="heading-4 text-white leading-[1.75] mt-6 max-w-[610px] font-light leading-relaxed">
                 {data.description}
               </p>
             </motion.div>
