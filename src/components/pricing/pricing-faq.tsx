@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import RotatingDots from "@/components/ui/rotating-dots";
 
 const faqs = [
@@ -57,8 +58,7 @@ export default function FAQSection() {
       snapTimerRef.current = setTimeout(() => {
         const rect = section.getBoundingClientRect();
         const viewportHeight = window.innerHeight;
-        const shouldLock =
-          rect.top < viewportHeight * 0.38 && rect.top > 8;
+        const shouldLock = rect.top < viewportHeight * 0.38 && rect.top > 8;
 
         if (shouldLock) {
           section.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -82,7 +82,6 @@ export default function FAQSection() {
       className="h-[100svh] w-full snap-start overflow-hidden py-8 lg:flex lg:items-center lg:py-10"
     >
       <div className="mx-auto grid w-full max-w-6xl items-start gap-10 px-6 lg:grid-cols-2 lg:gap-14">
-
         {/* LEFT SIDE */}
         <div className="text-white">
           <div className="mb-4 flex items-center gap-2">
@@ -91,28 +90,25 @@ export default function FAQSection() {
           </div>
 
           <h2 className="heading-2 max-w-[520px]">
-            Behind every question lies a commitment to clarity and understanding.
-            Every answer is crafted to guide you and build lasting trust.
+            Behind every question lies a commitment to clarity and
+            understanding. Every answer is crafted to guide you and build
+            lasting trust.
           </h2>
         </div>
 
         {/* RIGHT SIDE */}
         <div className="rounded-md bg-white p-5 md:p-6">
-
           {faqs.map((faq, index) => {
             const isOpen = activeIndex === index;
 
             return (
               <div key={index} className="border-b last:border-none">
-
                 {/* HEADER */}
                 <button
                   onClick={() => toggle(index)}
                   className="flex w-full items-center justify-between gap-6 py-3.5 text-left"
                 >
-                  <span className="body-medium text-black">
-                    {faq.question}
-                  </span>
+                  <span className="body-medium text-black">{faq.question}</span>
 
                   {/* ICON */}
                   <span
@@ -129,9 +125,7 @@ export default function FAQSection() {
                     isOpen ? "max-h-[140px] pb-3" : "max-h-0"
                   }`}
                 >
-                  <p className="pr-6 body-small text-[#55565C]">
-                    {faq.answer}
-                  </p>
+                  <p className="pr-6 body-small text-[#55565C]">{faq.answer}</p>
                 </div>
               </div>
             );
@@ -142,9 +136,11 @@ export default function FAQSection() {
             <p className="mb-3 body-small text-[#01030B">
               My question is not here.
             </p>
-            <button className="body-medium rounded bg-animated-gradient px-6 py-2 text-white">
-              Contact Us
-            </button>
+            <Link href="/contact-us">
+              <button className="body-medium rounded bg-animated-gradient px-6 py-2 text-white">
+                Contact Us
+              </button>
+            </Link>
           </div>
         </div>
       </div>
