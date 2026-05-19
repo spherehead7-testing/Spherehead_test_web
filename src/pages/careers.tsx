@@ -5,35 +5,50 @@ import OurCulture from "@/components/careers/careers-our-culture";
 import StayConnected from "@/components/careers/careers-stay-connected";
 import InternshipPrograms from "@/components/careers/careers-internship-programs";
 import Footer from "@/components/layout/footer";
-// import useAutoScroll from "@/hooks/useAutoScroll"; 
+import { useIsMobile } from "@/hooks/use-is-mobile";
 
 export default function CareersPage() {
+  const isMobile = useIsMobile();
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const { setScrollContainerRef } = useScrollContainerContext();
 
   useEffect(() => {
-    setScrollContainerRef(scrollContainerRef);
+    if (!isMobile) {
+      setScrollContainerRef(scrollContainerRef);
+    }
     return () => {
       setScrollContainerRef(null);
     };
-  }, [scrollContainerRef, setScrollContainerRef]);
+  }, [scrollContainerRef, setScrollContainerRef, isMobile]);
 
-  // useAutoScroll();
+  if (isMobile) {
+    return (
+      <main className="w-full overflow-x-hidden">
+        <CareersHero />
+
+        <div className="w-full bg-white text-[#01030B] z-10 relative">
+          <OurCulture />
+        </div>
+
+        <StayConnected />
+        <InternshipPrograms />
+
+        <Footer />
+      </main>
+    );
+  }
+
   return (
-    // <main className="w-full flex flex-col bg-transparent">
-      <main
-        ref={scrollContainerRef}
-        className="w-full snap-y snap-mandatory h-screen overflow-y-auto"
-      >
-      {/* Hero section on the global animated background */}
+    <main
+      ref={scrollContainerRef}
+      className="w-full snap-y snap-mandatory h-screen overflow-y-auto"
+    >
       <CareersHero />
 
-      {/* White background section */}
       <div className="w-full bg-white text-[#01030B] z-10 relative">
-        <OurCulture/>
+        <OurCulture />
       </div>
 
-      {/* Transparent background to show global gradient */}
       <StayConnected />
       <InternshipPrograms />
       <div className="w-full shrink-0 snap-start">
