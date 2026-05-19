@@ -60,7 +60,7 @@ export default function ContactCard({ variant = "flat" }: Props) {
     <form
       onSubmit={handleSubmit}
       className={`w-full flex flex-col gap-8 ${variant === "card"
-        ? "max-w-[480px] bg-[#f7f7f7] px-12 pt-14 pb-[52px] rounded-t-[6px]"
+        ? "md:max-w-[480px] bg-[#f7f7f7] px-8 md:px-12 pt-14 pb-[52px] rounded-t-[6px]"
         : "max-w-lg"
         }`}
     >

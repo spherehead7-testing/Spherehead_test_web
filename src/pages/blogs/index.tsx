@@ -1,12 +1,55 @@
 import Head from "next/head";
 import { useRef, useEffect } from "react";
-import { motion, useScroll, useTransform, useSpring } from "motion/react";
+import { motion, useScroll, useTransform, useSpring, useMotionValue } from "motion/react";
 import { useScrollContainerContext } from "@/context/ScrollContainerContext";
 import BlogsHero from "@/components/blogs/blogs-hero";
 import BlogsContent from "@/components/blogs/blogs-content";
 import Footer from "@/components/layout/footer";
+import { useIsMobile } from "@/hooks/use-is-mobile";
 
 export default function BlogsPage() {
+    const isMobile = useIsMobile();
+
+    if (isMobile) {
+        return <BlogsMobile />;
+    }
+
+    return <BlogsDesktop />;
+}
+
+/** Mobile: flat layout, no scroll hijacking */
+function BlogsMobile() {
+    const dummyProgress = useMotionValue(0);
+
+    return (
+        <>
+            <Head>
+                <title>Blogs | Spherehead Technologies</title>
+                <meta
+                    name="description"
+                    content="Technology, innovation, design, and tech stack insights from Spherehead Technologies."
+                />
+            </Head>
+
+            <main className="w-full overflow-x-hidden bg-[#01030B] text-[#01030B]">
+                <section className="relative bg-gradient-to-r from-[#06142E] via-[#0A2F76] to-[#2666D2]">
+                    <BlogsHero progress={dummyProgress} />
+                </section>
+
+                <section className="relative z-20 rounded-t-[24px] bg-white shadow-[0_-20px_60px_rgba(0,0,0,0.2)]">
+                    <BlogsContent />
+                </section>
+
+                <section className="relative z-20 bg-animated-gradient">
+                    <Footer />
+                </section>
+            </main>
+        </>
+    );
+}
+
+/** Desktop: scroll-linked animations with sticky hero */
+function BlogsDesktop() {
     const containerRef = useRef<HTMLElement | null>(null);
     const scrollContainerRef = useRef<HTMLDivElement | null>(null);
     const { setScrollContainerRef } = useScrollContainerContext();
@@ -29,9 +72,6 @@ export default function BlogsPage() {
         damping: 30,
         restDelta: 0.001,
     });
-
-    const heroOpacity = useTransform(smoothProgress, [0.7, 1], [1, 0]);
-    const heroY = useTransform(smoothProgress, [0, 1], ["0%", "5%"]);
 
     return (
         <>

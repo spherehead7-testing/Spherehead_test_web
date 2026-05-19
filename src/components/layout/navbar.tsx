@@ -8,6 +8,7 @@ import {
   Box,
   ChevronDown,
   Compass,
+  Plus,
   Sparkles,
 } from "lucide-react";
 import { useScrollContainerContext } from "@/context/ScrollContainerContext";
@@ -23,6 +24,7 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [scrollbarInset, setScrollbarInset] = useState(0);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const [servicesOpen, setServicesOpen] = useState(false);
   const [workOpen, setWorkOpen] = useState(false);
@@ -30,6 +32,7 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
 
   const headerRef = useRef<HTMLElement>(null);
   const lastScrollY = useRef(0);
+  const hideSectionVisible = useRef(false);
 
   const { scrollContainerRef: contextScrollContainerRef } = useScrollContainerContext();
 
@@ -44,7 +47,6 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
   useEffect(() => {
     const target =
       scrollContainer?.current || contextScrollContainerRef?.current || window;
-    const isCustomTarget = target !== window;
 
     if (target !== window) {
       const scrollElement = target as HTMLElement;
@@ -81,6 +83,35 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
     return () => cancelAnimationFrame(frameId);
   }, [scrollContainer, contextScrollContainerRef]);
 
+  // Hide navbar when scrolled into [data-hide-navbar] sections
+  useEffect(() => {
+    const sections = document.querySelectorAll("[data-hide-navbar]");
+    if (sections.length === 0) return;
+
+    const checkVisibility = () => {
+      let anyActive = false;
+      sections.forEach((section) => {
+        const rect = section.getBoundingClientRect();
+        // Section is covering the top of the viewport (top edge approaching navbar zone)
+        if (rect.top <= window.innerHeight * 0.3 && rect.bottom > 0) {
+          anyActive = true;
+        }
+      });
+
+      if (anyActive && !hideSectionVisible.current) {
+        hideSectionVisible.current = true;
+        setIsVisible(false);
+      } else if (!anyActive && hideSectionVisible.current) {
+        hideSectionVisible.current = false;
+      }
+    };
+
+    window.addEventListener("scroll", checkVisibility, { passive: true });
+    checkVisibility(); // initial check
+
+    return () => window.removeEventListener("scroll", checkVisibility);
+  }, []);
+
   useEffect(() => {
     const target =
       scrollContainer?.current || contextScrollContainerRef?.current || window;
@@ -94,7 +125,7 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
 
       if (currentScrollY > lastScrollY.current && currentScrollY > 50) {
         setIsVisible(false);
-      } else {
+      } else if (!hideSectionVisible.current) {
         setIsVisible(true);
       }
 
@@ -105,7 +136,7 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
       const e = event as WheelEvent;
       if (e.deltaY > 10) {
         setIsVisible(false);
-      } else if (e.deltaY < -10) {
+      } else if (e.deltaY < -10 && !hideSectionVisible.current) {
         setIsVisible(true);
         if (isCustomTarget) {
           setScrolled(true);
@@ -145,10 +176,17 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
   }, []);
 
   return (
+    <>
     <header
       ref={headerRef}
       onMouseLeave={closeAllMenus}
       style={{ right: scrollbarInset }}
+      className={`fixed top-0 left-0 z-[9999] will-change-transform transition-all duration-300 ease-in-out ${
+        isVisible ? "translate-y-0" : "-translate-y-[120%]"
+      } ${
+        scrolled
+          ? "bg-[#0b2a5b]/90 backdrop-blur-md shadow-md"
+          : "bg-transparent"
       className={`fixed top-0 left-0 z-[9999] will-change-transform transition-transform duration-300 ease-in-out ${
         isVisible ? "translate-y-0" : "-translate-y-full"
       }`}
@@ -175,6 +213,18 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
             className="h-auto"
           />
         </Link>
+
+        {/* MOBILE BURGER BUTTON */}
+        <button
+          type="button"
+          className="md:hidden flex flex-col justify-center items-center gap-[5px] p-2 cursor-pointer"
+          onClick={() => setMobileMenuOpen((prev) => !prev)}
+          aria-label="Toggle menu"
+        >
+          <span className={`block w-6 h-[2px] bg-white transition-all duration-300 ${mobileMenuOpen ? "rotate-45 translate-y-[7px]" : ""}`} />
+          <span className={`block w-6 h-[2px] bg-white transition-all duration-300 ${mobileMenuOpen ? "opacity-0" : ""}`} />
+          <span className={`block w-6 h-[2px] bg-white transition-all duration-300 ${mobileMenuOpen ? "-rotate-45 -translate-y-[7px]" : ""}`} />
+        </button>
 
         {/* MENU */}
         <nav className="body-extra-small hidden md:flex items-center gap-10 text-white">
@@ -503,7 +553,62 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
           )}
         </div>
       </div>
+
+      {/* MOBILE MENU — Full screen white overlay matching Figma */}
     </header>
+
+    {/* Mobile menu rendered OUTSIDE header to avoid clipping */}
+    <div
+      className={`fixed inset-0 w-full h-full z-[10000] md:hidden transition-all duration-300 ${
+        mobileMenuOpen ? "pointer-events-auto visible" : "pointer-events-none invisible"
+      }`}
+    >
+      <div
+        className={`w-full h-full bg-white flex flex-col overflow-y-auto transition-opacity duration-300 ${
+          mobileMenuOpen ? "opacity-100" : "opacity-0"
+        }`}
+      >
+        {/* Close button */}
+        <div className="flex justify-end px-6 pt-6">
+          <button
+            type="button"
+            className="text-[#0D54CA] text-2xl cursor-pointer p-2"
+            onClick={() => setMobileMenuOpen(false)}
+            aria-label="Close menu"
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* Nav links */}
+        <nav className="flex flex-col px-8 pt-12">
+          <Link href="/about-us" className="py-4 text-[#01030B] body-medium border-b border-gray-200" onClick={() => setMobileMenuOpen(false)}>About Us</Link>
+
+          <MobileNavAccordion label="Services" plusColor="text-[#FD7624]" onLinkClick={() => setMobileMenuOpen(false)}>
+            <Link href="/services/digital-services" className="block py-2 text-[#8A8B8F] body-small" onClick={() => setMobileMenuOpen(false)}>Digital Services</Link>
+            <Link href="/services/digital-solutions" className="block py-2 text-[#8A8B8F] body-small" onClick={() => setMobileMenuOpen(false)}>Digital Solutions</Link>
+            <Link href="/services/design-and-3d-services" className="block py-2 text-[#8A8B8F] body-small" onClick={() => setMobileMenuOpen(false)}>Design & 3D Services</Link>
+          </MobileNavAccordion>
+
+          <MobileNavAccordion label="Our Works" plusColor="text-[#FD7624]" onLinkClick={() => setMobileMenuOpen(false)}>
+            <Link href="/portfolio" className="block py-2 text-[#8A8B8F] body-small" onClick={() => setMobileMenuOpen(false)}>Portfolio</Link>
+            <Link href="/case-studies" className="block py-2 text-[#8A8B8F] body-small" onClick={() => setMobileMenuOpen(false)}>Case Studies</Link>
+          </MobileNavAccordion>
+
+          <Link href="/pricing" className="py-4 text-[#01030B] body-medium border-b border-gray-200" onClick={() => setMobileMenuOpen(false)}>Pricing</Link>
+          <Link href="/industries" className="py-4 text-[#01030B] body-medium border-b border-gray-200" onClick={() => setMobileMenuOpen(false)}>Industries</Link>
+
+          <MobileNavAccordion label="News & Insights" plusColor="text-[#0D54CA]" onLinkClick={() => setMobileMenuOpen(false)}>
+            <Link href="/news" className="block py-2 text-[#8A8B8F] body-small" onClick={() => setMobileMenuOpen(false)}>News</Link>
+            <Link href="/blogs" className="block py-2 text-[#8A8B8F] body-small" onClick={() => setMobileMenuOpen(false)}>Blogs</Link>
+          </MobileNavAccordion>
+
+          <Link href="/careers" className="py-4 text-[#01030B] body-medium border-b border-gray-200" onClick={() => setMobileMenuOpen(false)}>Careers</Link>
+          <Link href="/contact-us" className="py-4 text-[#01030B] body-medium" onClick={() => setMobileMenuOpen(false)}>Contact Us</Link>
+        </nav>
+      </div>
+    </div>
+    </>
   );
 }
 
@@ -539,6 +644,40 @@ function MegaMenuColumn({
       <div className="flex flex-col gap-2 body-extra-small font-light text-[#8A8B8F] transition-colors duration-300 group-hover:text-[#01030B]">
         {children}
       </div>
+    </div>
+  );
+}
+
+function MobileNavAccordion({
+  label,
+  plusColor,
+  onLinkClick,
+  children,
+}: {
+  label: string;
+  plusColor: string;
+  onLinkClick: () => void;
+  children: React.ReactNode;
+}) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="border-b border-gray-200">
+      <button
+        type="button"
+        className="flex w-full items-center justify-between py-4 cursor-pointer"
+        onClick={() => setOpen((prev) => !prev)}
+      >
+        <span className="body-medium text-[#01030B]">{label}</span>
+        <Plus
+          className={`w-5 h-5 transition-transform duration-300 ${open ? "rotate-45" : ""} ${plusColor}`}
+        />
+      </button>
+      {open && (
+        <div className="pb-3 pl-2">
+          {children}
+        </div>
+      )}
     </div>
   );
 }

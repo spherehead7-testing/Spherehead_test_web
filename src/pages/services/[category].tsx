@@ -20,6 +20,10 @@ export default function ServiceCategoryPage({ data }: ServiceCategoryPageProps) 
   useEffect(() => {
     const html = document.documentElement;
 
+    // Disable snap scrolling and smooth behavior on mobile for normal scrolling
+    const isMobile = window.matchMedia("(max-width: 767px)").matches;
+    if (isMobile) return;
+
     const enableSnap = () => html.classList.add("snap-y", "snap-proximity");
     const disableSnap = () => html.classList.remove("snap-y", "snap-proximity");
 
@@ -54,7 +58,7 @@ export default function ServiceCategoryPage({ data }: ServiceCategoryPageProps) 
   if (!data) return null;
 
   return (
-    <main className="w-full">
+    <main className="w-full overflow-x-hidden">
       <Head>
         <title>{data.metaTitle} | Spherehead Technologies</title>
       </Head>
@@ -67,11 +71,11 @@ export default function ServiceCategoryPage({ data }: ServiceCategoryPageProps) 
       <ServicesApproachSection />
       <ServicesListSection data={data} />
 
-      <div className="w-full snap-start bg-white py-6 z-50">
+      <div className="hidden md:block w-full bg-white py-6 z-50">
         <TechStackCarousel />
       </div>
 
-      <div className="w-full shrink-0 snap-start">
+      <div className="w-full shrink-0">
         <Footer />
       </div>
     </main>
