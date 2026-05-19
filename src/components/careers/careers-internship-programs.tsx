@@ -59,7 +59,7 @@ export default function InternshipPrograms() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, ease: "easeOut" }}
-              className="w-full aspect-[3/2] relative overflow-hidden bg-gray-100"
+              className="w-full aspect-[3/2] relative overflow-hidden bg-gray-100 rounded-[4px]"
             >
               <Image
                 src="https://res.cloudinary.com/dku9in8sb/image/upload/v1776932601/careers_gfefwe.png"

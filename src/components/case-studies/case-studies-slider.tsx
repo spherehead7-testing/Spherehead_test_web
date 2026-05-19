@@ -37,17 +37,16 @@ const DURATION = 1.5;
 const EASE: [number, number, number, number] = [0.76, 0, 0.24, 1];
 
 export default function CaseStudiesSlider() {
-  // 1. MEMORY FIX: Initialize state from sessionStorage so it remembers where we left off!
-  const getInitialPage = () => {
-    if (typeof window !== "undefined") {
-      const saved = sessionStorage.getItem("spherehead_slider_page");
-      return saved !== null ? parseInt(saved, 10) : 0;
-    }
-    return 0;
-  };
-
-  const [[page, direction], setPage] = useState([getInitialPage(), 0]);
+  const [[page, direction], setPage] = useState([0, 0]);
   const [isLg, setIsLg] = useState(true);
+
+  // 1. MEMORY FIX: Hydrate from sessionStorage after mount to avoid SSR/client mismatch
+  useEffect(() => {
+    const saved = sessionStorage.getItem("spherehead_slider_page");
+    if (saved !== null) {
+      setPage([parseInt(saved, 10), 0]);
+    }
+  }, []);
 
   // 2. SAVE STATE: Update sessionStorage whenever the slide changes
   useEffect(() => {
