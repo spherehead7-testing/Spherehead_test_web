@@ -20,7 +20,7 @@ export default function ContactIntro() {
           >
             <div className="flex items-center gap-4 inter-tight text-[#8A8B8F]">
               <RotatingDots variant="light" />
-              <span className="tracking-[0.1em]">Featured Stories</span>
+              <span className="body-small !text-[#01030B]">Featured Stories</span>
             </div>
 
             <h2 className="heading-2 !text-[#01030B] lg:whitespace-nowrap">

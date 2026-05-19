@@ -149,14 +149,16 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
       ref={headerRef}
       onMouseLeave={closeAllMenus}
       style={{ right: scrollbarInset }}
-      className={`fixed top-0 left-0 z-[9999] will-change-transform transition-all duration-300 ease-in-out ${
+      className={`fixed top-0 left-0 z-[9999] will-change-transform transition-transform duration-300 ease-in-out ${
         isVisible ? "translate-y-0" : "-translate-y-full"
-      } ${
-        scrolled
-          ? "bg-[#0b2a5b]/90 backdrop-blur-md shadow-md"
-          : "bg-transparent"
       }`}
     >
+      <div 
+        className={`absolute inset-0 -z-10 bg-animated-gradient transition-opacity duration-300 ${
+          scrolled ? "opacity-100" : "opacity-0"
+        }`} 
+      />
+
       <SiteContainer
         className={`transition-all duration-300 flex items-center justify-between ${
           scrolled ? "py-4" : "py-8"

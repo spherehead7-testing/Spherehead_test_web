@@ -31,7 +31,7 @@ export default function PortfolioHeroSection() {
             initial={{ opacity: 0, scaleX: 0 }}
             animate={{ opacity: 1, scaleX: 1 }}
             transition={{ duration: 1, ease: "easeOut" }}
-            className="w-full h-[1px] bg-white/20 mb-6 lg:mb-12 origin-left"
+            className="w-full h-[1px] bg-white mb-6 lg:mb-12 origin-left"
           />
 
           <div className="grid grid-cols-1 gap-6 lg:gap-8 lg:grid-cols-[minmax(0,820px)_1fr] lg:items-end">

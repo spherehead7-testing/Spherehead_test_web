@@ -51,9 +51,25 @@ export default function ServicesApproachSection() {
     if (!section) return;
 
     let edgeAccumulator = 0;
-    const EDGE_THRESHOLD = 100;
+    const EDGE_THRESHOLD = 300; // Higher threshold to handle touchpad momentum
+
+    // Touchpad detection: touchpads fire many small deltaY events, mice fire fewer large ones
+    let lastEventTime = 0;
+    let consecutiveSmallDeltas = 0;
+    const isTouchpad = () => consecutiveSmallDeltas > 3;
 
     const handleWheel = (e: WheelEvent) => {
+      const now = Date.now();
+      const timeSinceLast = now - lastEventTime;
+      lastEventTime = now;
+
+      // Track small rapid deltas to detect touchpad
+      if (Math.abs(e.deltaY) < 50 && timeSinceLast < 80) {
+        consecutiveSmallDeltas = Math.min(consecutiveSmallDeltas + 1, 10);
+      } else if (timeSinceLast > 200) {
+        consecutiveSmallDeltas = 0;
+      }
+
       if (isAnimating.current) {
         e.preventDefault();
         return;
@@ -62,20 +78,29 @@ export default function ServicesApproachSection() {
       const isScrollingDown = e.deltaY > 0;
       const isScrollingUp = e.deltaY < 0;
 
+      // For touchpad, require a minimum delta to register intent
+      const minDelta = isTouchpad() ? 8 : 1;
+      if (Math.abs(e.deltaY) < minDelta) {
+        e.preventDefault();
+        return;
+      }
+
       if (isScrollingDown) {
         if (pageRef.current === 0) {
           e.preventDefault();
           setPage(1);
           isAnimating.current = true;
+          // Longer lock for touchpad to absorb momentum events
           setTimeout(() => {
             isAnimating.current = false;
-          }, 500);
+            edgeAccumulator = 0;
+          }, isTouchpad() ? 1200 : 800);
           return;
         } else {
           edgeAccumulator += e.deltaY;
           if (edgeAccumulator > EDGE_THRESHOLD) {
             edgeAccumulator = 0;
-            return; // This allows the browser to perform the native vertical snap!
+            return; // Allow native scroll to next section
           }
           e.preventDefault();
           return;
@@ -89,15 +114,11 @@ export default function ServicesApproachSection() {
           isAnimating.current = true;
           setTimeout(() => {
             isAnimating.current = false;
-          }, 500);
+            edgeAccumulator = 0;
+          }, isTouchpad() ? 1200 : 800);
           return;
         } else {
-          edgeAccumulator += Math.abs(e.deltaY);
-          if (edgeAccumulator > EDGE_THRESHOLD) {
-            edgeAccumulator = 0;
-            return; // This allows the browser to perform the native vertical snap!
-          }
-          e.preventDefault();
+          // page === 0 and scrolling up: release to let the browser scroll up naturally
           return;
         }
       }
@@ -114,9 +135,9 @@ export default function ServicesApproachSection() {
     <div
       key={item.num}
       className={`flex flex-col gap-1 py-12 lg:py-12 ${idx === 0
-        ? "md:pr-8 lg:pr-12 md:border-r border-white/20"
+        ? "md:pr-8 lg:pr-12 md:border-r-1 border-white"
         : idx === 1
-          ? "md:px-8 lg:px-12 md:border-r border-white/20"
+          ? "md:px-8 lg:px-12 md:border-r-1 border-white"
           : "md:pl-8 lg:pl-12"
         }`}
     >
@@ -139,7 +160,7 @@ export default function ServicesApproachSection() {
     // 1. THE ONLY CHANGE: Added 'snap-start' to the end of these classes!
     <section
       ref={sectionRef}
-      className="relative z-10 w-full h-[100vh] bg-transparent text-white flex flex-col justify-center overflow-hidden snap-start"
+      className="relative z-10 w-full h-[100vh] bg-transparent text-white flex flex-col justify-center overflow-hidden"
     >
       {/* Top overlap bar mimicking the bottom of the previous section */}
       <div className="absolute top-0 left-0 w-full h-[30px] md:h-[90px] bg-white rounded-b-[12px] z-30" />
@@ -170,9 +191,9 @@ export default function ServicesApproachSection() {
           transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
           className="relative w-full overflow-hidden"
         >
-          <motion.div
-            animate={{ x: page === 0 ? "0%" : "-50%" }}
-            transition={{ duration: 4, ease: [0.16, 1, 0.3, 1] }}
+            <motion.div
+                animate={{ x: page === 0 ? "0%" : "-50%" }}
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="flex w-[200%] gap-0 will-change-transform"
           >
             {/* PANEL 1 */}
