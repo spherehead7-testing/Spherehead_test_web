@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { motion } from "framer-motion";
+import { div } from "framer-motion/m";
 
 const LOGOS = [
   { name: "Hour Markers", url: "https://res.cloudinary.com/dku9in8sb/image/upload/v1776751738/HourMarkers_sbveeh.png" },
@@ -10,7 +11,7 @@ const LOGOS = [
   { name: "Aegis Pinnacle", url: "https://res.cloudinary.com/dku9in8sb/image/upload/v1776684959/Aegis_Pinnacle_kmobmi.png" },
   { name: "Winlo", url: "https://res.cloudinary.com/dku9in8sb/image/upload/v1776684959/Winlo_bjjbuv.png" },
   { name: "Enrich Dairies", url: "https://res.cloudinary.com/dku9in8sb/image/upload/v1776684958/Enrich_Diaries_j60qdn.png" },
-  { name: "Ninja Xpress", url: "https://res.cloudinary.com/dku9in8sb/image/upload/v1776684953/Ninja_Xpress_k88rle.png" },
+  { name: "Ninja Xpress", url: "https://res.cloudinary.com/dku9in8sb/image/upload/v1778841487/Ninja_Xpress_xchn9k.png" },
 ];
 
 // Doubling the base array so each block is massively wide (fixes the gap on large screens)
@@ -18,7 +19,7 @@ const LOGO_GROUP = [...LOGOS, ...LOGOS];
 
 export default function ClientLogoCarousel() {
   return (
-    <div className="w-full overflow-hidden flex relative z-10 py-6 lg:py-8 border-t border-white/5 bg-transparent">
+    <div className="w-full overflow-hidden flex relative z-10 py-6 lg:py-8 bg-transparent">
       
       <motion.div 
         className="flex flex-nowrap w-max"

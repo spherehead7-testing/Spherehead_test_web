@@ -372,8 +372,6 @@ export default function WorkShowcaseSection({
         {isVisible && (
           <motion.div
             key="showcase-panel"
-            // Fix: declare transformOrigin inside the animation props,
-            // not just as a style, so exit keyframes inherit it correctly
             initial={{ scale: 0, transformOrigin: "bottom left" }}
             animate={{
               scale: 1,
@@ -408,7 +406,7 @@ export default function WorkShowcaseSection({
                           <div className="w-full flex flex-col gap-3 lg:gap-4 max-w-4xl">
                             <div className="flex items-center gap-4">
                               <RotatingDots variant="light" />
-                              <span className="body-small tracking-[0.1em] text-[#01030B] uppercase font-bold">
+                              <span className="body-small">
                                 Projects delivered
                               </span>
                             </div>
