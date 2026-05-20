@@ -249,33 +249,31 @@ export default function HomePage() {
           aria-hidden="true"
         />
 
-      {/* MOBILE LAYOUT */}
-<div className="flex flex-col w-full bg-transparent lg:hidden">
-    <LandingHeroSection isMobile={true} />
-    <LandingAboutSection isMobile={true} />
-    
-    <div className="bg-white">
-        <LandingServicesSection />
-        <LandingIndustriesSection />
-    </div>
-    
-    {/* White container for Technologies */}
-    <div className="relative z-30 w-full bg-white">
-        <TechnologiesSection />
-    </div>
+        {/* MOBILE LAYOUT */}
+        <div className="flex flex-col w-full bg-transparent lg:hidden">
+          <LandingHeroSection isMobile={true} />
+          <LandingAboutSection isMobile={true} />
 
-    {/* The Blue Bar Separator */}
-    <div className="w-full h-16 bg-animated-gradient" />
+          <div className="bg-white">
+            <LandingServicesSection />
+            <LandingIndustriesSection />
+            <div className="relative z-30 w-full bg-white">
+              <TechnologiesSection />
+            </div>
+          </div>
 
-    {/* White container for Testimonials */}
-    <div className="relative z-30 w-full bg-white">
-        <TestimonialSection />
-    </div>
-    
-    <div className="relative z-50 w-full bg-animated-gradient">
-        <Footer />
-    </div>
-</div>
+          {/* The Blue Bar Separator */}
+          <div className="w-full h-16 bg-animated-gradient" />
+
+          {/* White container for Testimonials */}
+          <div className="relative z-30 w-full bg-white">
+            <TestimonialSection />
+          </div>
+
+          <div className="relative z-50 w-full bg-animated-gradient">
+            <Footer />
+          </div>
+        </div>
 
         {/* ========================================================
                     DESKTOP LAYOUT
@@ -316,7 +314,7 @@ export default function HomePage() {
             >
               <div
                 className="absolute inset-x-0 top-[38vh] rounded-[12px] bg-[#ffffff]"
-                style={{ height: "152vh" }}
+                style={{ height: "155vh" }}
               />
               <LandingServicesSection />
               <LandingIndustriesSection />
