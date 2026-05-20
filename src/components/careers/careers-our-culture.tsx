@@ -37,7 +37,7 @@ export default function WhyWorkWithUs() {
   return (
     <section className="w-full relative bg-white snap-start">
 
-      <SiteContainer className="w-full grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8 items-start relative pt-16 lg:pt-20 pb-24 lg:pb-32">
+      <SiteContainer className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-start relative pt-10 lg:pt-20 pb-10 lg:pb-32">
         <div className="lg:col-span-6 sticky top-20 lg:top-24 flex flex-col justify-start items-start gap-6">
           <div className="flex items-center gap-4 inter-tight">
             <RotatingDots variant="light" />
@@ -60,7 +60,7 @@ export default function WhyWorkWithUs() {
         <div className="lg:col-span-5 lg:col-start-8 relative flex flex-col h-full">
           <div className="sticky top-0 w-full h-12 lg:h-20 bg-gradient-to-b from-white to-transparent z-10 pointer-events-none -mt-4 lg:-mt-8" />
           {/* Cards Container */}
-          <div className="flex flex-col gap-12 pb-12">
+          <div className="flex flex-col gap-8 lg:gap-12 pb-0 lg:pb-12">
             {cards.map((card, idx) => (
               <motion.div
                 key={idx}
@@ -91,7 +91,7 @@ export default function WhyWorkWithUs() {
             ))}
           </div>
 
-          <div className="sticky bottom-0 w-full h-12 lg:h-20 bg-gradient-to-t from-white to-transparent z-10 pointer-events-none" />
+          <div className="hidden lg:block sticky bottom-0 w-full h-20 bg-gradient-to-t from-white to-transparent z-10 pointer-events-none" />
         </div>
       </SiteContainer>
     </section>

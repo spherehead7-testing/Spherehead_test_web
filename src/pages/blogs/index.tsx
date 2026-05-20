@@ -31,8 +31,8 @@ function BlogsMobile() {
                 />
             </Head>
 
-            <main className="w-full overflow-x-hidden bg-[#01030B] text-[#01030B]">
-                <section className="relative bg-gradient-to-r from-[#06142E] via-[#0A2F76] to-[#2666D2]">
+            <main className="w-full overflow-x-hidden text-[#01030B]">
+                <section className="relative">
                     <BlogsHero progress={dummyProgress} />
                 </section>
 
@@ -85,14 +85,14 @@ function BlogsDesktop() {
 
             <main
                 ref={scrollContainerRef}
-                className="w-full h-screen overflow-y-auto overflow-x-hidden bg-[#01030B] text-[#01030B]"
+                className="w-full h-screen overflow-y-auto overflow-x-hidden text-[#01030B]"
             >
                 <section
                     ref={containerRef}
-                    className="relative min-h-[150vh] bg-[#06142E]"
+                    className="relative min-h-[150vh]"
                 >
                     <motion.div
-                        className="sticky top-0 h-screen w-full overflow-hidden bg-gradient-to-r from-[#06142E] via-[#0A2F76] to-[#2666D2]"
+                        className="sticky top-0 h-screen w-full overflow-hidden"
                     >
                         <BlogsHero progress={smoothProgress} />
                     </motion.div>

@@ -184,11 +184,7 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
       className={`fixed top-0 left-0 z-[9999] will-change-transform transition-all duration-300 ease-in-out ${
         isVisible ? "translate-y-0" : "-translate-y-[120%]"
       } ${
-        scrolled
-          ? "bg-[#0b2a5b]/90 backdrop-blur-md shadow-md"
-          : "bg-transparent"
-      className={`fixed top-0 left-0 z-[9999] will-change-transform transition-transform duration-300 ease-in-out ${
-        isVisible ? "translate-y-0" : "-translate-y-full"
+        scrolled ? "backdrop-blur-md" : ""
       }`}
     >
       <div 
