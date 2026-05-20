@@ -29,7 +29,9 @@ export default function ContactHero() {
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
             className="flex lg:justify-end"
           >
-            <CyclicButton onClick={() => console.log("Start Project Clicked!")}>
+            <CyclicButton onClick={() => {
+              document.getElementById("contact-form")?.scrollIntoView({ behavior: "smooth" });
+            }}>
               Start A Project
             </CyclicButton>
           </motion.div>
