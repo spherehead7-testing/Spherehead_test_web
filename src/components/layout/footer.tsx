@@ -5,8 +5,64 @@ import { FaFacebook, FaInstagram, FaLinkedin } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import ContactCard from "@/components/forms/contact-form";
 import SiteContainer from "./site-container";
+import { useIsMobile } from "@/hooks/use-is-mobile";
 
 export default function Footer() {
+  const isMobile = useIsMobile();
+
+  if (isMobile) {
+    return (
+      <section id="site-footer" className="relative z-10">
+        <SiteContainer>
+          {/* Heading */}
+          <div className="text-white pt-12 pb-10">
+            <h1
+              className="font-light leading-[1.2]"
+              style={{
+                fontFamily: "var(--font-archivo)",
+                fontSize: "36px",
+                letterSpacing: "1px",
+              }}
+            >
+              Let&apos;s Build
+              <br />
+              Something
+              <br />
+              Awesome together
+            </h1>
+          </div>
+        </SiteContainer>
+
+        {/* Form card */}
+        <div className="relative">
+          <div className="w-full rounded-[5px] overflow-hidden">
+            <ContactCard variant="card" />
+          </div>
+        </div>
+
+        {/* Social + Legal */}
+        <SiteContainer>
+          <div className="text-white body-small pt-10 pb-8">
+            <div className="flex gap-6">
+              <FaFacebook className="hover:opacity-70 transition cursor-pointer" size={22} />
+              <FaInstagram className="hover:opacity-70 transition cursor-pointer" size={22} />
+              <FaXTwitter className="hover:opacity-70 transition cursor-pointer" size={22} />
+              <FaLinkedin className="hover:opacity-70 transition cursor-pointer" size={22} />
+            </div>
+
+            <p className="mt-5 mb-4">
+              Legal Policies / Terms of Services / Privacy Policies
+            </p>
+
+            <p>
+              &copy; 2026 All Rights Reserved. Designed and Developed by Spherehead
+            </p>
+          </div>
+        </SiteContainer>
+      </section>
+    );
+  }
+
   return (
     <section id="site-footer" className="min-h-screen relative z-10">
       <SiteContainer>
@@ -17,7 +73,7 @@ export default function Footer() {
             <div className="mb-5">
               <div className="heading-1">
                 {/* LINE 1 */}
-                <h1 className="whitespace-nowrap">Let’s Build Something</h1>
+                <h1 className="whitespace-nowrap">Let's Build Something</h1>
 
                 {/* LINE 2 */}
                 <h1 className="flex items-center gap-6 whitespace-nowrap">
@@ -44,7 +100,7 @@ export default function Footer() {
               </p>
 
               <p>
-                © 2026 All Rights Reserved. Designed and Developed
+                &copy; 2026 All Rights Reserved. Designed and Developed
                 <br />by Spherehead
               </p>
             </div>

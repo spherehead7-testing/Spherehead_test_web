@@ -36,7 +36,7 @@ export default function CyclicButton({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={onClick}
-      className={`flex items-center gap-4 text-white transition-opacity hover:opacity-90 ${className}`}
+      className={`flex items-center gap-4 text-white transition-opacity hover:opacity-90 cursor-pointer ${className}`}
     >
       <motion.div
         className="relative flex items-center justify-center w-10 h-10"

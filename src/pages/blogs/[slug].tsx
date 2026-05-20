@@ -53,7 +53,7 @@ export default function BlogStoryPage({ post }: BlogStoryPageProps) {
 
           <article className="mt-10">
             <div className="mb-5 flex items-center gap-3">
-              <RotatingDots />
+              <RotatingDots variant="light"/>
               <span className="text-sm text-[#5c667a]">{post.category}</span>
             </div>
 

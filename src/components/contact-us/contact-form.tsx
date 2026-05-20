@@ -7,7 +7,7 @@ import ContactCard from "@/components/forms/contact-form";
 
 export default function ContactForm() {
   return (
-    <section className="w-full relative z-10 pt-8 lg:pt-12 pb-0 snap-start">
+    <section id="contact-form" className="w-full relative z-10 pt-8 lg:pt-12 pb-0 snap-start">
       <div className="absolute inset-0 -z-10 flex flex-col lg:flex-row">
         {/* Replaced h-full with h-[90%] on mobile and lg:h-[90%] on desktop */}
         <div className="w-full lg:w-1/2 h-[95%] lg:h-[95%] bg-white rounded-b-[2px] lg:rounded-none lg:rounded-b-[4px]" />
