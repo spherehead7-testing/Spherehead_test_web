@@ -4,12 +4,72 @@ import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 
 import SiteContainer from "@/components/layout/site-container";
 import { ServiceCategoryData } from "@/data/service-categories";
+import { useIsMobile } from "@/hooks/use-is-mobile";
 
 export default function ServicesIntroSection({
     data,
 }: {
     data: ServiceCategoryData["intro"];
 }) {
+    const isMobile = useIsMobile();
+
+    if (isMobile) {
+        return <ServicesIntroMobile data={data} />;
+    }
+
+    return <ServicesIntroDesktop data={data} />;
+}
+
+/** Mobile: plain static layout matching Figma — text, small paragraph, centered image, two body cols */
+function ServicesIntroMobile({ data }: { data: ServiceCategoryData["intro"] }) {
+    return (
+        <section className="relative z-30 w-full bg-white py-10 rounded-[6px]">
+            <SiteContainer>
+                {/* Main bold text — reduced size for mobile to match Figma */}
+                <div className="w-full">
+                    <p
+                        className="!text-[#01030B] font-light leading-[1.35]"
+                        style={{
+                            fontFamily: "var(--font-archivo)",
+                            fontSize: "24px",
+                        }}
+                        dangerouslySetInnerHTML={{ __html: data.mainText }}
+                    />
+                </div>
+
+                {/* First paragraph below the heading */}
+                <p className="body-small mt-6" style={{ color: "#8A8B8F", lineHeight: "1.6" }}>
+                    {data.p1}
+                </p>
+
+                {/* Image — left-aligned, wider like Figma */}
+                <div className="relative mt-8 aspect-[4/3] w-full max-w-[280px] overflow-hidden rounded-[4px] bg-animated-gradient">
+                    <div className="absolute inset-5 z-10 overflow-hidden rounded-xl">
+                        <Image
+                            src={data.image}
+                            alt="Section Image"
+                            fill
+                            sizes="280px"
+                            className="object-contain"
+                        />
+                    </div>
+                </div>
+
+                {/* Second paragraph below image */}
+                <p className="body-small mt-8 italic" style={{ color: "#8A8B8F", lineHeight: "1.6" }}>
+                    {data.heading}
+                </p>
+
+                <p className="body-small mt-6" style={{ color: "#8A8B8F", lineHeight: "1.6" }}>
+                    {data.p2}
+                </p>
+            </SiteContainer>
+        </section>
+    );
+}
+
+/** Desktop: original parallax + scroll hijacking behavior */
+function ServicesIntroDesktop({ data }: { data: ServiceCategoryData["intro"] }) {
     const containerRef = useRef<HTMLElement>(null);
 
     const { scrollYProgress } = useScroll({
@@ -193,6 +253,7 @@ export default function ServicesIntroSection({
     return (
         <section
             ref={containerRef}
+            data-hide-navbar
             className="relative z-30 isolate flex h-screen w-full max-w-full flex-col justify-center overflow-hidden"
         >
             <div className="pointer-events-none absolute inset-0 flex h-[120vh] w-full">
