@@ -13,14 +13,13 @@ export default function LandingServicesSection() {
                 <div className="mb-12 flex flex-col gap-4">
                     <div className="flex items-center gap-3">
                         <div className="origin-left scale-[0.85]">
-                            {/* Uses light variant so dots are visible on white bg */}
                             <RotatingDots variant="light" /> 
                         </div>
-                        <p className="text-[12px] font-medium tracking-[1.2px] text-black">
+                        <p className="body-small !text-[#01030B] !tracking-[1.2px]">
                             Services
                         </p>
                     </div>
-                    <h2 className="text-[1.6rem] font-medium leading-[1.3] text-[#01030B]">
+                    <h2 className="heading-2 !text-[#01030B]">
                         Transforming Ideas into Powerful Digital Services that Accelerate Success
                     </h2>
                 </div>
@@ -29,10 +28,10 @@ export default function LandingServicesSection() {
                 <div className="grid grid-cols-2 gap-x-6 gap-y-12">
                     {services.map((service) => (
                         <div key={service.number} className="flex flex-col border-l border-gray-200 pl-4">
-                            <span className="mb-3 text-[2.2rem] font-light leading-none text-[#0D54CA]">
+                            <span className="mb-3 heading-2 !font-light !leading-none !text-[#0D54CA]">
                                 {service.number}
                             </span>
-                            <span className="text-[11px] leading-[1.4] text-[#333]">
+                            <span className="body-small text-[#333]">
                                 {service.lines[0]}
                                 <br />
                                 {service.lines[1]}

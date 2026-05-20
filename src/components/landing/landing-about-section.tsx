@@ -22,7 +22,7 @@ type Props = {
 };
 
 const statsData = [
-    { id: 1, value: "30+", label: "Project Delivered" },
+    { id: 1, value: "30+", label: "Projects Delivered" },
     { id: 2, value: "98%", label: "Client Satisfaction" },
     { id: 3, value: "16+", label: "Countries Served" },
     { id: 4, value: "100+", label: "Project Completion" },
@@ -44,17 +44,18 @@ export default function LandingAboutSection({
 }: Props) {
     if (isMobile) {
         return (
-            <section className="relative z-20 flex w-full flex-col bg-white pt-8">
-                {/* Top White Section */}
-                <div className="flex flex-col items-center px-6 pb-12 text-center">
+            <section className="relative z-20 flex w-full flex-col">
+                <div className="flex flex-col items-center bg-white px-6 pb-12 pt-8 text-center">
                     <div className="mb-8 scale-[1.3]">
                         <RotatingDots variant="light" />
                     </div>
-                    <h2 className="mb-6 max-w-[400px] text-[1.4rem] font-semibold leading-[1.3] text-[#01030B]">
+                    {/* Applied heading-2 here */}
+                    <h2 className="heading-2 mb-6 max-w-[400px] !text-[#01030B] !text-center">
                         <span className="text-[#0D54CA]">Spherehead Technologies</span> is a{" "}
                         <span className="text-[#0D54CA]">USA established</span> technology solutions company delivering end-to-end digital services, including software development, digital transformation, and creative technology <span className="text-[#0D54CA]">solutions for global clients.</span>
                     </h2>
-                    <p className="mb-8 max-w-[400px] text-[13px] leading-[1.6] text-[#55565C]">
+                    {/* Applied body-small here */}
+                    <p className="body-small mb-8 max-w-[400px] !text-[#55565C]">
                         Driven by client satisfaction and continuous feedback, we deliver tailored digital solutions that empower businesses worldwide, building lasting partnerships through trust, innovation, and measurable results.
                     </p>
                     <div className="mb-8 flex items-center justify-center -space-x-3">
@@ -67,13 +68,13 @@ export default function LandingAboutSection({
                     </button>
                 </div>
 
-                {/* Bottom Blue Section */}
-                <div className="bg-gradient-to-b from-[#061836] to-[#124296] px-6 py-16">
+                <div className="px-6 py-16">
                     <div className="mx-auto grid max-w-[400px] grid-cols-2 gap-x-4 gap-y-14 text-center">
                         {statsData.map((stat) => (
                             <div key={stat.id} className="flex flex-col items-center">
-                                <span className="mb-3 text-[2.4rem] font-light leading-none text-white">{stat.value}</span>
-                                <span className="text-[11px] tracking-[0.08em] text-[#e8e8e8]">{stat.label}</span>
+                                {/* Applied heading-1 and body-small to stats */}
+                                <span className="heading-1 mb-3 !leading-none text-white">{stat.value}</span>
+                                <span className="body-small text-[#e8e8e8] !tracking-[0.08em]">{stat.label}</span>
                             </div>
                         ))}
                     </div>
@@ -114,7 +115,6 @@ export default function LandingAboutSection({
                 className="absolute bottom-0 right-0 bg-[#ffffff]"
             />
 
-            {/* --- DESKTOP: SCROLL TO DISCOVER --- */}
             <motion.div
                 style={{ opacity: labelOpacity }}
                 className="pointer-events-none absolute inset-x-0 top-5 z-10 flex items-center justify-center gap-2"
