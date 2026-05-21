@@ -5,8 +5,8 @@ import { useEffect, useRef } from "react";
 
 export default function AboutIntro() {
   return (
-    <section className="bg-white pt-12 pb-6 lg:pb-10">
-      <div className=" mx-auto px-6 lg:px-20">
+    <section className="bg-white pt-12 pb-8 lg:pb-10">
+      <div className="mx-auto px-6 lg:px-20">
         {/* TEXT */}
         <p className="heading-2 max-w-[1100px] !text-[#01030B]">
           <span className="!text-[#0D54CA]">Spherehead</span> is dedicated to
@@ -23,7 +23,7 @@ export default function AboutIntro() {
 
         {/* STATS */}
 
-        <div className="grid grid-cols-4 gap-x-32 mt-12">
+        <div className="mt-10 grid grid-cols-2 gap-x-8 gap-y-8 md:grid-cols-4 lg:mt-12 lg:gap-x-32">
           <StatItem label="Projects Delivered" value={30} suffix="+" />
           <StatItem label="Client Satisfaction" value={98} suffix="%" />
           <StatItem label="Countries Served" value={16} suffix="+" />
@@ -31,7 +31,7 @@ export default function AboutIntro() {
         </div>
 
         {/* MAP */}
-        <div className="relative -mb-22 lg:-mb-40">
+        <div className="relative -mb-10 mt-8 lg:-mb-40 lg:mt-0">
           <img
             src="https://res.cloudinary.com/dku9in8sb/image/upload/v1776759937/About-Us-World-Map_whcynj.webp"
             alt="world map"
@@ -92,7 +92,7 @@ function StatItem({
         {label}
       </p>
 
-      <h3 className="heading-1 !text-[#0B2A5B] text-transparent">
+      <h3 className="about-stat-number !text-[#0B2A5B] text-transparent">
         <span ref={displayRef}>0</span>
         {suffix}
       </h3>

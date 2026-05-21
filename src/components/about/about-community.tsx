@@ -8,6 +8,7 @@ import {
   useSpring,
   useTransform,
 } from "framer-motion";
+import { useScrollContainerContext } from "@/context/ScrollContainerContext";
 import RotatingDots from "../ui/rotating-dots";
 
 const initiatives = [
@@ -130,9 +131,11 @@ function CollapsingCommunityImage({
 
 export default function OutGreaterCommunity() {
   const sectionRef = useRef<HTMLElement | null>(null);
+  const { scrollContainerRef } = useScrollContainerContext();
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
+    container: scrollContainerRef ?? undefined,
     offset: ["start start", "end end"],
   });
 
@@ -147,7 +150,36 @@ export default function OutGreaterCommunity() {
   );
 
   return (
-    <section ref={sectionRef} className="relative h-[300vh] bg-white">
+    <>
+    <section className="bg-white px-6 py-14 md:hidden">
+      <div className="mb-8 flex items-center gap-2">
+        <RotatingDots variant="light" />
+        <span className="body-small text-[#01030B]">
+          Our Greater Community
+        </span>
+      </div>
+
+      <h1 className="heading-2 mb-10 !text-[#01030B]">
+        Beyond business, we strive to make a difference through care,
+        responsibility, and meaningful impact.
+      </h1>
+
+      <div className="space-y-8">
+        {initiatives.slice(0, 3).map((item) => (
+          <article key={item.title}>
+            <img
+              src={item.image}
+              alt=""
+              className="mb-4 aspect-[16/9] w-full rounded-[3px] object-cover"
+            />
+            <h2 className="heading-3 mb-2 !text-[#01030B]">{item.title}</h2>
+            <p className="body-small text-[#01030B]">{item.description}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section ref={sectionRef} className="relative hidden h-[300vh] bg-white md:block">
       <div className="sticky top-0 flex h-screen w-full flex-col bg-white">
         {/* STATIC HEADER - Never animates */}
         <div
@@ -203,5 +235,6 @@ export default function OutGreaterCommunity() {
         </div>
       </div>
     </section>
+    </>
   );
 }

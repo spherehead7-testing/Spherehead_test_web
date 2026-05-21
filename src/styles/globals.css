@@ -132,6 +132,16 @@ select {
   text-align: left;
 }
 
+.about-hero-divider {
+  top: 43svh;
+}
+
+@media (min-width: 768px) {
+  .about-hero-divider {
+    top: 50%;
+  }
+}
+
 .body-large {
   font-family: var(--font-inter-tight), Arial, Helvetica, sans-serif;
   font-size: clamp(18px, 2vw, 24px);
@@ -252,10 +262,11 @@ select {
 
 .about-stat-number {
   font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
-  font-size: clamp(36px, 6vw, 62px);
+  font-size: clamp(56px, 10vw, 62px);
   font-weight: 400;
   line-height: 1;
   color: #ffffff;
+  max-width: 640px;
 }
 
 .about-stat-label {

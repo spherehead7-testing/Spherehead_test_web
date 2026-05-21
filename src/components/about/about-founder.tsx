@@ -5,10 +5,11 @@ import RotatingDots from "../ui/rotating-dots";
 import { useEffect, useRef } from "react";
 
 export default function FounderMessage() {
-
-    const sectionRef = useRef<HTMLElement | null>(null);
+  const sectionRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
+    if (!window.matchMedia("(min-width: 1024px)").matches) return;
+
     const section = sectionRef.current;
     if (!section) return;
 
@@ -23,8 +24,7 @@ export default function FounderMessage() {
 
         // snap when section reaches around halfway
         const shouldSnap =
-          rect.top < viewportHeight * 0.5 &&
-          rect.top > -viewportHeight * 0.3;
+          rect.top < viewportHeight * 0.5 && rect.top > -viewportHeight * 0.3;
 
         if (shouldSnap) {
           section.scrollIntoView({
@@ -45,8 +45,9 @@ export default function FounderMessage() {
 
   return (
     <section
-    ref={sectionRef}
-    className="flex h-screen w-full snap-start items-center overflow-hidden rounded-b-xl bg-white px-6 lg:px-20">
+      ref={sectionRef}
+      className="flex w-full snap-start items-center overflow-visible rounded-b-xl bg-white px-6 py-14 md:min-h-screen lg:h-screen lg:overflow-hidden lg:px-20 lg:py-0"
+    >
       <div className="mx-auto flex w-full max-w-[1400px] flex-col justify-between">
         {/* TOP CONTENT */}
         <div className="max-w-[760px]">
@@ -66,36 +67,36 @@ export default function FounderMessage() {
               simple idea
             </span>{" "}
             has grown
-            <br />
+            <br className="hidden md:block" />
             into a journey of creativity and impact.
-            <br />
+            <br className="hidden md:block" />
             At <span className="text-[#0D54CA]">Spherehead</span>, every step
             forward is
-            <br />
+            <br className="hidden md:block" />
             guided by purpose and{" "}
             <span className="text-[#0D54CA]">innovation</span>.
           </h1>
         </div>
 
         {/* BOTTOM CONTENT */}
-        <div className="mt-2 flex justify-end">
-          <div className="flex items-start gap-10 lg:gap-12">
+        <div className="mt-10 flex justify-start lg:mt-2 lg:justify-end">
+          <div className="flex w-full flex-wrap items-end gap-x-4 gap-y-6 lg:w-auto lg:flex-nowrap lg:items-start lg:gap-12">
             {/* IMAGE */}
-            <div className="-ml-4 h-[380px] w-[270px] flex-shrink-0 overflow-hidden rounded-md">
+            <div className="h-auto w-[61%] max-w-[270px] flex-shrink-0 overflow-hidden rounded-md lg:-ml-4 lg:h-[380px] lg:w-[270px]">
               <Image
                 src="https://res.cloudinary.com/dku9in8sb/image/upload/v1776671592/About-Us-Founder_zjlfec.webp"
                 alt="Founder"
                 width={270}
                 height={380}
-                className="h-full w-full object-cover"
+                className="h-auto w-full object-cover lg:h-full"
               />
             </div>
 
             {/* TEXT */}
-            <div className="flex h-[380px] max-w-[390px] flex-col text-[#01030B]">
+            <div className="flex min-w-0 flex-1 flex-col pb-3 text-[#01030B] lg:h-[380px] lg:max-w-[390px] lg:flex-none lg:pb-4">
               {/* NAME */}
               <div>
-                <h3 className="heading-4 !text-[#01030B] !leading-none">
+                <h3 className="heading-4 !text-[16px] !leading-none !text-[#01030B] md:!text-[18px] lg:!text-[20px]">
                   Artemii Garibov
                 </h3>
 
@@ -105,7 +106,7 @@ export default function FounderMessage() {
               </div>
 
               {/* DESCRIPTION */}
-              <div className="mt-24 space-y-4">
+              <div className="mt-auto hidden space-y-4 pb-4 lg:block">
                 <p className="body-small text-[#01030B]">
                   At Spherehead Technologies, our vision has always been to
                   create more than just software, we craft solutions that solve
@@ -121,6 +122,23 @@ export default function FounderMessage() {
                   secure, scalable, and future-ready products.
                 </p>
               </div>
+            </div>
+
+            <div className="w-full space-y-4 lg:hidden">
+              <p className="body-small text-[#01030B]">
+                At Spherehead Technologies, our vision has always been to create
+                more than just software, we craft solutions that solve real
+                challenges and drive meaningful change. By blending advanced
+                technology with creativity, we help businesses transform
+                digitally and deliver exceptional experiences.
+              </p>
+
+              <p className="body-small text-[#01030B]">
+                Our foundation is built on trust, innovation, and collaboration.
+                Every solution we deliver reflects our commitment to quality and
+                our mission to empower clients with secure, scalable, and
+                future-ready products.
+              </p>
             </div>
           </div>
         </div>
