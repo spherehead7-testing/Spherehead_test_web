@@ -41,31 +41,81 @@ export default function ServicesApproachSection() {
   const isMobile = useIsMobile();
   const sectionRef = useRef<HTMLElement>(null);
   const [page, setPage] = useState(0);
-
   const pageRef = useRef(page);
   pageRef.current = page;
-
   const isAnimating = useRef(false);
 
-  // Wheel listener — only active on desktop
   useEffect(() => {
     if (isMobile) return;
 
     const section = sectionRef.current;
     if (!section) return;
 
-    let edgeAccumulator = 0;
-    const EDGE_THRESHOLD = 300;
+    // Reset page to 0 whenever the section comes into view
+    let enteredAt = 0;
+    const ENTRY_COOLDOWN_MS = 150; // brief pause to absorb animation inertia
+
+    const visibilityObserver = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          // Always reset to page 0 when section enters view
+          if (pageRef.current !== 0) {
+            setPage(0);
+          }
+          enteredAt = Date.now();
+          // Reset upward accumulator so it's ready for immediate use after cooldown
+          upExitAccumulator = 0;
+        }
+      },
+      { threshold: 0.3 }
+    );
+    visibilityObserver.observe(section);
+
+    const ACCUMULATOR_THRESHOLD = 50;
 
     let lastEventTime = 0;
     let consecutiveSmallDeltas = 0;
     const isTouchpad = () => consecutiveSmallDeltas > 3;
+
+    // Upward exit state
+    let upExitAccumulator = 0;
+
+    const animateScrollTo = (targetY: number, duration: number, cb?: () => void) => {
+      isAnimating.current = true;
+      const startY = window.scrollY;
+      const distance = targetY - startY;
+      const t0 = performance.now();
+
+      const step = (ts: number) => {
+        const elapsed = ts - t0;
+        const t = Math.min(elapsed / duration, 1);
+        const ease = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+        window.scrollTo({
+          top: Math.round(startY + distance * ease),
+          behavior: "instant" as ScrollBehavior,
+        });
+        if (t < 1) {
+          requestAnimationFrame(step);
+        } else {
+          isAnimating.current = false;
+          cb?.();
+        }
+      };
+      requestAnimationFrame(step);
+    };
 
     const handleWheel = (e: WheelEvent) => {
       const now = Date.now();
       const timeSinceLast = now - lastEventTime;
       lastEventTime = now;
 
+      // Ignore wheel events during the entry cooldown period
+      if (now - enteredAt < ENTRY_COOLDOWN_MS) {
+        e.preventDefault();
+        return;
+      }
+
+      // Touchpad detection
       if (Math.abs(e.deltaY) < 50 && timeSinceLast < 80) {
         consecutiveSmallDeltas = Math.min(consecutiveSmallDeltas + 1, 10);
       } else if (timeSinceLast > 200) {
@@ -77,68 +127,89 @@ export default function ServicesApproachSection() {
         return;
       }
 
-      const isScrollingDown = e.deltaY > 0;
-      const isScrollingUp = e.deltaY < 0;
+      const isDown = e.deltaY > 0;
+      const isUp = e.deltaY < 0;
 
+      // Filter out micro-movements
       const minDelta = isTouchpad() ? 8 : 1;
       if (Math.abs(e.deltaY) < minDelta) {
         e.preventDefault();
         return;
       }
 
-      if (isScrollingDown) {
+      // --- Scrolling Down ---
+      if (isDown) {
+        // Reset upward state
+        upExitAccumulator = 0;
+
         if (pageRef.current === 0) {
+          // Slide to page 1
           e.preventDefault();
           setPage(1);
           isAnimating.current = true;
           setTimeout(() => {
             isAnimating.current = false;
-            edgeAccumulator = 0;
           }, isTouchpad() ? 1200 : 800);
           return;
-        } else {
-          edgeAccumulator += e.deltaY;
-          if (edgeAccumulator > EDGE_THRESHOLD) {
-            edgeAccumulator = 0;
-            return;
-          }
-          e.preventDefault();
-          return;
         }
+
+        // On page 1, snap to the list section precisely
+        e.preventDefault();
+        const listSection = section.nextElementSibling as HTMLElement;
+        if (listSection) {
+          const targetY = listSection.getBoundingClientRect().top + window.scrollY;
+          isAnimating.current = true;
+          animateScrollTo(targetY, 600, () => {
+            isAnimating.current = false;
+          });
+        }
+        return;
       }
 
-      if (isScrollingUp) {
+      // --- Scrolling Up ---
+      if (isUp) {
         if (pageRef.current === 1) {
+          // Shouldn't normally happen (page resets on entry), but handle it
           e.preventDefault();
           setPage(0);
           isAnimating.current = true;
           setTimeout(() => {
             isAnimating.current = false;
-            edgeAccumulator = 0;
-          }, isTouchpad() ? 1200 : 800);
+            upExitAccumulator = 0;
+          }, 400);
           return;
-        } else {
-          return;
+        }
+
+        // On page 0, snap up to intro immediately (no accumulator)
+        e.preventDefault();
+        const introSection = document.querySelector<HTMLElement>("[data-hide-navbar]");
+        if (introSection) {
+          const targetY = introSection.offsetTop;
+          animateScrollTo(targetY, 500);
         }
       }
     };
 
     section.addEventListener("wheel", handleWheel, { passive: false });
-    return () => section.removeEventListener("wheel", handleWheel);
+    return () => {
+      section.removeEventListener("wheel", handleWheel);
+      visibilityObserver.disconnect();
+    };
   }, [isMobile]);
 
   const panel1 = approaches.slice(0, 3);
   const panel2 = approaches.slice(3, 6);
 
-  const renderCard = (item: any, idx: number) => (
+  const renderCard = (item: (typeof approaches)[0], idx: number) => (
     <div
       key={item.num}
-      className={`flex flex-col gap-1 py-12 lg:py-12 ${idx === 0
-        ? "md:pr-8 lg:pr-12 md:border-r-1 border-white"
-        : idx === 1
-          ? "md:px-8 lg:px-12 md:border-r-1 border-white"
-          : "md:pl-8 lg:pl-12"
-        }`}
+      className={`flex flex-col gap-1 py-12 ${
+        idx === 0
+          ? "md:pr-8 lg:pr-12 md:border-r border-white/20"
+          : idx === 1
+            ? "md:px-8 lg:px-12 md:border-r border-white/20"
+            : "md:pl-8 lg:pl-12"
+      }`}
     >
       <span
         className="text-[48px] lg:text-[64px] font-light text-white/90 leading-none mb-3"
@@ -155,17 +226,10 @@ export default function ServicesApproachSection() {
     </div>
   );
 
-  return (
-    <section
-      ref={sectionRef}
-      className={`relative z-10 w-full bg-transparent text-white flex flex-col justify-center overflow-hidden ${isMobile ? "min-h-fit py-10" : "h-[100vh]"}`}
-    >
-      {/* Top overlap bar mimicking the bottom of the previous section — desktop only */}
-      {!isMobile && (
-        <div className="absolute top-0 left-0 w-full h-[30px] md:h-[90px] bg-white rounded-b-[12px] z-30" />
-      )}
-      <SiteContainer className={`flex flex-col gap-12 lg:gap-16 ${isMobile ? "pt-8 items-center" : "pt-32 lg:pt-30"}`}>
-        {isMobile ? (
+  if (isMobile) {
+    return (
+      <section className="relative z-10 w-full bg-transparent text-white py-10">
+        <SiteContainer className="flex flex-col gap-12 pt-8 items-center">
           <div className="flex flex-col items-center text-center">
             <div className="flex items-center gap-4 mb-6">
               <RotatingDots />
@@ -177,28 +241,6 @@ export default function ServicesApproachSection() {
               Powering Business Transformation through Precision Engineering
             </h2>
           </div>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, amount: 0.5 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="flex flex-col"
-          >
-            <div className="flex items-center gap-4 mb-6">
-              <RotatingDots />
-              <span className="body-small tracking-[0.1em] text-white/90 font-bold">
-                Strategic Approach
-              </span>
-            </div>
-            <h2 className="heading-2 max-w-[900px]">
-              Powering Business Transformation through Precision Engineering
-            </h2>
-          </motion.div>
-        )}
-
-        {isMobile ? (
-          /* Mobile: 2-column grid, centered text, matching Figma */
           <div className="grid grid-cols-2 gap-x-8 gap-y-12">
             {approaches.map((item) => (
               <div key={item.num} className="flex flex-col items-center text-center gap-2">
@@ -214,31 +256,59 @@ export default function ServicesApproachSection() {
               </div>
             ))}
           </div>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, amount: 0.2 }}
-            transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
-            className="relative w-full overflow-hidden"
-          >
-              <motion.div
-                  animate={{ x: page === 0 ? "0%" : "-50%" }}
-                  transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className="flex w-[200%] gap-0 will-change-transform"
-            >
-              {/* PANEL 1 */}
-              <div className="w-1/2 shrink-0 grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-0">
-                {panel1.map(renderCard)}
-              </div>
+        </SiteContainer>
+      </section>
+    );
+  }
 
-              {/* PANEL 2 */}
-              <div className="w-1/2 shrink-0 grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-0">
-                {panel2.map(renderCard)}
-              </div>
-            </motion.div>
+  return (
+    <section
+      ref={sectionRef}
+      id="services-approach"
+      className="relative z-10 w-full h-screen bg-transparent text-white flex flex-col justify-center overflow-hidden"
+    >
+      {/* White overlap bar from intro section */}
+      <div className="absolute top-0 left-0 w-full h-[30px] md:h-[90px] bg-white rounded-b-[12px] z-30" />
+
+      <SiteContainer className="flex flex-col gap-12 lg:gap-16 pt-32 lg:pt-30">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false, amount: 0.5 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="flex flex-col"
+        >
+          <div className="flex items-center gap-4 mb-6">
+            <RotatingDots />
+            <span className="body-small tracking-[0.1em] text-white/90 font-bold">
+              Strategic Approach
+            </span>
+          </div>
+          <h2 className="heading-2 max-w-[900px]">
+            Powering Business Transformation through Precision Engineering
+          </h2>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false, amount: 0.2 }}
+          transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
+          className="relative w-full overflow-hidden"
+        >
+          <motion.div
+            animate={{ x: page === 0 ? "0%" : "-50%" }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="flex w-[200%] will-change-transform"
+          >
+            <div className="w-1/2 shrink-0 grid grid-cols-1 md:grid-cols-3">
+              {panel1.map(renderCard)}
+            </div>
+            <div className="w-1/2 shrink-0 grid grid-cols-1 md:grid-cols-3">
+              {panel2.map(renderCard)}
+            </div>
           </motion.div>
-        )}
+        </motion.div>
       </SiteContainer>
     </section>
   );

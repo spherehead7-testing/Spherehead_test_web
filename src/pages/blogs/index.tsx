@@ -31,12 +31,12 @@ function BlogsMobile() {
                 />
             </Head>
 
-            <main className="w-full overflow-x-hidden text-[#01030B]">
-                <section className="relative">
+            <main className="w-full overflow-x-hidden text-[#01030B] bg-white">
+                <section className="relative bg-animated-gradient">
                     <BlogsHero progress={dummyProgress} />
                 </section>
 
-                <section className="relative z-20 rounded-t-[24px] bg-white shadow-[0_-20px_60px_rgba(0,0,0,0.2)]">
+                <section className="relative z-20 bg-white">
                     <BlogsContent />
                 </section>
 
@@ -85,7 +85,7 @@ function BlogsDesktop() {
 
             <main
                 ref={scrollContainerRef}
-                className="w-full h-screen overflow-y-auto overflow-x-hidden text-[#01030B]"
+                className="w-full h-screen overflow-y-auto overflow-x-hidden text-[#01030B] bg-animated-gradient services-list-scroll"
             >
                 <section
                     ref={containerRef}
