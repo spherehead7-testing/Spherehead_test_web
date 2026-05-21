@@ -41,19 +41,19 @@ export default function ContactForm() {
             <div className="flex flex-col gap-5 text-white lg:pl-4 pt-10 lg:pt-24 pb-8 lg:pb-0">
               <div className="flex items-center gap-4">
                 <FiMapPin className="w-5 h-5 shrink-0" />
-                <p className="body-small font-light tracking-wide">
+                <p className="body-small tracking-wide">
                   1309 Coffeen Avenue STE 1200 Sheridan, Wyoming 82801
                 </p>
               </div>
               <div className="flex items-center gap-4">
                 <FiPhone className="w-5 h-5 shrink-0" />
-                <p className="body-small font-light tracking-wide">
+                <p className="body-small tracking-wide">
                   +94 76 666 6688
                 </p>
               </div>
               <div className="flex items-center gap-4">
                 <FiMail className="w-5 h-5 shrink-0" />
-                <p className="body-small font-light tracking-wide">
+                <p className="body-small tracking-wide">
                   info@Spherehead.tech
                 </p>
               </div>

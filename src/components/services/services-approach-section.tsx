@@ -112,6 +112,10 @@ export default function ServicesApproachSection() {
     let lastEventTime = 0;
     let lastUpEventTime = 0;
     let consecutiveSmallDeltas = 0;
+    let upEventCount = 0; // Safari trackpad event count fallback
+    let downEventCount = 0; // Safari trackpad event count fallback for page transitions
+    const UP_EVENT_COUNT_THRESHOLD = 8; // Safari fires many small events; 8 in a row = intent
+    const DOWN_EVENT_COUNT_THRESHOLD = 4; // Fewer needed for down (more natural direction)
     const isTouchpad = () => consecutiveSmallDeltas > 3;
 
     // Upward exit state
@@ -173,8 +177,8 @@ export default function ServicesApproachSection() {
       const isDown = e.deltaY > 0;
       const isUp = e.deltaY < 0;
 
-      // Filter out micro-movements
-      const minDelta = isTouchpad() ? 8 : 1;
+      // Filter out micro-movements (use lower threshold for trackpads on Safari)
+      const minDelta = isTouchpad() ? 2 : 1;
       if (Math.abs(e.deltaY) < minDelta) {
         e.preventDefault();
         return;
@@ -184,20 +188,26 @@ export default function ServicesApproachSection() {
       if (isDown) {
         // Reset upward state
         upExitAccumulator = 0;
+        upEventCount = 0;
+        downEventCount += 1;
 
         if (pageRef.current === 0) {
-          // Slide to page 1
+          // Slide to page 1 (use event count fallback for Safari trackpads)
           e.preventDefault();
-          setPage(1);
-          isAnimating.current = true;
-          setTimeout(() => {
-            isAnimating.current = false;
-          }, isTouchpad() ? 1200 : 800);
+          if (downEventCount >= DOWN_EVENT_COUNT_THRESHOLD || Math.abs(e.deltaY) > 10) {
+            downEventCount = 0;
+            setPage(1);
+            isAnimating.current = true;
+            setTimeout(() => {
+              isAnimating.current = false;
+            }, isTouchpad() ? 1200 : 800);
+          }
           return;
         }
 
         // On page 1, snap to the list section precisely
         e.preventDefault();
+        downEventCount = 0;
         const listSection = section.nextElementSibling as HTMLElement;
         if (listSection) {
           const targetY = listSection.getBoundingClientRect().top + window.scrollY;
@@ -227,16 +237,24 @@ export default function ServicesApproachSection() {
 
         // On page 0, accumulate upward scroll intent before snapping to intro
         e.preventDefault();
+        // Reset downward state
+        downEventCount = 0;
         // Decay accumulator if there's been a gap (momentum dying down)
-        if (now - lastUpEventTime > 150) {
+        if (now - lastUpEventTime > 250) {
           upExitAccumulator = 0;
+          upEventCount = 0;
         }
         lastUpEventTime = now;
         upExitAccumulator += Math.abs(e.deltaY);
-        if (upExitAccumulator < ACCUMULATOR_THRESHOLD) {
+        upEventCount += 1;
+
+        // Intent detected via delta accumulation OR event count (Safari trackpad fallback)
+        const hasUpIntent = upExitAccumulator >= ACCUMULATOR_THRESHOLD || upEventCount >= UP_EVENT_COUNT_THRESHOLD;
+        if (!hasUpIntent) {
           return;
         }
         upExitAccumulator = 0;
+        upEventCount = 0;
         const introSection = document.querySelector<HTMLElement>("[data-hide-navbar]");
         if (introSection) {
           const targetY = introSection.offsetTop;

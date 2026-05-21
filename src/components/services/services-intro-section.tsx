@@ -25,7 +25,7 @@ function ServicesIntroMobile({ data }: { data: ServiceCategoryData["intro"] }) {
       <SiteContainer>
         <div className="w-full">
           <p
-            className="!text-[#01030B] font-light leading-[1.35]"
+            className="!text-[#01030B]"
             style={{ fontFamily: "var(--font-archivo)", fontSize: "24px" }}
             dangerouslySetInnerHTML={{ __html: data.mainText }}
           />
@@ -98,8 +98,11 @@ function ServicesIntroDesktop({ data }: { data: ServiceCategoryData["intro"] }) 
     // Track last wheel time for intent detection
     let lastWheelTime = 0;
     let accumulator = 0;
+    let eventCount = 0; // count consecutive same-direction events for Safari trackpad
+    let lastDirection: "up" | "down" | null = null;
     const ACCUMULATOR_THRESHOLD = 50;
-    const INTENT_GAP_MS = 300;
+    const EVENT_COUNT_THRESHOLD = 6; // Safari fires many small-delta events; 6 in a row = intent
+    const INTENT_GAP_MS = 400; // increased for Safari's slower event cadence
     let atIntroSince = 0; // when we entered atIntro state
     const INTRO_COOLDOWN_MS = 400; // ignore input for this long after arriving at intro
 
@@ -184,26 +187,37 @@ function ServicesIntroDesktop({ data }: { data: ServiceCategoryData["intro"] }) 
         // Cooldown: ignore input right after arriving at intro
         if (now - atIntroSince < INTRO_COOLDOWN_MS) {
           accumulator = 0;
+          eventCount = 0;
           return;
         }
 
         const gap = now - lastWheelTime;
         lastWheelTime = now;
 
-        // Reset accumulator if there's been a long gap (new gesture)
-        if (gap > INTENT_GAP_MS) {
+        // Determine current direction
+        const currentDir = isDown ? "down" : "up";
+
+        // Reset accumulator if there's been a long gap (new gesture) or direction changed
+        if (gap > INTENT_GAP_MS || currentDir !== lastDirection) {
           accumulator = 0;
+          eventCount = 0;
         }
+        lastDirection = currentDir;
 
         accumulator += Math.abs(e.deltaY);
+        eventCount += 1;
 
-        if (accumulator < ACCUMULATOR_THRESHOLD) {
+        // Intent detected via delta accumulation OR event count (Safari trackpad fallback)
+        const hasIntent = accumulator >= ACCUMULATOR_THRESHOLD || eventCount >= EVENT_COUNT_THRESHOLD;
+
+        if (!hasIntent) {
           return; // Not enough intent yet
         }
 
         // Enough intent detected — determine direction
         if (isDown) {
           accumulator = 0;
+          eventCount = 0;
           setScrollDir("down");
           const approach = document.getElementById("services-approach");
           if (approach) {
@@ -218,6 +232,7 @@ function ServicesIntroDesktop({ data }: { data: ServiceCategoryData["intro"] }) 
           }
         } else if (isUp) {
           accumulator = 0;
+          eventCount = 0;
           setScrollDir("up");
           animateScrollTo(0, 600, () => {
             state = "atHero";
