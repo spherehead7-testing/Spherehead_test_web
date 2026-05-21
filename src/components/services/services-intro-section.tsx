@@ -208,6 +208,8 @@ function ServicesIntroDesktop({ data }: { data: ServiceCategoryData["intro"] }) 
           const approach = document.getElementById("services-approach");
           if (approach) {
             const approachY = approach.getBoundingClientRect().top + scrollY;
+            // Notify approach section that a snap is incoming
+            window.dispatchEvent(new CustomEvent("intro-snap-to-approach"));
             animateScrollTo(approachY, 600, () => {
               state = "idle";
             });

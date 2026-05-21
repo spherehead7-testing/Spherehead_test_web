@@ -23,6 +23,7 @@ export default function ServicesListSection({ data }: { data: ServiceCategoryDat
   const toggleAccordion = (index: number) =>
     setActiveIndex((prev) => (prev === index ? null : index));
 
+  // Handle hash navigation - open accordion and scroll to item
   useEffect(() => {
     const openServiceFromHash = () => {
       const hash = window.location.hash;
@@ -31,7 +32,31 @@ export default function ServicesListSection({ data }: { data: ServiceCategoryDat
       const targetIndex = data.items.findIndex((s) => s.slug === slug);
       if (targetIndex === -1) return;
       setActiveIndex(targetIndex);
+
+      setTimeout(() => {
+        if (!listRef.current || !sectionRef.current) return;
+
+        // Scroll the page so the list section is in sticky position
+        const sectionRect = sectionRef.current.getBoundingClientRect();
+        if (sectionRect.top > 0 || sectionRect.top < -10) {
+          const targetPageScroll = window.scrollY + sectionRect.top;
+          window.scrollTo({ top: targetPageScroll, behavior: "instant" as ScrollBehavior });
+        }
+
+        // Then scroll within the list container to the target item
+        const targetEl = document.getElementById(`service-${slug}`);
+        if (!targetEl) return;
+        const listEl = listRef.current;
+        const targetOffset = targetEl.offsetTop - listEl.offsetTop;
+        listEl.scrollTop = Math.max(0, targetOffset - 10);
+      }, 150);
     };
+
+    // Prevent browser's native hash scroll on initial load
+    if (window.location.hash) {
+      window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+    }
+
     openServiceFromHash();
     router.events.on("hashChangeComplete", openServiceFromHash);
     window.addEventListener("hashchange", openServiceFromHash);
@@ -41,38 +66,24 @@ export default function ServicesListSection({ data }: { data: ServiceCategoryDat
     };
   }, [data.items, router]);
 
+  // Snap-back to approach section when scrolling up at the top of the list
   useEffect(() => {
     if (isMobile) return;
     const section = sectionRef.current;
     const sticky = stickyRef.current;
     if (!section || !sticky) return;
 
-    let listTranslateY = 0;
-    let isSnapping = false; // Guard to prevent multiple snap calls
+    let isSnapping = false;
+    let lockedUntil = 0;
 
-    const getMaxTranslate = () => {
-      const listEl = listRef.current;
-      const leftCol = leftColumnRef.current;
-      if (!listEl || !sticky) return 0;
-
-      const stickyRect = sticky.getBoundingClientRect();
-      let stopY = stickyRect.height - 40;
-
-      if (leftCol) {
-        const leftRect = leftCol.getBoundingClientRect();
-        const leftBottom = leftRect.bottom - stickyRect.top;
-        if (leftBottom > 200) {
-          stopY = leftBottom;
-        }
+    const handleSnapEvent = () => {
+      lockedUntil = Date.now() + 1200;
+      // Reset scroll position when snapping from approach
+      if (listRef.current) {
+        listRef.current.scrollTop = 0;
       }
-
-      const listInitialTop =
-        listEl.getBoundingClientRect().top + listTranslateY - stickyRect.top;
-      const visibleHeight = stopY - listInitialTop;
-      const totalContentHeight = listEl.scrollHeight;
-      const overflow = totalContentHeight - visibleHeight;
-      return overflow > 0 ? overflow : 0;
     };
+    window.addEventListener("approach-snap-to-list", handleSnapEvent);
 
     const isStickyEngaged = () => {
       const rect = section.getBoundingClientRect();
@@ -80,53 +91,46 @@ export default function ServicesListSection({ data }: { data: ServiceCategoryDat
     };
 
     const handleWheel = (e: WheelEvent) => {
-      const rect = section.getBoundingClientRect();
-      const isDown = e.deltaY > 0;
-      const isUp = e.deltaY < 0;
-
-      if (!isStickyEngaged()) return;
-
-      const maxY = getMaxTranslate();
-
-      if (isDown) {
-        if (listTranslateY < maxY && maxY > 0) {
-          e.preventDefault();
-          e.stopPropagation();
-          listTranslateY = Math.min(
-            listTranslateY + Math.abs(e.deltaY),
-            maxY
-          );
-          if (listRef.current) {
-            listRef.current.style.transform = `translateY(${-listTranslateY}px)`;
-          }
-          return;
-        }
+      if (Date.now() < lockedUntil) {
+        e.preventDefault();
+        e.stopPropagation();
         return;
       }
 
-      if (isUp) {
-        if (listTranslateY > 0) {
-          e.preventDefault();
+      if (!isStickyEngaged()) return;
+
+      const isUp = e.deltaY < 0;
+      const isDown = e.deltaY > 0;
+      const list = listRef.current;
+
+      if (isDown && list) {
+        // Let native scroll handle scrolling down within the list
+        const atBottom = list.scrollTop + list.clientHeight >= list.scrollHeight - 2;
+        if (!atBottom) {
+          // List can still scroll down — don't interfere
           e.stopPropagation();
-          listTranslateY = Math.max(
-            listTranslateY - Math.abs(e.deltaY),
-            0
-          );
-          if (listRef.current) {
-            listRef.current.style.transform = `translateY(${-listTranslateY}px)`;
-          }
+          return;
+        }
+        // At bottom of list — allow page scroll to continue past section
+        return;
+      }
+
+      if (isUp && list) {
+        // If list is scrolled down, let native scroll handle it
+        if (list.scrollTop > 0) {
+          e.stopPropagation();
           return;
         }
 
+        // List is at the very top and user scrolls up — snap back to approach
         const rect = section.getBoundingClientRect();
         if (rect.top > -50 && rect.top <= 80 && !isSnapping) {
           e.preventDefault();
           e.stopPropagation();
           isSnapping = true;
-          const approachSection =
-            document.getElementById("services-approach");
+          window.dispatchEvent(new CustomEvent("list-snap-to-approach"));
+          const approachSection = document.getElementById("services-approach");
           if (approachSection) {
-            // Target: approach section top aligned with viewport top
             const targetY = window.scrollY + approachSection.getBoundingClientRect().top;
             const startY = window.scrollY;
             const distance = targetY - startY;
@@ -134,10 +138,7 @@ export default function ServicesListSection({ data }: { data: ServiceCategoryDat
             const step = (ts: number) => {
               const elapsed = ts - t0;
               const t = Math.min(elapsed / 400, 1);
-              const ease =
-                t < 0.5
-                  ? 4 * t * t * t
-                  : 1 - Math.pow(-2 * t + 2, 3) / 2;
+              const ease = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
               window.scrollTo({
                 top: Math.round(startY + distance * ease),
                 behavior: "instant" as ScrollBehavior,
@@ -155,19 +156,18 @@ export default function ServicesListSection({ data }: { data: ServiceCategoryDat
           return;
         }
 
-        // If snapping is in progress, block the event
         if (isSnapping) {
           e.preventDefault();
           e.stopPropagation();
           return;
         }
-        return;
       }
     };
 
     window.addEventListener("wheel", handleWheel, { passive: false });
     return () => {
       window.removeEventListener("wheel", handleWheel);
+      window.removeEventListener("approach-snap-to-list", handleSnapEvent);
     };
   }, [isMobile]);
 
@@ -267,7 +267,7 @@ export default function ServicesListSection({ data }: { data: ServiceCategoryDat
                   />
                   <div
                     ref={listRef}
-                    className="flex flex-col pt-[60px] will-change-transform"
+                    className="flex flex-col pt-[80px] overflow-y-auto h-full services-list-scroll"
                   >
                     {data.items.map((service, index) => (
                       <ServiceListItem

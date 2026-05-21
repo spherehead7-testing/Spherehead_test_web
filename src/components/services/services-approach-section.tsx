@@ -53,7 +53,43 @@ export default function ServicesApproachSection() {
 
     // Reset page to 0 whenever the section comes into view
     let enteredAt = 0;
-    const ENTRY_COOLDOWN_MS = 150; // brief pause to absorb animation inertia
+    const ENTRY_COOLDOWN_MS = 600; // absorb trackpad momentum when entering from intro
+    let lockedUntil = 0; // Hard lock for snap-back from list section
+
+    // Global wheel blocker during snap-back lock period
+    const globalWheelBlocker = (e: WheelEvent) => {
+      if (Date.now() < lockedUntil) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
+
+    // Listen for snap-back from list section (hard trackpad swipe)
+    const handleSnapBack = () => {
+      // Block wheel events for 1200ms (400ms animation + 800ms momentum)
+      lockedUntil = Date.now() + 1200;
+      // Reset upward accumulator to prevent stale momentum from triggering intro snap
+      upExitAccumulator = 0;
+      // Add global blocker to catch momentum events at window level
+      window.addEventListener("wheel", globalWheelBlocker, { passive: false, capture: true });
+      // Remove it after the lock period
+      setTimeout(() => {
+        window.removeEventListener("wheel", globalWheelBlocker, { capture: true });
+      }, 1200);
+    };
+    window.addEventListener("list-snap-to-approach", handleSnapBack);
+
+    // Listen for snap from intro section (hard trackpad swipe down)
+    const handleSnapFromIntro = () => {
+      // Block wheel events for 1200ms (600ms animation + 600ms momentum)
+      lockedUntil = Date.now() + 1200;
+      // Add global blocker
+      window.addEventListener("wheel", globalWheelBlocker, { passive: false, capture: true });
+      setTimeout(() => {
+        window.removeEventListener("wheel", globalWheelBlocker, { capture: true });
+      }, 1200);
+    };
+    window.addEventListener("intro-snap-to-approach", handleSnapFromIntro);
 
     const visibilityObserver = new IntersectionObserver(
       ([entry]) => {
@@ -71,9 +107,10 @@ export default function ServicesApproachSection() {
     );
     visibilityObserver.observe(section);
 
-    const ACCUMULATOR_THRESHOLD = 50;
+    const ACCUMULATOR_THRESHOLD = 120;
 
     let lastEventTime = 0;
+    let lastUpEventTime = 0;
     let consecutiveSmallDeltas = 0;
     const isTouchpad = () => consecutiveSmallDeltas > 3;
 
@@ -108,6 +145,12 @@ export default function ServicesApproachSection() {
       const now = Date.now();
       const timeSinceLast = now - lastEventTime;
       lastEventTime = now;
+
+      // Hard lock: block ALL wheel events during snap-back from list section
+      if (now < lockedUntil) {
+        e.preventDefault();
+        return;
+      }
 
       // Ignore wheel events during the entry cooldown period
       if (now - enteredAt < ENTRY_COOLDOWN_MS) {
@@ -159,6 +202,8 @@ export default function ServicesApproachSection() {
         if (listSection) {
           const targetY = listSection.getBoundingClientRect().top + window.scrollY;
           isAnimating.current = true;
+          // Notify list section that a snap is incoming so it ignores momentum
+          window.dispatchEvent(new CustomEvent("approach-snap-to-list"));
           animateScrollTo(targetY, 600, () => {
             isAnimating.current = false;
           });
@@ -180,8 +225,18 @@ export default function ServicesApproachSection() {
           return;
         }
 
-        // On page 0, snap up to intro immediately (no accumulator)
+        // On page 0, accumulate upward scroll intent before snapping to intro
         e.preventDefault();
+        // Decay accumulator if there's been a gap (momentum dying down)
+        if (now - lastUpEventTime > 150) {
+          upExitAccumulator = 0;
+        }
+        lastUpEventTime = now;
+        upExitAccumulator += Math.abs(e.deltaY);
+        if (upExitAccumulator < ACCUMULATOR_THRESHOLD) {
+          return;
+        }
+        upExitAccumulator = 0;
         const introSection = document.querySelector<HTMLElement>("[data-hide-navbar]");
         if (introSection) {
           const targetY = introSection.offsetTop;
@@ -193,6 +248,9 @@ export default function ServicesApproachSection() {
     section.addEventListener("wheel", handleWheel, { passive: false });
     return () => {
       section.removeEventListener("wheel", handleWheel);
+      window.removeEventListener("list-snap-to-approach", handleSnapBack);
+      window.removeEventListener("intro-snap-to-approach", handleSnapFromIntro);
+      window.removeEventListener("wheel", globalWheelBlocker, { capture: true });
       visibilityObserver.disconnect();
     };
   }, [isMobile]);
