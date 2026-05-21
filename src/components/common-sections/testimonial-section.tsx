@@ -281,7 +281,7 @@ export default function TestimonialSection({
             <SiteContainer>
                 <div className="mb-4 flex items-center gap-3">
                     <RotatingDots variant="light" />
-                    <p className="body-small text-[#01030B">Testimonials</p>
+                    <p className="body-small text-[#01030B]">Testimonials</p>
                 </div>
 
                 <h2 className={cn("heading-2 !text-[#0A0D0F]", snapToScreen)}>
