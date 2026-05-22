@@ -10,7 +10,7 @@ export default function IndustriesHero() {
       <SiteContainer>
         <div className="pb-24">
           {/* Top line */}
-          <div className="h-[1px] bg-white/40 mb-12" />
+          <div className="h-[1px] bg-white mb-12" />
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-end">
             {/* LEFT CONTENT */}

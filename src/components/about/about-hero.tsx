@@ -1,16 +1,17 @@
 "use client";
 
-import { motion } from "framer-motion";
 import Image from "next/image";
 import CyclicButton from "@/components/ui/cyclic-button";
 import SiteContainer from "../layout/site-container";
+import { useScrollContainerContext } from "@/context/ScrollContainerContext";
 
 export default function AboutHero() {
+  const { scrollContainerRef } = useScrollContainerContext();
   return (
     <section className="relative overflow-hidden md:min-h-[100svh]">
       <SiteContainer className="relative md:min-h-[100svh]">
-        {/* CENTER DIVIDER LINE */}
-        <div className="about-hero-divider absolute left-0 right-0 z-10 h-px -translate-y-1/2 bg-white/75 md:bg-white/40" />
+        {/* CENTER DIVIDER LINEabout-hero-divider */}
+        <div className="about-hero-divider absolute left-0 right-0 z-10 h-px -translate-y-1/2 bg-white md:bg-white" />
 
         {/* CONTENT WRAPPER */}
         <div className="relative z-20 flex items-start pt-[calc(43svh+clamp(24px,7vw,32px))] pb-[clamp(20px,6svh,36px)] md:min-h-[100svh] md:items-end md:pt-28 md:pb-[clamp(32px,8vh,50px)]">
@@ -18,7 +19,7 @@ export default function AboutHero() {
             {/* LEFT CONTENT */}
             <div className="max-w-[980px]">
               {/* TITLE */}
-              <h1 className="heading-1 !text-[clamp(44px,13vw,72px)] !leading-[1.12] !tracking-0 md:hidden">
+              <h1 className="inner-hero md:hidden">
                 Who We Are
                 <br />
                 &amp; What We
@@ -26,7 +27,7 @@ export default function AboutHero() {
                 Stand For
               </h1>
 
-              <h1 className="heading-1 hidden md:block">
+              <h1 className="inner-hero hidden md:block">
                 Who We Are & <br />
                 What We Stand For
               </h1>
@@ -52,20 +53,21 @@ export default function AboutHero() {
                 />
               </div>
             </div>
+            <CyclicButton
+              onClick={() => {
+                const container = scrollContainerRef?.current;
+                const element = document.getElementById("contact-pricing");
 
-            {/* CTA */}
-            <motion.div
-              initial={{ opacity: 0, x: 35 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.45, duration: 0.7 }}
-              className="mb-0 shrink-0 lg:mb-5"
+                if (container && element) {
+                  container.scrollTo({
+                    top: element.offsetTop,
+                    behavior: "smooth",
+                  });
+                }
+              }}
             >
-              <CyclicButton
-                onClick={() => console.log("Start Project Clicked!")}
-              >
-                Start a Project
-              </CyclicButton>
-            </motion.div>
+              Start a Project
+            </CyclicButton>
           </div>
         </div>
       </SiteContainer>

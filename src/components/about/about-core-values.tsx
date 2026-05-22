@@ -37,35 +37,38 @@ const values = [
 
 export default function CoreValues() {
   const [active, setActive] = useState(0);
+
   const sectionRef = useRef<HTMLElement | null>(null);
   const isAnimating = useRef(false);
-  // Track whether this section has been "entered" — i.e. scrolled into view
-  const isLocked = useRef(false);
 
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
+
+  // =========================
+  // DESKTOP WHEEL ANIMATION
+  // =========================
   useEffect(() => {
+    if (window.innerWidth < 768) return;
+
     const section = sectionRef.current;
     if (!section) return;
 
-    // Accumulate trackpad delta — only step once threshold is crossed.
-    // This prevents rapid-fire inertia scrolling from skipping multiple values.
     let accumulated = 0;
-    const THRESHOLD = 60;   // px of total delta before a step fires
-    const COOLDOWN_MS = 850; // ms lockout after each step
+
+    const THRESHOLD = 60;
+    const COOLDOWN_MS = 850;
 
     const handleWheel = (e: WheelEvent) => {
       const rect = section.getBoundingClientRect();
+
       const sectionInView = rect.top <= 0 && rect.bottom >= window.innerHeight;
 
       if (!sectionInView) {
         accumulated = 0;
-        isLocked.current = false;
         return;
       }
 
-      isLocked.current = true;
-
       if (isAnimating.current) {
-        // Swallow scroll while animating so inertia can't queue up steps
         e.preventDefault();
         accumulated = 0;
         return;
@@ -74,71 +77,104 @@ export default function CoreValues() {
       accumulated += e.deltaY;
 
       if (Math.abs(accumulated) < THRESHOLD) {
-        // Not enough delta yet — block page scroll but don't step
         e.preventDefault();
         return;
       }
 
       const direction = accumulated > 0 ? "down" : "up";
-      accumulated = 0; // consume
+
+      accumulated = 0;
 
       if (direction === "down" && active < values.length - 1) {
         e.preventDefault();
+
         isAnimating.current = true;
+
         setActive((prev) => prev + 1);
-        setTimeout(() => { isAnimating.current = false; }, COOLDOWN_MS);
+
+        setTimeout(() => {
+          isAnimating.current = false;
+        }, COOLDOWN_MS);
       } else if (direction === "up" && active > 0) {
         e.preventDefault();
+
         isAnimating.current = true;
+
         setActive((prev) => prev - 1);
-        setTimeout(() => { isAnimating.current = false; }, COOLDOWN_MS);
+
+        setTimeout(() => {
+          isAnimating.current = false;
+        }, COOLDOWN_MS);
       }
-      // At first/last item — fall through so page scrolls naturally past the section
     };
 
     window.addEventListener("wheel", handleWheel, { passive: false });
+
     return () => {
       window.removeEventListener("wheel", handleWheel);
-      accumulated = 0;
     };
   }, [active]);
 
-  return (
-    <section
-      ref={sectionRef}
-      // h-[300vh] gives enough scroll distance to cover all 4 values
-      className="relative h-[300vh] text-white"
-    >
-      {/* Sticky panel — stays in view while parent scrolls */}
-      <div className="sticky top-0 flex h-screen w-full flex-col py-12 overflow-hidden">
+  // =========================
+  // MOBILE SWIPE
+  // =========================
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.changedTouches[0].screenX;
+  };
 
-        {/* HEADER */}
-        <div className="max-w-[1400px] mx-auto w-full px-6 lg:px-20">
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    touchEndX.current = e.changedTouches[0].screenX;
+
+    const deltaX = touchStartX.current - touchEndX.current;
+
+    if (Math.abs(deltaX) < 50) return;
+
+    // swipe left
+    if (deltaX > 0 && active < values.length - 1) {
+      setActive((prev) => prev + 1);
+    }
+
+    // swipe right
+    if (deltaX < 0 && active > 0) {
+      setActive((prev) => prev - 1);
+    }
+  };
+
+  return (
+    <>
+      {/* ========================= */}
+      {/* MOBILE */}
+      {/* ========================= */}
+      <section className="overflow-hidden bg-[#0A2C82] text-white md:hidden">
+        <div
+          className="px-6 py-14"
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+        >
+          {/* HEADER */}
           <div className="mb-10">
-            <div className="flex items-center gap-3 mb-2">
+            <div className="mb-3 flex items-center gap-3">
               <RotatingDots />
               <span className="body-small">Our Core Values</span>
             </div>
-            <h2 className="heading-2 max-w-[700px]">
+
+            <h2 className="heading-2 max-w-[320px]">
               Driving Excellence through Strong Values and Purpose
             </h2>
           </div>
-        </div>
 
-        {/* FULL WIDTH TOP LINE */}
-        <div className="w-full h-[2px] bg-white/30" />
+          {/* TOP LINE */}
+          <div className="h-px w-full bg-white/30" />
 
-        {/* TABS */}
-        <div className="w-full">
-          {/* LABELS — py-5 gives equal space above and below relative to both lines */}
-          <div className="w-full px-6 lg:px-20">
-            <div className="body-medium flex justify-between py-5">
+          {/* TABS */}
+          <div className="overflow-x-auto">
+            <div className="body-small flex min-w-max gap-10 py-5 whitespace-nowrap">
               {values.map((item, i) => (
                 <button
                   key={i}
                   onClick={() => setActive(i)}
                   className={`transition-opacity duration-300 ${
-                    active === i ? "text-white opacity-100" : "text-white/50 opacity-70"
+                    active === i ? "opacity-100" : "opacity-50"
                   }`}
                 >
                   {item.title}
@@ -147,62 +183,165 @@ export default function CoreValues() {
             </div>
           </div>
 
-          {/* PROGRESS LINE + DOT
-           * One full-width track. A single white bar grows from the left
-           * edge to the centre of the active tab label. The dot sits at
-           * the tip of that bar — both driven by the same `targetPct` value.
-           *
-           * Each tab occupies 25% of the width; its centre is at:
-           *   i * 25 + 12.5  (%)
-           */}
-          <div className="relative w-full h-[3px] bg-white/25">
-            {/* Growing white highlight */}
+          {/* PROGRESS */}
+          <div className="relative h-[2px] w-full bg-white/20">
             <motion.div
               className="absolute left-0 top-0 h-full bg-white"
-              animate={{ width: `${active * 25 + 12.5}%` }}
-              transition={{ duration: 0.45, ease: "easeInOut" }}
+              animate={{
+                width: `${((active + 1) / values.length) * 100}%`,
+              }}
+              transition={{
+                duration: 0.35,
+              }}
             />
-            {/* Dot — rides the tip of the highlight */}
+
             <motion.div
-              className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-white z-10"
-              animate={{ left: `${active * 25 + 12.5}%` }}
-              transition={{ duration: 0.45, ease: "easeInOut" }}
+              className="absolute top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white"
+              animate={{
+                left: `${((active + 1) / values.length) * 100}%`,
+              }}
+              transition={{
+                duration: 0.35,
+              }}
             />
           </div>
-        </div>
 
-        {/* CONTENT */}
-        <div className="max-w-[1440px] mx-auto w-full px-6 lg:px-20 flex-1 flex items-center">
-          <div className="grid lg:grid-cols-2 gap-16 items-center w-full">
-
-            {/* IMAGE */}
+          {/* CONTENT */}
+          <div className="pt-10">
             <motion.div
               key={values[active].image}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.4 }}
-              className="overflow-hidden max-w-[480px]"
+              transition={{ duration: 0.35 }}
+              className="mb-6 overflow-hidden"
             >
               <img
                 src={values[active].image}
-                className="w-full h-auto"
                 alt={values[active].title}
+                className="w-full object-cover"
               />
             </motion.div>
 
-            {/* TEXT */}
             <motion.div
               key={values[active].title}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.4 }}
+              transition={{ duration: 0.35 }}
             >
-              <h3 className="body-large mb-6">{values[active].title}</h3>
-              <p className="body-small max-w-[500px]">{values[active].description}</p>
+              <p className="body-small max-w-[320px] text-white/95">
+                {values[active].description}
+              </p>
             </motion.div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      {/* ========================= */}
+      {/* DESKTOP */}
+      {/* ========================= */}
+      <section
+        ref={sectionRef}
+        className="relative hidden h-[300vh] text-white md:block"
+      >
+        <div className="sticky top-0 flex h-screen w-full flex-col overflow-hidden py-12">
+          {/* HEADER */}
+          <div className="mx-auto w-full max-w-[1400px] px-6 lg:px-20">
+            <div className="mb-10">
+              <div className="mb-2 flex items-center gap-3">
+                <RotatingDots />
+                <span className="body-small">Our Core Values</span>
+              </div>
+
+              <h2 className="heading-2 max-w-[700px]">
+                Driving Excellence through Strong Values and Purpose
+              </h2>
+            </div>
+          </div>
+
+          {/* LINE */}
+          <div className="h-[2px] w-full bg-white/30" />
+
+          {/* TABS */}
+          <div className="w-full">
+            <div className="w-full px-6 lg:px-20">
+              <div className="body-medium flex justify-between py-5">
+                {values.map((item, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setActive(i)}
+                    className={`transition-opacity duration-300 ${
+                      active === i
+                        ? "text-white opacity-100"
+                        : "text-white/50 opacity-70"
+                    }`}
+                  >
+                    {item.title}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* PROGRESS */}
+            <div className="relative h-[3px] w-full bg-white/25">
+              <motion.div
+                className="absolute left-0 top-0 h-full bg-white"
+                animate={{
+                  width: `${active * 25 + 12.5}%`,
+                }}
+                transition={{
+                  duration: 0.45,
+                  ease: "easeInOut",
+                }}
+              />
+
+              <motion.div
+                className="absolute top-1/2 z-10 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white"
+                animate={{
+                  left: `${active * 25 + 12.5}%`,
+                }}
+                transition={{
+                  duration: 0.45,
+                  ease: "easeInOut",
+                }}
+              />
+            </div>
+          </div>
+
+          {/* CONTENT */}
+          <div className="mx-auto flex w-full max-w-[1440px] flex-1 items-center px-6 lg:px-20">
+            <div className="grid w-full items-center gap-16 lg:grid-cols-2">
+              {/* IMAGE */}
+              <motion.div
+                key={values[active].image}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.4 }}
+                className="max-w-[480px] overflow-hidden"
+              >
+                <img
+                  src={values[active].image}
+                  className="h-auto w-full"
+                  alt={values[active].title}
+                />
+              </motion.div>
+
+              {/* TEXT */}
+              <motion.div
+                key={values[active].title}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.4 }}
+              >
+                <h3 className="body-large mb-6">{values[active].title}</h3>
+
+                <p className="body-small max-w-[500px]">
+                  {values[active].description}
+                </p>
+              </motion.div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </>
   );
 }

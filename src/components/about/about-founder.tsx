@@ -96,9 +96,9 @@ export default function FounderMessage() {
             <div className="flex min-w-0 flex-1 flex-col pb-3 text-[#01030B] lg:h-[380px] lg:max-w-[390px] lg:flex-none lg:pb-4">
               {/* NAME */}
               <div>
-                <h3 className="heading-4 !text-[16px] !leading-none !text-[#01030B] md:!text-[18px] lg:!text-[20px]">
+                <h4 className="heading-4 !text-[#01030B]">
                   Artemii Garibov
-                </h3>
+                </h4>
 
                 <p className="body-small mt-1 text-[#01030B]">
                   Co-Founder & CEO
