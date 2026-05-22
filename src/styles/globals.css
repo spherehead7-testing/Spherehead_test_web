@@ -92,11 +92,12 @@ select {
    TYPOGRAPHY (RESPONSIVE)
 ========================================================= */
 
+/* line height 1.1 for desktop , 1.25 for mobile*/
 .heading-1 {
   font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
   font-weight: 300;
   font-size: clamp(40px, 6vw, 72px);
-  line-height: 1.1;
+  line-height: clamp(1.1, 1.32 - 0.45vw, 1.25);
   letter-spacing: 2px;
   color: #ffffff;
   text-align: left;
@@ -112,11 +113,12 @@ select {
   text-align: left;
 }
 
+/* line height 0 for desktop , 1.06 for mobile*/
 .heading-3 {
   font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
   font-weight: 350;
   font-size: clamp(18px, 2.5vw, 22px);
-  line-height: 1.4;
+  line-height: clamp(0, 1.18 - 0.35vw, 1.06);
   letter-spacing: 0;
   color: #ffffff;
   text-align: left;
@@ -132,35 +134,49 @@ select {
   text-align: left;
 }
 
+.about-hero-divider {
+  top: 43svh;
+}
+
+@media (min-width: 768px) {
+  .about-hero-divider {
+    top: 50%;
+  }
+}
+
+/* line height 1.5 for desktop , 1.25 for mobile*/
 .body-large {
   font-family: var(--font-inter-tight), Arial, Helvetica, sans-serif;
   font-size: clamp(18px, 2vw, 24px);
   font-weight: 350;
-  line-height: 1.5;
+  line-height: clamp(1.25, 1.15 + 0.4vw, 1.5);
   letter-spacing: 0.02em;
 }
 
+/* line height 1.6 for desktop , 1.25 for mobile*/
 .body-medium {
   font-family: var(--font-inter-tight), Arial, Helvetica, sans-serif;
   font-size: clamp(16px, 1.6vw, 18px);
   font-weight: 450;
-  line-height: 1.6;
+  line-height: clamp(1.25, 1.12 + 0.35vw, 1.6);
   letter-spacing: 0.02em;
 }
 
+/* line height 1.5 for desktop , 1.25 for mobile*/
 .body-small {
   font-family: var(--font-inter-tight), Arial, Helvetica, sans-serif;
   font-size: clamp(14px, 1.4vw, 16px);
   font-weight: 400;
-  line-height: 1.5;
+  line-height: clamp(1.25, 1.1 + 0.3vw, 1.5);
   letter-spacing: 0.02em;
 }
 
+/* line height 1.5 for desktop , 1.25 for mobile*/
 .body-extra-small {
   font-family: var(--font-inter-tight), Arial, Helvetica, sans-serif;
   font-size: clamp(12px, 1.2vw, 14px);
   font-weight: 400;
-  line-height: 1.5;
+  line-height: clamp(1.25, 1.08 + 0.28vw, 1.5);
   letter-spacing: 0.02em;
 }
 
@@ -252,10 +268,11 @@ select {
 
 .about-stat-number {
   font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
-  font-size: clamp(36px, 6vw, 62px);
+  font-size: clamp(56px, 10vw, 62px);
   font-weight: 400;
   line-height: 1;
   color: #ffffff;
+  max-width: 640px;
 }
 
 .about-stat-label {

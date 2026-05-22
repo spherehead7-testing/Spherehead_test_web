@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";  
+import { useEffect, useRef } from "react";
 import { useScrollContainerContext } from "@/context/ScrollContainerContext";
 import CareersHero from "@/components/careers/careers-hero";
 import OurCulture from "@/components/careers/careers-our-culture";
@@ -53,7 +53,7 @@ export default function CareersPage() {
       <InternshipPrograms />
       <div className="w-full shrink-0 snap-start">
         <Footer />
-      </div> 
+      </div>
     </main>
   );
 }

@@ -42,6 +42,7 @@ export default function ContactSection() {
 
   return (
     <section
+      id="contact-pricing"
       ref={sectionRef}
       className="min-h-[calc(100svh-88px)] w-full snap-start bg-[#F6F6F6] py-20 lg:flex lg:items-center"
     >
@@ -79,7 +80,9 @@ export default function ContactSection() {
               <button
                 onClick={() => setMode("quotation")}
                 className={`rounded px-5 py-1.5 body-extra-small ${
-                  mode === "quotation" ? "bg-[#0D54CA] text-white" : "text-black"
+                  mode === "quotation"
+                    ? "bg-[#0D54CA] text-white"
+                    : "text-black"
                 }`}
               >
                 Get a Quotation

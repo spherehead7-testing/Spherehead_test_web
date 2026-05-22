@@ -313,7 +313,7 @@ export default function ServicesApproachSection() {
                 Strategic Approach
               </span>
             </div>
-            <h2 className="heading-3 !text-center max-w-[320px]">
+            <h2 className="heading-2 !text-center max-w-[320px]">
               Powering Business Transformation through Precision Engineering
             </h2>
           </div>
@@ -326,7 +326,7 @@ export default function ServicesApproachSection() {
                 >
                   {item.num}
                 </span>
-                <h3 className="body-small text-white leading-snug">
+                <h3 className="body-large text-white leading-snug">
                   {item.title.replace(/\n/g, " ")}
                 </h3>
               </div>
