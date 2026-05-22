@@ -9,10 +9,13 @@ import ContactFooter from "@/components/contact-us/contact-footer";
 
 export default function ContactUsPage() {
   useEffect(() => {
-    // Enable scroll snapping for full-page sections
-    document.documentElement.classList.add("snap-y", "snap-mandatory");
+    const isMobile = window.matchMedia("(max-width: 767px)").matches;
+    if (isMobile) return;
+
+    // Enable scroll snapping for full-page sections on desktop only
+    document.documentElement.classList.add("snap-y", "snap-proximity");
     return () => {
-      document.documentElement.classList.remove("snap-y", "snap-mandatory");
+      document.documentElement.classList.remove("snap-y", "snap-proximity");
     };
   }, []);
 

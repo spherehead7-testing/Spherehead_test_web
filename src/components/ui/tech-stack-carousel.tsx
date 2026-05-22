@@ -2,7 +2,7 @@
 
 import React, { useRef, useEffect } from "react";
 import Image from "next/image";
-import { motion, useMotionValue } from "framer-motion";
+import { motion, useMotionValue } from "motion/react";
 
 export interface TechItem {
   name: string;

@@ -1,341 +1,343 @@
 import React, { useRef, useEffect } from "react";
 import Image from "next/image";
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
-
 import SiteContainer from "@/components/layout/site-container";
 import { ServiceCategoryData } from "@/data/service-categories";
 import { useIsMobile } from "@/hooks/use-is-mobile";
 
 export default function ServicesIntroSection({
-    data,
+  data,
 }: {
-    data: ServiceCategoryData["intro"];
+  data: ServiceCategoryData["intro"];
 }) {
-    const isMobile = useIsMobile();
+  const isMobile = useIsMobile();
 
-    if (isMobile) {
-        return <ServicesIntroMobile data={data} />;
-    }
+  if (isMobile) {
+    return <ServicesIntroMobile data={data} />;
+  }
 
-    return <ServicesIntroDesktop data={data} />;
+  return <ServicesIntroDesktop data={data} />;
 }
 
-/** Mobile: plain static layout matching Figma — text, small paragraph, centered image, two body cols */
 function ServicesIntroMobile({ data }: { data: ServiceCategoryData["intro"] }) {
-    return (
-        <section className="relative z-30 w-full bg-white py-10 rounded-[6px]">
-            <SiteContainer>
-                {/* Main bold text — reduced size for mobile to match Figma */}
-                <div className="w-full">
-                    <p
-                        className="!text-[#01030B] font-light leading-[1.35]"
-                        style={{
-                            fontFamily: "var(--font-archivo)",
-                            fontSize: "24px",
-                        }}
-                        dangerouslySetInnerHTML={{ __html: data.mainText }}
-                    />
-                </div>
-
-                {/* First paragraph below the heading */}
-                <p className="body-small mt-6" style={{ color: "#8A8B8F", lineHeight: "1.6" }}>
-                    {data.p1}
-                </p>
-
-                {/* Image — left-aligned, wider like Figma */}
-                <div className="relative mt-8 aspect-[4/3] w-full max-w-[280px] overflow-hidden rounded-[4px] bg-animated-gradient">
-                    <div className="absolute inset-5 z-10 overflow-hidden rounded-xl">
-                        <Image
-                            src={data.image}
-                            alt="Section Image"
-                            fill
-                            sizes="280px"
-                            className="object-contain"
-                        />
-                    </div>
-                </div>
-
-                {/* Second paragraph below image */}
-                <p className="body-small mt-8 italic" style={{ color: "#8A8B8F", lineHeight: "1.6" }}>
-                    {data.heading}
-                </p>
-
-                <p className="body-small mt-6" style={{ color: "#8A8B8F", lineHeight: "1.6" }}>
-                    {data.p2}
-                </p>
-            </SiteContainer>
-        </section>
-    );
+  return (
+    <section className="relative z-30 w-full bg-white py-10 rounded-[6px]">
+      <SiteContainer>
+        <div className="w-full">
+          <p
+            className="!text-[#01030B]"
+            style={{ fontFamily: "var(--font-archivo)", fontSize: "24px" }}
+            dangerouslySetInnerHTML={{ __html: data.mainText }}
+          />
+        </div>
+        <p className="body-small mt-6" style={{ color: "#8A8B8F", lineHeight: "1.6" }}>
+          {data.p1}
+        </p>
+        <div className="relative mt-8 aspect-[4/3] w-full max-w-[280px] overflow-hidden rounded-[4px] bg-animated-gradient">
+          <div className="absolute inset-5 z-10 overflow-hidden rounded-xl">
+            <Image src={data.image} alt="Section Image" fill sizes="280px" className="object-contain" />
+          </div>
+        </div>
+        <p className="body-small mt-8 italic" style={{ color: "#8A8B8F", lineHeight: "1.6" }}>
+          {data.heading}
+        </p>
+        <p className="body-small mt-6" style={{ color: "#8A8B8F", lineHeight: "1.6" }}>
+          {data.p2}
+        </p>
+      </SiteContainer>
+    </section>
+  );
 }
 
-/** Desktop: original parallax + scroll hijacking behavior */
+/**
+ * Desktop intro with parallax columns and scroll-controlled navigation.
+ *
+ * Scroll flow (managed entirely via wheel preventDefault + programmatic scrollTo):
+ * 1. Hero zone → animate to intro top, STOP here
+ * 2. From intro → next intentional scroll down → animate to approach section
+ * 3. From intro → intentional scroll up → animate back to hero (scrollY = 0)
+ */
 function ServicesIntroDesktop({ data }: { data: ServiceCategoryData["intro"] }) {
-    const containerRef = useRef<HTMLElement>(null);
+  const containerRef = useRef<HTMLElement>(null);
 
-    const { scrollYProgress } = useScroll({
-        target: containerRef,
-        offset: ["start end", "start start"],
-    });
+  // Framer Motion parallax for the white column curtain
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "start start"],
+  });
 
-    const smoothProgress = useSpring(scrollYProgress, {
-        stiffness: 45,
-        damping: 22,
-        mass: 1.2,
-    });
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 45,
+    damping: 22,
+    mass: 1.2,
+  });
 
-    const [scrollDir, setScrollDir] = React.useState<"down" | "up">("down");
+  const [scrollDir, setScrollDir] = React.useState<"down" | "up">("down");
 
-    const lastScrollY = useRef(0);
+  const col1Y = useTransform(smoothProgress, [0, 1], [scrollDir === "down" ? "0%" : "30%", "0%"]);
+  const col2Y = useTransform(smoothProgress, [0, 1], [scrollDir === "down" ? "55%" : "110%", "0%"]);
+  const col3Y = useTransform(smoothProgress, [0, 1], [scrollDir === "down" ? "80%" : "180%", "0%"]);
+  const contentY = useTransform(smoothProgress, [0, 1], [scrollDir === "down" ? "75vh" : "180vh", "0vh"]);
 
-    // State machine: idle → stuck → scrolling-up
-    // "stuck"  = section is visible, user scrolled up once, we hold position
-    // "locked" = scroll-to-hero animation is running, block everything
-    type UpScrollState = "idle" | "stuck" | "locked";
-    const upScrollState = useRef<UpScrollState>("idle");
+  useEffect(() => {
+    const section = containerRef.current;
+    if (!section) return;
 
-    // Whether the intro section is currently fully in the viewport
-    const sectionVisible = useRef(false);
+    // Disable CSS scroll-behavior: smooth so our programmatic scroll isn't sluggish
+    const html = document.documentElement;
+    html.style.scrollBehavior = "auto";
 
-    // Cooldown after momentum dies: only accept a new intentional swipe
-    // after at least this many ms of no wheel events
-    const lastWheelTime = useRef(0);
-    const INTENT_GAP_MS = 350; // gap between momentum tail and next swipe
+    // --- State machine ---
+    // "idle"       = not controlling scroll (e.g., further down the page)
+    // "atHero"     = user is at the hero, next down-scroll snaps to intro
+    // "atIntro"    = user is at intro, stopped. Next down → approach, next up → hero
+    // "animating"  = a programmatic scroll is in progress, block everything
+    type State = "idle" | "atHero" | "atIntro" | "animating";
+    let state: State = window.scrollY < 50 ? "atHero" : "idle";
 
-    useEffect(() => {
-        // Track visibility with IntersectionObserver
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                sectionVisible.current = entry.intersectionRatio >= 0.85;
-                // Reset state when section leaves view
-                if (!sectionVisible.current) {
-                    upScrollState.current = "idle";
-                }
-            },
-            { threshold: [0, 0.85, 1] }
-        );
-        if (containerRef.current) observer.observe(containerRef.current);
+    // Track last wheel time for intent detection
+    let lastWheelTime = 0;
+    let accumulator = 0;
+    let eventCount = 0; // count consecutive same-direction events for Safari trackpad
+    let lastDirection: "up" | "down" | null = null;
+    const ACCUMULATOR_THRESHOLD = 50;
+    const EVENT_COUNT_THRESHOLD = 6; // Safari fires many small-delta events; 6 in a row = intent
+    const INTENT_GAP_MS = 400; // increased for Safari's slower event cadence
+    let atIntroSince = 0; // when we entered atIntro state
+    const INTRO_COOLDOWN_MS = 400; // ignore input for this long after arriving at intro
 
-        const handleScroll = () => {
-            if (upScrollState.current === "locked") return;
+    const getIntroTop = () => section.offsetTop;
 
-            const scrollY = window.scrollY;
-            const isScrollingDown = scrollY > lastScrollY.current;
-            lastScrollY.current = scrollY;
+    // Programmatic smooth scroll using requestAnimationFrame
+    const animateScrollTo = (targetY: number, duration: number, cb?: () => void) => {
+      state = "animating";
+      const startY = window.scrollY;
+      const distance = targetY - startY;
+      if (Math.abs(distance) < 2) {
+        window.scrollTo({ top: targetY, behavior: "instant" as ScrollBehavior });
+        cb?.();
+        return;
+      }
+      const t0 = performance.now();
 
-            if (
-                isScrollingDown &&
-                scrollY > 20 &&
-                scrollY < window.innerHeight * 0.4
-            ) {
-                upScrollState.current = "locked";
-                setScrollDir("down");
-                containerRef.current?.scrollIntoView({ behavior: "smooth" });
-                setTimeout(() => {
-                    upScrollState.current = "idle";
-                }, 1500);
-            }
-        };
+      const step = (ts: number) => {
+        const elapsed = ts - t0;
+        const t = Math.min(elapsed / duration, 1);
+        const ease = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+        window.scrollTo({
+          top: Math.round(startY + distance * ease),
+          behavior: "instant" as ScrollBehavior,
+        });
+        if (t < 1) {
+          requestAnimationFrame(step);
+        } else {
+          cb?.();
+        }
+      };
+      requestAnimationFrame(step);
+    };
 
-        const handleWheel = (e: WheelEvent) => {
-            const html = document.documentElement;
-            const now = Date.now();
+    const handleWheel = (e: WheelEvent) => {
+      const now = Date.now();
+      const scrollY = window.scrollY;
+      const introTop = getIntroTop();
+      const isDown = e.deltaY > 0;
+      const isUp = e.deltaY < 0;
 
-            // Always block wheel during locked (animation running)
-            if (upScrollState.current === "locked") {
-                e.preventDefault();
-                return;
-            }
+      // --- While animating, block everything ---
+      if (state === "animating") {
+        e.preventDefault();
+        return;
+      }
 
-            const isScrollingUp = e.deltaY < 0;
+      // --- Determine current state from scroll position if needed ---
+      if (state === "idle") {
+        // Don't engage when far below the intro zone
+        if (scrollY > introTop + window.innerHeight) return;
 
-            if (!isScrollingUp) {
-                // Scrolling down — reset stuck state so user can re-enter
-                if (upScrollState.current === "stuck") {
-                    upScrollState.current = "idle";
-                }
-                lastWheelTime.current = now;
-                return;
-            }
+        if (scrollY < 50) {
+          state = "atHero";
+        } else if (Math.abs(scrollY - introTop) < 20) {
+          state = "atIntro";
+          atIntroSince = now;
+          lastWheelTime = now;
+          accumulator = 0;
+        }
+      }
 
-            // --- Upward scroll handling ---
+      // --- At Hero: block all wheel, snap to intro on scroll down ---
+      if (state === "atHero") {
+        e.preventDefault();
+        if (isDown) {
+          setScrollDir("down");
+          animateScrollTo(introTop, 1000, () => {
+            state = "atIntro";
+            atIntroSince = Date.now();
+            lastWheelTime = Date.now();
+            accumulator = 0;
+          });
+        }
+        return;
+      }
 
-            if (!sectionVisible.current) {
-                lastWheelTime.current = now;
-                return; // Section not in view, don't intercept
-            }
+      // --- At Intro: block all wheel, detect intent for next snap ---
+      if (state === "atIntro") {
+        e.preventDefault();
 
-            if (upScrollState.current === "idle") {
-                // First upward swipe while section is visible → get stuck
-                e.preventDefault();
-                upScrollState.current = "stuck";
-                lastWheelTime.current = now;
-                return;
-            }
+        // Cooldown: ignore input right after arriving at intro
+        if (now - atIntroSince < INTRO_COOLDOWN_MS) {
+          accumulator = 0;
+          eventCount = 0;
+          return;
+        }
 
-            if (upScrollState.current === "stuck") {
-                const timeSinceLast = now - lastWheelTime.current;
-                lastWheelTime.current = now;
+        const gap = now - lastWheelTime;
+        lastWheelTime = now;
 
-                // Still in momentum tail — keep blocking
-                if (timeSinceLast < INTENT_GAP_MS) {
-                    e.preventDefault();
-                    return;
-                }
+        // Determine current direction
+        const currentDir = isDown ? "down" : "up";
 
-                // Gap detected → this is a new intentional swipe, scroll to hero
-                e.preventDefault();
-                upScrollState.current = "locked";
-                setScrollDir("up");
+        // Reset accumulator if there's been a long gap (new gesture) or direction changed
+        if (gap > INTENT_GAP_MS || currentDir !== lastDirection) {
+          accumulator = 0;
+          eventCount = 0;
+        }
+        lastDirection = currentDir;
 
-                html.style.scrollBehavior = "auto";
+        accumulator += Math.abs(e.deltaY);
+        eventCount += 1;
 
-                const scrollStart = window.scrollY;
-                const scrollDuration = 1800;
-                const t0 = performance.now();
+        // Intent detected via delta accumulation OR event count (Safari trackpad fallback)
+        const hasIntent = accumulator >= ACCUMULATOR_THRESHOLD || eventCount >= EVENT_COUNT_THRESHOLD;
 
-                const step = (ts: number) => {
-                    const elapsed = ts - t0;
-                    const t = Math.min(elapsed / scrollDuration, 1);
-                    const ease =
-                        t < 0.5
-                            ? 4 * t * t * t
-                            : 1 - Math.pow(-2 * t + 2, 3) / 2;
-                    window.scrollTo({
-                        top: Math.round(scrollStart * (1 - ease)),
-                        behavior: "instant" as ScrollBehavior,
-                    });
-                    if (t < 1) {
-                        requestAnimationFrame(step);
-                    } else {
-                        html.style.scrollBehavior = "smooth";
-                    }
-                };
-                requestAnimationFrame(step);
+        if (!hasIntent) {
+          return; // Not enough intent yet
+        }
 
-                setTimeout(() => {
-                    html.style.scrollBehavior = "smooth";
-                    upScrollState.current = "idle";
-                }, 2200);
-            }
-        };
+        // Enough intent detected — determine direction
+        if (isDown) {
+          accumulator = 0;
+          eventCount = 0;
+          setScrollDir("down");
+          const approach = document.getElementById("services-approach");
+          if (approach) {
+            const approachY = approach.getBoundingClientRect().top + scrollY;
+            // Notify approach section that a snap is incoming
+            window.dispatchEvent(new CustomEvent("intro-snap-to-approach"));
+            animateScrollTo(approachY, 600, () => {
+              state = "idle";
+            });
+          } else {
+            state = "idle";
+          }
+        } else if (isUp) {
+          accumulator = 0;
+          eventCount = 0;
+          setScrollDir("up");
+          animateScrollTo(0, 600, () => {
+            state = "atHero";
+          });
+        }
+        return;
+      }
 
-        window.addEventListener("scroll", handleScroll, { passive: true });
-        window.addEventListener("wheel", handleWheel, { passive: false });
+      // --- Below intro (approach/list/etc): let scroll happen naturally ---
+      // But if user scrolls back up to intro zone, catch them
+      if (isUp && scrollY <= introTop + 50 && scrollY > 10) {
+        // They're scrolling up right at the intro boundary — don't interfere,
+        // let the approach section's handler manage this
+      }
+    };
 
-        return () => {
-            observer.disconnect();
-            window.removeEventListener("scroll", handleScroll);
-            window.removeEventListener("wheel", handleWheel);
-        };
-    }, []);
+    // Detect when user ends up at intro via other means (e.g. approach snapping up to intro)
+    const handleScroll = () => {
+      if (state === "animating") return;
+      const scrollY = window.scrollY;
+      const introTop = getIntroTop();
 
-    const col1YDown = useTransform(smoothProgress, [0, 1], ["0%", "0%"]);
+      // Only manage state when in the hero/intro zone
+      // Don't interfere when user is far below (e.g. at footer)
+      if (scrollY > introTop + window.innerHeight) {
+        if (state !== "idle") state = "idle";
+        return;
+      }
 
-    const col2YDown = useTransform(smoothProgress, [0, 1], ["55%", "0%"]);
+      if (scrollY < 50 && state !== "atHero") {
+        state = "atHero";
+      } else if (Math.abs(scrollY - introTop) < 20 && state === "idle") {
+        state = "atIntro";
+        atIntroSince = Date.now();
+        lastWheelTime = Date.now();
+        accumulator = 0;
+      } else if (scrollY > introTop + 50 && state === "atIntro") {
+        state = "idle";
+      }
+    };
 
-    const col3YDown = useTransform(smoothProgress, [0, 1], ["80%", "0%"]);
+    window.addEventListener("wheel", handleWheel, { passive: false });
+    window.addEventListener("scroll", handleScroll, { passive: true });
 
-    const col1YUp = useTransform(smoothProgress, [0, 1], ["30%", "0%"]);
+    return () => {
+      window.removeEventListener("wheel", handleWheel);
+      window.removeEventListener("scroll", handleScroll);
+      html.style.scrollBehavior = "";
+    };
+  }, []);
 
-    const col2YUp = useTransform(smoothProgress, [0, 1], ["110%", "0%"]);
+  return (
+    <section
+      ref={containerRef}
+      data-hide-navbar
+      className="relative z-30 isolate flex h-screen w-full flex-col justify-center overflow-hidden"
+    >
+      {/* Parallax white columns (curtain reveal) */}
+      <div className="pointer-events-none absolute inset-0 flex h-[120vh] w-full">
+        <motion.div style={{ y: col1Y }} className="h-full w-1/3 bg-white" />
+        <motion.div style={{ y: col2Y }} className="h-full w-1/3 bg-white" />
+        <motion.div style={{ y: col3Y }} className="h-full w-1/3 bg-white" />
+      </div>
 
-    const col3YUp = useTransform(smoothProgress, [0, 1], ["180%", "0%"]);
+      {/* Content */}
+      <motion.div style={{ y: contentY }} className="relative w-full">
+        <SiteContainer className="relative flex h-full max-h-[950px] flex-col justify-center py-6 lg:py-10">
+          <div className="w-full max-w-[1100px]">
+            <p
+              className="heading-2 !text-[#01030B]"
+              dangerouslySetInnerHTML={{ __html: data.mainText }}
+            />
+          </div>
 
-    const col1Y = scrollDir === "down" ? col1YDown : col1YUp;
-    const col2Y = scrollDir === "down" ? col2YDown : col2YUp;
-    const col3Y = scrollDir === "down" ? col3YDown : col3YUp;
+          <div className="my-5 h-[1px] w-full bg-gray-200 lg:my-8" />
 
-    const contentYDown = useTransform(smoothProgress, [0, 1], ["75vh", "0vh"]);
-    const contentYUp = useTransform(smoothProgress, [0, 1], ["180vh", "0vh"]);
-
-    const contentY = scrollDir === "down" ? contentYDown : contentYUp;
-
-    return (
-        <section
-            ref={containerRef}
-            data-hide-navbar
-            className="relative z-30 isolate flex h-screen w-full max-w-full flex-col justify-center overflow-hidden"
-        >
-            <div className="pointer-events-none absolute inset-0 flex h-[120vh] w-full">
-                <motion.div
-                    style={{ y: col1Y }}
-                    className="h-full w-1/3 bg-white"
+          <div className="grid w-full grid-cols-1 items-start gap-8 lg:grid-cols-[3.5fr_6.5fr] lg:gap-16">
+            <div className="relative mx-auto aspect-[4/5] w-full max-w-[260px] overflow-hidden rounded-[4px] bg-animated-gradient lg:mx-0 lg:max-w-[360px]">
+              <div className="absolute inset-6 z-10 overflow-hidden rounded-2xl lg:inset-8">
+                <Image
+                  src={data.image}
+                  alt="Section Image"
+                  fill
+                  sizes="(max-width: 768px) 260px, 360px"
+                  className="object-contain"
                 />
-
-                <motion.div
-                    style={{ y: col2Y }}
-                    className="h-full w-1/3 bg-white"
-                />
-
-                <motion.div
-                    style={{ y: col3Y }}
-                    className="h-full w-1/3 bg-white"
-                />
+              </div>
             </div>
 
-            <motion.div style={{ y: contentY }} className="relative w-full">
-                <SiteContainer className="relative flex h-full max-h-[950px] flex-col justify-center py-6 lg:py-10">
-                    <div className="w-full max-w-[1100px]">
-                        <p
-                            className="heading-2 !text-[#01030B]"
-                            dangerouslySetInnerHTML={{
-                                __html: data.mainText,
-                            }}
-                        />
-                    </div>
-
-                    <div className="my-5 h-[1px] w-full origin-left bg-gray-200 lg:my-8" />
-
-                    <div className="grid w-full grid-cols-1 items-start gap-8 lg:grid-cols-[3.5fr_6.5fr] lg:gap-16">
-                        <div className="relative mx-auto aspect-[4/5] w-full max-w-[260px] overflow-hidden rounded-[4px] bg-animated-gradient lg:mx-0 lg:max-w-[360px]">
-                            <div className="absolute inset-6 z-10 overflow-hidden rounded-2xl lg:inset-8">
-                                <Image
-                                    src={data.image}
-                                    alt="Section Image"
-                                    fill
-                                    sizes="(max-width: 768px) 260px,
-                                    (max-width: 1200px) 360px,
-                                    360px"
-                                    className="object-contain"
-                                />
-                            </div>
-                        </div>
-
-                        <div className="mt-8 flex w-full flex-col lg:mt-16">
-                            <p
-                                className="heading-3"
-                                style={{
-                                    color: "#01030B",
-                                }}
-                            >
-                                {data.heading}
-                            </p>
-
-                            <div className="mt-8 grid max-w-3xl grid-cols-1 gap-6 sm:grid-cols-2 lg:mt-12 lg:gap-16">
-                                <p
-                                    className="body-small pr-2 lg:pr-0"
-                                    style={{
-                                        color: "#8A8B8F",
-                                        lineHeight: "1.6",
-                                    }}
-                                >
-                                    {data.p1}
-                                </p>
-
-                                <p
-                                    className="body-small pr-2 lg:pr-0"
-                                    style={{
-                                        color: "#8A8B8F",
-                                        lineHeight: "1.6",
-                                    }}
-                                >
-                                    {data.p2}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </SiteContainer>
-            </motion.div>
-        </section>
-    );
+            <div className="mt-8 flex w-full flex-col lg:mt-16">
+              <p className="heading-3" style={{ color: "#01030B" }}>
+                {data.heading}
+              </p>
+              <div className="mt-8 grid max-w-3xl grid-cols-1 gap-6 sm:grid-cols-2 lg:mt-12 lg:gap-16">
+                <p className="body-small" style={{ color: "#8A8B8F", lineHeight: "1.6" }}>
+                  {data.p1}
+                </p>
+                <p className="body-small" style={{ color: "#8A8B8F", lineHeight: "1.6" }}>
+                  {data.p2}
+                </p>
+              </div>
+            </div>
+          </div>
+        </SiteContainer>
+      </motion.div>
+    </section>
+  );
 }
