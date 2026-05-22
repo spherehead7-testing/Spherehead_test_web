@@ -186,10 +186,10 @@ export default function TestimonialSection({
   /* ── SideCardInner (shared) ─────────────────────────────────── */
   const SideCardInner = ({ card }: { card: (typeof testimonials)[number] }) => (
     <>
-      <span className="body-extra-small absolute top-5 left-1/2 [writing-mode:vertical-rl] [transform:translateX(-50%)_rotate(180deg)] text-[#8A8B8F]">
+      <span className="body-extra-small absolute top-5 left-1/2 [writing-mode:vertical-rl] [transform:translateX(-50%)_rotate(180deg)] !text-[#8A8B8F]">
         {card.role}
       </span>
-      <span className="body-small absolute bottom-6 left-1/2 [writing-mode:vertical-rl] [transform:translateX(-50%)_rotate(180deg)] text-[#01030B]">
+      <span className="body-small absolute bottom-6 left-1/2 [writing-mode:vertical-rl] [transform:translateX(-50%)_rotate(180deg)] !text-[#01030B]">
         {card.name}
       </span>
     </>
@@ -220,17 +220,17 @@ export default function TestimonialSection({
             draggable={false}
           />
         </div>
-        <div className="absolute top-0 right-0 z-10 flex h-10 w-10 items-center justify-center bg-[#0D54CA]">
+        <div className="absolute top-0 right-0 z-10 flex h-10 w-10 items-center justify-center !bg-[#0D54CA]">
           <Quote className="h-5 w-5 fill-white text-white" />
         </div>
       </div>
       <div className="flex min-h-[320px] flex-col justify-between pt-10 sm:min-h-0 sm:w-[288px] sm:pl-5 sm:pt-11 sm:pb-[74px]">
-        <p className="body-small max-w-[238px] whitespace-pre-line text-[#01030b] !leading-[1.4]">
+        <p className="body-small max-w-[238px] whitespace-pre-line !text-[#01030b] !leading-[1.4]">
           {card.quote}
         </p>
         <div>
           <h3 className="body-large !text-[#01030b]">{card.name}</h3>
-          <p className="body-extra-small text-[#01030b]">{card.role}</p>
+          <p className="body-extra-small !text-[#01030b]">{card.role}</p>
         </div>
       </div>
     </div>
@@ -250,18 +250,18 @@ export default function TestimonialSection({
             draggable={false}
           />
         </div>
-        <div className="absolute top-0 right-0 z-10 flex h-8 w-8 items-center justify-center bg-[#0D54CA]">
+        <div className="absolute top-0 right-0 z-10 flex h-8 w-8 items-center justify-center !bg-[#0D54CA]">
           <Quote className="h-4 w-4 fill-white text-white" />
         </div>
       </div>
 
       {/* Middle column — quote + name, same height */}
       <div className="flex flex-1 min-w-0 flex-col justify-between pl-3 pt-3 pb-3">
-        <p className="body-small whitespace-pre-line text-[#01030b]">
+        <p className="body-small whitespace-pre-line !text-[#01030b]">
           {card.quote}
         </p>
         <div>
-          <h3 className="text-[#01030b] font-semibold leading-tight body-large">
+          <h3 className="body-large !text-[#01030b] font-semibold leading-tight">
             {card.name}
           </h3>
           <p className="body-extra-small">{card.role}</p>
@@ -283,7 +283,7 @@ export default function TestimonialSection({
       <SiteContainer>
         <div className="mb-4 flex items-center gap-3">
           <RotatingDots variant="light" />
-          <p className="body-small text-[#01030B]">Testimonials</p>
+          <p className="body-small !text-[#01030B]">Testimonials</p>
         </div>
 
         <h2 className={cn("heading-2 !text-[#0A0D0F]", snapToScreen)}>

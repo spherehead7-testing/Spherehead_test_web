@@ -192,16 +192,21 @@ export default function LandingAboutSection({
         }}
         className="absolute bottom-0 left-0 z-[3] overflow-hidden"
       >
-        <div className="flex h-full items-center px-10 pl-6 sm:px-14 lg:px-16 lg:pl-24">
-          <div className="flex w-full max-w-[912px] items-start justify-start gap-12">
+        <div className="flex h-full items-center px-4 lg:px-8 xl:px-16 xl:pl-24 w-full">
+          <div className="flex w-full max-w-[912px] items-start justify-between xl:justify-start gap-2 lg:gap-4 xl:gap-12">           
             {statsData.map((stat) => (
-              <div key={stat.id} className="flex flex-col items-start w-min">
-                <span className="heading-1 !leading-none">{stat.value}</span>
-                <span className="body-small text-[#e8e8e8] mt-3 leading-snug tracking-[1.2px] whitespace-nowrap">
+              <div key={stat.id} className="flex flex-col items-center text-center xl:items-start xl:text-left flex-1 xl:flex-none">            
+                {/* Replaced the messy Tailwind classes with your custom CSS class */}
+                <span className="about-stat-number">
+                  {stat.value}
+                </span>
+                {/* You can also use your pre-existing about-stat-label here if you want! */}
+                <span className="body-small !text-[#e8e8e8] mt-2 xl:mt-3 leading-snug tracking-normal xl:tracking-[1.2px] xl:whitespace-nowrap">
                   {stat.label}
                 </span>
               </div>
             ))}
+            
           </div>
         </div>
       </motion.div>

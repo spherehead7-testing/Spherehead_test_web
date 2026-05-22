@@ -19,17 +19,13 @@ export default function LandingHeroSection({
   if (isMobile) {
     return (
       // Notice pb-32 here. This gives plenty of room at the bottom for the white card
-      <div className="flex min-h-[100dvh] flex-col bg-transparent px-6 pb-10 pt-28">
+      <div className="flex min-h-[80svh] flex-col bg-transparent px-6 pb-10 pt-28">
         <div className="mt-auto flex flex-col justify-center">
           <h1 className="heading-1 text-white">
             A Comprehensive
-            <br />
             Technological
-            <br />
             Sphere Crafted To
-            <br />
             Fulfil Modern Digital
-            <br />
             Needs
           </h1>
         </div>

@@ -10,7 +10,7 @@ export default function TechnologiesSection() {
       <div className="w-full px-6 lg:px-10 max-w-5xl mx-auto mb-4 lg:mb-10">
         <div className="flex items-center justify-center gap-2 mb-3">
           <RotatingDots variant="light" />
-          <span className="body-small !text-[#01030B] lg:!text-[#01030B] !tracking-[1.2px]">
+          <span className="body-small !text-[#01030B] !tracking-[1.2px]">
             Technologies
           </span>
         </div>
