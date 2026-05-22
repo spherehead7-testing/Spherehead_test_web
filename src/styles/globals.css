@@ -92,6 +92,7 @@ select {
    TYPOGRAPHY (RESPONSIVE)
 ========================================================= */
 
+/* line height 1.1 for desktop , 1.25 for mobile*/
 .heading-1 {
   font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
   font-weight: 300;
@@ -100,6 +101,12 @@ select {
   letter-spacing: 2px;
   color: #ffffff;
   text-align: left;
+}
+
+@media (max-width: 767px) {
+  .heading-1 {
+    line-height: 1.25;
+  }
 }
 
 .heading-2 {
@@ -112,14 +119,21 @@ select {
   text-align: left;
 }
 
+/* line height 0 for desktop , 1.06 for mobile*/
 .heading-3 {
   font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
   font-weight: 350;
   font-size: clamp(18px, 2.5vw, 22px);
-  line-height: 1.4;
+  line-height: 0;
   letter-spacing: 0;
   color: #ffffff;
   text-align: left;
+}
+
+@media (max-width: 767px) {
+  .heading-3 {
+    line-height: 1.06;
+  }
 }
 
 .heading-4 {
@@ -132,6 +146,17 @@ select {
   text-align: left;
 }
 
+.about-hero-divider {
+  top: 43svh;
+}
+
+@media (min-width: 768px) {
+  .about-hero-divider {
+    top: 50%;
+  }
+}
+
+/* line height 1.5 for desktop , 1.25 for mobile*/
 .body-large {
   font-family: var(--font-inter-tight), Arial, Helvetica, sans-serif;
   font-size: clamp(18px, 2vw, 24px);
@@ -140,6 +165,13 @@ select {
   letter-spacing: 0.02em;
 }
 
+@media (max-width: 767px) {
+  .body-large {
+    line-height: 1.25;
+  }
+}
+
+/* line height 1.6 for desktop , 1.25 for mobile*/
 .body-medium {
   font-family: var(--font-inter-tight), Arial, Helvetica, sans-serif;
   font-size: clamp(16px, 1.6vw, 18px);
@@ -148,6 +180,13 @@ select {
   letter-spacing: 0.02em;
 }
 
+@media (max-width: 767px) {
+  .body-medium {
+    line-height: 1.25;
+  }
+}
+
+/* line height 1.5 for desktop , 1.25 for mobile*/
 .body-small {
   font-family: var(--font-inter-tight), Arial, Helvetica, sans-serif;
   font-size: clamp(14px, 1.4vw, 16px);
@@ -156,12 +195,25 @@ select {
   letter-spacing: 0.02em;
 }
 
+@media (max-width: 767px) {
+  .body-small {
+    line-height: 1.25;
+  }
+}
+
+/* line height 1.5 for desktop , 1.25 for mobile*/
 .body-extra-small {
   font-family: var(--font-inter-tight), Arial, Helvetica, sans-serif;
   font-size: clamp(12px, 1.2vw, 14px);
   font-weight: 400;
   line-height: 1.5;
   letter-spacing: 0.02em;
+}
+
+@media (max-width: 767px) {
+  .body-extra-small {
+    line-height: 1.25;
+  }
 }
 
 .inner-tight {
@@ -252,10 +304,11 @@ select {
 
 .about-stat-number {
   font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
-  font-size: clamp(36px, 6vw, 62px);
+  font-size: clamp(56px, 10vw, 62px);
   font-weight: 400;
   line-height: 1;
   color: #ffffff;
+  max-width: 640px;
 }
 
 .about-stat-label {
