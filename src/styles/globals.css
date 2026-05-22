@@ -165,7 +165,7 @@ select {
 /* line height 1.5 for desktop , 1.25 for mobile*/
 .body-small {
   font-family: var(--font-inter-tight), Arial, Helvetica, sans-serif;
-  font-size: clamp(12px, 1.4vw, 16px);
+  font-size: clamp(14px, 1.4vw, 16px);
   font-weight: 400;
   line-height: clamp(1.25, 1.1 + 0.3vw, 1.5);
   letter-spacing: 0.02em;
@@ -174,7 +174,7 @@ select {
 /* line height 1.5 for desktop , 1.25 for mobile*/
 .body-extra-small {
   font-family: var(--font-inter-tight), Arial, Helvetica, sans-serif;
-  font-size: clamp(14px, 1.2vw, 14px);
+  font-size: clamp(12px, 1.2vw, 14px);
   font-weight: 400;
   line-height: clamp(1.25, 1.08 + 0.28vw, 1.5);
   letter-spacing: 0.02em;

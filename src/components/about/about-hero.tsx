@@ -8,8 +8,8 @@ import { useScrollContainerContext } from "@/context/ScrollContainerContext";
 export default function AboutHero() {
   const { scrollContainerRef } = useScrollContainerContext();
   return (
-    <section className="relative overflow-hidden md:min-h-[100svh]">
-      <SiteContainer className="relative md:min-h-[100svh]">
+    <section className="relative overflow-hidden md:min-h-[80svh]">
+      <SiteContainer className="relative">
         {/* CENTER DIVIDER LINEabout-hero-divider */}
         <div className="about-hero-divider absolute left-0 right-0 z-10 h-px -translate-y-1/2 bg-white md:bg-white" />
 
