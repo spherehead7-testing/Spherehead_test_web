@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import { motion } from "motion/react";
+import { useIsMobile } from "@/hooks/use-is-mobile";
+import { useEffect, useMemo, useState } from "react";
 
 const industryCards = [
     {
@@ -34,12 +36,53 @@ const industryCards = [
 const loopCards = [...industryCards, ...industryCards];
 
 export default function LandingIndustryCarousel() {
+    const isMobile = useIsMobile();
+    const [isUserInteracting, setIsUserInteracting] = useState(false);
+
+    // When user starts interacting (scrolling horizontally), pause the auto-rotation.
+    useEffect(() => {
+        if (!isMobile) return;
+        if (isUserInteracting) {
+            const t = window.setTimeout(() => setIsUserInteracting(false), 800);
+            return () => window.clearTimeout(t);
+        }
+    }, [isMobile, isUserInteracting]);
+
+    const shouldAutoScroll = !isMobile || !isUserInteracting;
+
+    // Width container for both desktop and mobile now breaks out of parent padding
+    // to touch the absolute edges of the screen.
+    const outerClassName = useMemo(() => {
+        if (isMobile) {
+            return "relative left-1/2 mt-8 w-screen -translate-x-1/2 overflow-x-auto overflow-y-hidden scroll-smooth lg:mt-10";
+        }
+        return "relative left-1/2 mt-8 w-screen -translate-x-1/2 overflow-hidden lg:mt-10";
+    }, [isMobile]);
+
     return (
-        <div className="relative left-1/2 mt-8 w-screen -translate-x-1/2 overflow-hidden lg:mt-10">
+        <div className={outerClassName}>
             <motion.div
-                className="flex w-max gap-4 px-6 lg:px-10"
-                animate={{ x: ["0%", "-50%"] }}
-                transition={{ duration: 35, repeat: Infinity, ease: "linear" }}
+                // Removed px-6 lg:px-10 so the cards flow directly from the 0px edge
+                className={`flex w-max gap-4 ${isMobile ? "py-2" : ""}`}
+                animate={
+                    shouldAutoScroll
+                        ? { x: ["0%", "-50%"] }
+                        : undefined
+                }
+                transition={
+                    shouldAutoScroll
+                        ? { duration: 35, repeat: Infinity, ease: "linear" }
+                        : undefined
+                }
+                // Mobile: detect user gesture and pause marquee.
+                onPointerDown={() => {
+                    if (!isMobile) return;
+                    setIsUserInteracting(true);
+                }}
+                onTouchStart={() => {
+                    if (!isMobile) return;
+                    setIsUserInteracting(true);
+                }}
             >
                 {loopCards.map((card, index) => (
                     <div

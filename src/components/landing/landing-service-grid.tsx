@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 
-// Replace the placeholder URLs with your actual Cloudinary links
-const services = [
+// ADDED "export" so we can map this same data in the mobile view
+export const services = [
     {
         number: "01",
         lines: ["UI/UX Design & Creative", "Graphics Services"],
