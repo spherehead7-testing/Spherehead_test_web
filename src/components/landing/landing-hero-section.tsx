@@ -22,11 +22,8 @@ export default function LandingHeroSection({
       <div className="flex min-h-[80svh] flex-col bg-transparent px-6 pb-10 pt-28">
         <div className="mt-auto flex flex-col justify-center">
           <h1 className="heading-1 text-white">
-            A Comprehensive
-            Technological
-            Sphere Crafted To
-            Fulfil Modern Digital
-            Needs
+            A Comprehensive Technological Sphere Crafted To Fulfil Modern
+            Digital Needs
           </h1>
         </div>
         <div className="mt-8 flex items-start justify-start">
@@ -51,14 +48,10 @@ export default function LandingHeroSection({
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="flex flex-col justify-center"
         >
-          <h1 className="heading-1">
-            A Comprehensive
-            <br />
-            Technological
-            <br />
-            Sphere Crafted To Fulfil
-            <br />
-            Modern Digital Needs
+          <h1 className="heading-1 max-w-3xl">
+            {
+              "Comprehensive Technological Sphere Crafted To Fulfill Modern Digital Needs"
+            }
           </h1>
 
           <motion.p
