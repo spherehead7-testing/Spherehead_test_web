@@ -38,7 +38,7 @@ export default function BlogsHero({
 
     return (
         <section className="relative min-h-screen overflow-hidden text-white">
-            <SiteContainer className="relative z-10 grid min-h-screen max-w-none gap-10 pt-28 pb-12 lg:grid-cols-[minmax(0,1fr)_330px] lg:items-stretch lg:pt-24 lg:pb-0 xl:grid-cols-[minmax(0,1fr)_380px]">
+            <SiteContainer className="relative z-10 grid min-h-screen max-w-none gap-10 pt-28 pb-12 lg:grid-cols-[minmax(0,1fr)_330px] lg:items-stretch lg:pt-24 lg:pb-0 lg:pr-0 xl:grid-cols-[minmax(0,1fr)_380px] xl:pr-0">
                 <motion.div
                     style={{ opacity: contentOpacity, y: contentY }}
                     className="flex min-h-[54vh] flex-col justify-end pb-8 lg:min-h-0 lg:pb-24 mb-[50px] md:ml-[50px]"

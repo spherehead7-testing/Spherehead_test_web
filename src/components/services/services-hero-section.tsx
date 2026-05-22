@@ -18,7 +18,10 @@ export default function ServicesHeroSection({ data }: { data: ServiceCategoryDat
               {data.title}
             </h1>
             <div className="flex items-start justify-start mt-6">
-              <CyclicButton onClick={() => console.log("Start Project Clicked!")}>
+              <CyclicButton onClick={() => {
+                const footer = document.getElementById("site-footer");
+                if (footer) footer.scrollIntoView({ behavior: "smooth" });
+              }}>
                 Start A Project
               </CyclicButton>
             </div>
@@ -61,7 +64,10 @@ export default function ServicesHeroSection({ data }: { data: ServiceCategoryDat
               transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
               className="flex items-start justify-start lg:justify-end lg:self-end mt-2 lg:mt-0 lg:pb-2"
             >
-              <CyclicButton onClick={() => console.log("Start Project Clicked!")}>
+              <CyclicButton onClick={() => {
+                  const footer = document.getElementById("site-footer");
+                  if (footer) footer.scrollIntoView({ behavior: "smooth" });
+                }}>
                 Start a Project
               </CyclicButton>
             </motion.div>

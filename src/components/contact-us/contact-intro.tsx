@@ -3,7 +3,6 @@
 import React from "react";
 import { motion } from "framer-motion";
 import SiteContainer from "@/components/layout/site-container";
-import RotatingDots from "@/components/ui/rotating-dots";
 
 export default function ContactIntro() {
   return (
@@ -18,11 +17,6 @@ export default function ContactIntro() {
             viewport={{ once: true }}
             className="lg:col-span-12 flex flex-col gap-6"
           >
-            <div className="flex items-center gap-4 inter-tight text-[#8A8B8F]">
-              <RotatingDots variant="light" />
-              <span className="body-small !text-[#01030B]">Featured Stories</span>
-            </div>
-
             <h2 className="heading-2 !text-[#01030B] lg:whitespace-nowrap">
               Located in the Heart of{" "}
               <span className="text-[#0D54CA]">Delaware USA</span>
