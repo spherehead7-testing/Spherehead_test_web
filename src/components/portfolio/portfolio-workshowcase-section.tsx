@@ -417,7 +417,7 @@ export default function WorkShowcaseSection({
           </section>
         </div>
 
-        <div className="w-full bg-animated-gradient mt-auto shrink-0">
+        <div className="w-full bg-transparent mt-auto shrink-0 flex-grow flex flex-col">
           <Footer />
         </div>
       </section>
