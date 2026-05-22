@@ -222,7 +222,6 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
         </button>
 
         <nav className="body-extra-small hidden lg:flex items-center gap-5 xl:gap-10 text-white">
-          <Link href="/" onMouseEnter={closeAllMenus}>Home</Link>
           <Link href="/about-us" onMouseEnter={closeAllMenus}>About Us</Link>
 
           {/* SERVICES */}

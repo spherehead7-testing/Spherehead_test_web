@@ -19,11 +19,8 @@ export default function PortfolioHeroSection() {
   }, []);
 
   const handleScrollToWork = () => {
-    if (isMobile) {
-      document.getElementById("work-showcase")?.scrollIntoView({ behavior: "smooth" });
-    } else {
-      window.dispatchEvent(new WheelEvent("wheel", { deltaY: 100, bubbles: true }));
-    }
+    // Native smooth scroll for both mobile and desktop
+    document.getElementById("work-showcase")?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
@@ -44,12 +41,13 @@ export default function PortfolioHeroSection() {
             className="w-full h-[1px] bg-white mb-6 lg:mb-12 origin-left"
           />
 
-          <div className="grid grid-cols-1 gap-6 lg:gap-8 lg:grid-cols-[minmax(0,820px)_1fr] lg:items-end">
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 lg:gap-8 w-full">
+            
             <motion.div
               initial={isMobile ? false : { opacity: 0, y: 36 }}
               animate={isMobile ? false : { opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
-              className="flex flex-col gap-4 lg:gap-6"
+              className="flex flex-col gap-4 lg:gap-6 max-w-[820px]"
             >
               <h1 className="heading-1 !text-4xl sm:!text-5xl lg:!text-[72px] lg:leading-[90px] text-white">
                 Work Showcase
@@ -64,16 +62,18 @@ export default function PortfolioHeroSection() {
               )}
             </motion.div>
 
+            {/* CHANGED: Added shrink-0 and w-fit to protect the button's size */}
             <motion.div
               initial={isMobile ? false : { opacity: 0, x: 30 }}
               animate={isMobile ? false : { opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-              className="flex items-start justify-start lg:justify-end lg:self-end mt-2 lg:mt-0 lg:pb-2"
+              className="flex shrink-0 w-fit lg:pb-2"
             >
               <CyclicButton onClick={handleScrollToWork}>
                 Start a Project
               </CyclicButton>
             </motion.div>
+
           </div>
         </div>
       </SiteContainer>
