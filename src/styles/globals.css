@@ -97,10 +97,16 @@ select {
   font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
   font-weight: 300;
   font-size: clamp(40px, 6vw, 72px);
-  line-height: clamp(1.1, 1.32 - 0.45vw, 1.25);
+  line-height: 1.1;
   letter-spacing: 2px;
   color: #ffffff;
   text-align: left;
+}
+
+@media (max-width: 767px) {
+  .heading-1 {
+    line-height: 1.25;
+  }
 }
 
 .heading-2 {
@@ -118,10 +124,16 @@ select {
   font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
   font-weight: 350;
   font-size: clamp(18px, 2.5vw, 22px);
-  line-height: clamp(0, 1.18 - 0.35vw, 1.06);
+  line-height: 0;
   letter-spacing: 0;
   color: #ffffff;
   text-align: left;
+}
+
+@media (max-width: 767px) {
+  .heading-3 {
+    line-height: 1.06;
+  }
 }
 
 .heading-4 {
@@ -149,8 +161,14 @@ select {
   font-family: var(--font-inter-tight), Arial, Helvetica, sans-serif;
   font-size: clamp(18px, 2vw, 24px);
   font-weight: 350;
-  line-height: clamp(1.25, 1.15 + 0.4vw, 1.5);
+  line-height: 1.5;
   letter-spacing: 0.02em;
+}
+
+@media (max-width: 767px) {
+  .body-large {
+    line-height: 1.25;
+  }
 }
 
 /* line height 1.6 for desktop , 1.25 for mobile*/
@@ -158,8 +176,14 @@ select {
   font-family: var(--font-inter-tight), Arial, Helvetica, sans-serif;
   font-size: clamp(16px, 1.6vw, 18px);
   font-weight: 450;
-  line-height: clamp(1.25, 1.12 + 0.35vw, 1.6);
+  line-height: 1.6;
   letter-spacing: 0.02em;
+}
+
+@media (max-width: 767px) {
+  .body-medium {
+    line-height: 1.25;
+  }
 }
 
 /* line height 1.5 for desktop , 1.25 for mobile*/
@@ -167,8 +191,14 @@ select {
   font-family: var(--font-inter-tight), Arial, Helvetica, sans-serif;
   font-size: clamp(14px, 1.4vw, 16px);
   font-weight: 400;
-  line-height: clamp(1.25, 1.1 + 0.3vw, 1.5);
+  line-height: 1.5;
   letter-spacing: 0.02em;
+}
+
+@media (max-width: 767px) {
+  .body-small {
+    line-height: 1.25;
+  }
 }
 
 /* line height 1.5 for desktop , 1.25 for mobile*/
@@ -176,8 +206,14 @@ select {
   font-family: var(--font-inter-tight), Arial, Helvetica, sans-serif;
   font-size: clamp(12px, 1.2vw, 14px);
   font-weight: 400;
-  line-height: clamp(1.25, 1.08 + 0.28vw, 1.5);
+  line-height: 1.5;
   letter-spacing: 0.02em;
+}
+
+@media (max-width: 767px) {
+  .body-extra-small {
+    line-height: 1.25;
+  }
 }
 
 .inner-tight {
