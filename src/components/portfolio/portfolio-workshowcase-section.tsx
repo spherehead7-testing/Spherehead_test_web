@@ -417,7 +417,7 @@ export default function WorkShowcaseSection({
           </section>
         </div>
 
-        <div className="w-full bg-transparent mt-auto shrink-0 flex-grow flex flex-col">
+        <div className="w-full bg-animated-gradient mt-auto shrink-0 flex-grow flex flex-col">
           <Footer />
         </div>
       </section>
@@ -451,7 +451,7 @@ export default function WorkShowcaseSection({
               ref={showcaseRef}
               className="w-full h-full overflow-y-auto scroll-smooth flex flex-col [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
             >
-              <div className="w-full min-h-full flex flex-col bg-white shrink-0">
+              <div className="w-full min-h-full flex flex-col shrink-0">
                 {/* Intro */}
                 <AnimatePresence mode="sync">
                   {!introHidden && (

@@ -95,7 +95,7 @@ export default function LandingAboutSection({
           <button
             type="button"
             onClick={() => router.push("/about-us")}
-            className="rounded bg-[#1c4ca8] px-10 py-3 body-small !font-medium text-white transition-colors hover:bg-[#0D54CA]"
+            className="rounded bg-animated-gradient px-10 py-3 body-small text-white"
           >
             About Us
           </button>
@@ -267,7 +267,7 @@ export default function LandingAboutSection({
               onClick={() => router.push("/about-us")}
               className="group relative flex h-[70px] cursor-pointer items-center justify-center overflow-hidden rounded-md bg-animated-gradient px-10 text-white scale-[0.75] origin-left transition-colors duration-300"
             >
-              <span className="invisible body-large !text-3xl font-medium">
+              <span className="invisible body-large">
                 About Us
               </span>
               <div className="absolute top-0 left-0 flex w-full flex-col transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-1/2">

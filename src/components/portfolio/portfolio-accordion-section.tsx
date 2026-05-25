@@ -24,7 +24,6 @@ export const ProjectListItemHeader: React.FC<ProjectListItemHeaderProps> = ({
       className="w-full py-6 lg:py-8 bg-white cursor-pointer group hover:bg-[#F6F6F6] transition-colors border-b border-[#E5E5E5]"
     >
       <SiteContainer className="flex items-center justify-between gap-6">
-        
         {/* Project Title locked to #01030B */}
         <h3 className="body-large text-[#01030B] transition-colors flex-shrink-0">
           {project.title}
@@ -56,7 +55,11 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
     visible: {
       x: 0,
       opacity: 1,
-      transition: { duration: 0.7, delay: 0.25, ease: [0.25, 0.46, 0.45, 0.94] },
+      transition: {
+        duration: 0.7,
+        delay: 0.25,
+        ease: [0.25, 0.46, 0.45, 0.94],
+      },
     },
   };
 
@@ -84,15 +87,12 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
       <div style={{ backgroundColor: project.bgColor }} className="w-full">
         <SiteContainer className="h-full flex flex-col py-4 pb-6">
           <div className="flex items-center justify-between gap-6 pb-4 border-b border-white flex-shrink-0">
-            <h2 
-              className="text-white font-light tracking-tight"
-              style={{ fontSize: "clamp(2rem, 5vw, 4rem)", lineHeight: 1.05 }}
-            >
+            <h2 className="body-large text-white">
               {project.title}
             </h2>
             <button
               onClick={onClose}
-              className="body-extra-small text-white tracking-[0.15em] hover:text-white transition-colors flex-shrink-0 uppercase"
+              className="body-extra-small text-white flex-shrink-0 uppercase"
             >
               CLOSE
             </button>
@@ -100,7 +100,7 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
 
           <div className="flex flex-col gap-4 flex-1 mt-4 min-h-0 overflow-hidden">
             <div className="flex items-end justify-between gap-4 h-full">
-             <div className="w-[75%]">
+              <div className="w-[75%]">
                 <Image
                   src={project.expandedContent.laptopImage}
                   alt={`${project.title} laptop`}
@@ -128,7 +128,10 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
 
   // ── DESKTOP LAYOUT (Unchanged) ──
   return (
-    <div style={{ backgroundColor: project.bgColor, minHeight: "62vh" }} className="w-full">
+    <div
+      style={{ backgroundColor: project.bgColor, minHeight: "62vh" }}
+      className="w-full"
+    >
       <SiteContainer className="h-full flex flex-col py-6 lg:py-8">
         {/* ... [Keep all your existing desktop grid/motion code here] ... */}
         <div className="flex items-center justify-between gap-6 pb-4 border-b border-white flex-shrink-0">
@@ -151,18 +154,48 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
         </div>
 
         <div className="hidden lg:grid grid-cols-12 gap-8 xl:gap-10 flex-1 mt-6 min-h-0">
-          <motion.div className="col-span-4 h-full flex items-end pb-2" variants={laptopVariants} initial="hidden" animate="visible">
-            <Image src={project.expandedContent.laptopImage} alt={`${project.title} laptop`} width={520} height={340} className="w-full h-auto object-contain max-h-[42vh]" />
+          <motion.div
+            className="col-span-4 h-full flex items-end pb-2"
+            variants={laptopVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            <Image
+              src={project.expandedContent.laptopImage}
+              alt={`${project.title} laptop`}
+              width={520}
+              height={340}
+              className="w-full h-auto object-contain max-h-[42vh]"
+            />
           </motion.div>
 
-          <motion.div className="col-span-5 h-full flex flex-col items-start justify-end pb-2 min-h-0" variants={fadeUp} initial="hidden" animate="visible">
-            <Image src={project.expandedContent.tabletImage} alt={`${project.title} tablet`} width={240} height={180} className="w-[60%] max-w-[320px] h-auto object-contain rounded-lg border-[3px] border-black/40 shadow-2xl" />
+          <motion.div
+            className="col-span-5 h-full flex flex-col items-start justify-end pb-2 min-h-0"
+            variants={fadeUp}
+            initial="hidden"
+            animate="visible"
+          >
+            <Image
+              src={project.expandedContent.tabletImage}
+              alt={`${project.title} tablet`}
+              width={240}
+              height={180}
+              className="w-[60%] max-w-[320px] h-auto object-contain rounded-lg border-[3px] border-black/40 shadow-2xl"
+            />
           </motion.div>
 
           <div className="col-span-3 h-full flex flex-col items-end justify-end gap-2 pb-2">
             {project.expandedContent.services.map((service, i) => (
-              <motion.div key={i} custom={i} variants={serviceItem} initial="hidden" animate="visible">
-                <span className="body-small text-white text-right block">{service}</span>
+              <motion.div
+                key={i}
+                custom={i}
+                variants={serviceItem}
+                initial="hidden"
+                animate="visible"
+              >
+                <span className="body-small text-white text-right block">
+                  {service}
+                </span>
               </motion.div>
             ))}
           </div>

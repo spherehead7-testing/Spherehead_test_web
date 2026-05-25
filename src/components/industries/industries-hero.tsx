@@ -36,9 +36,11 @@ export default function IndustriesHero() {
                 className="flex items-center gap-4 text-white/90 hover:text-white transition"
               >
                 <CyclicButton
-                  onClick={() => console.log("Start Project Clicked!")}
+                  onClick={() => {
+                    window.location.href = "/pricing#contact-pricing";
+                  }}
                 >
-                  Start a Project
+                  <span>Start a Project</span>
                 </CyclicButton>
               </motion.div>
             </div>

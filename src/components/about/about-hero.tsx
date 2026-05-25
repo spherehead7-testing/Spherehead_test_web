@@ -55,18 +55,10 @@ export default function AboutHero() {
             </div>
             <CyclicButton
               onClick={() => {
-                const container = scrollContainerRef?.current;
-                const element = document.getElementById("contact-pricing");
-
-                if (container && element) {
-                  container.scrollTo({
-                    top: element.offsetTop,
-                    behavior: "smooth",
-                  });
-                }
+                window.location.href = "/pricing#contact-pricing";
               }}
             >
-              Start a Project
+              <span>Start a Project</span>
             </CyclicButton>
           </div>
         </div>

@@ -19,10 +19,12 @@ export default function ContactHero() {
               Contact Us
             </h1>
             <div className="mt-6">
-              <CyclicButton onClick={() => {
-                document.getElementById("contact-form")?.scrollIntoView({ behavior: "smooth" });
-              }}>
-                Start A Project
+              <CyclicButton
+                onClick={() => {
+                  window.location.href = "/pricing#contact-pricing";
+                }}
+              >
+                <span>Start a Project</span>
               </CyclicButton>
             </div>
           </div>
@@ -53,10 +55,14 @@ export default function ContactHero() {
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
             className="flex lg:justify-end"
           >
-            <CyclicButton onClick={() => {
-              document.getElementById("contact-form")?.scrollIntoView({ behavior: "smooth" });
-            }}>
-              Start A Project
+            <CyclicButton
+              onClick={() => {
+                document
+                  .getElementById("contact-pricing")
+                  ?.scrollIntoView({ behavior: "smooth", block: "start" });
+              }}
+            >
+              <span className="body-medium">Start a Project</span>
             </CyclicButton>
           </motion.div>
           

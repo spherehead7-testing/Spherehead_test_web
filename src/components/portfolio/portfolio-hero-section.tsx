@@ -27,7 +27,8 @@ export default function PortfolioHeroSection() {
     <section 
       className={
         isMobile 
-          ? "relative w-full h-[100svh] flex flex-col overflow-hidden bg-transparent z-10" 
+          // CHANGED: h-[100svh] to h-[80svh] for mobile
+          ? "relative w-full h-[80svh] flex flex-col overflow-hidden bg-transparent z-10" 
           : "fixed top-0 left-0 z-0 w-full h-[100svh] flex flex-col overflow-hidden"
       }
     >
@@ -49,7 +50,7 @@ export default function PortfolioHeroSection() {
               transition={{ duration: 0.8, ease: "easeOut" }}
               className="flex flex-col gap-4 lg:gap-6 max-w-[820px]"
             >
-              <h1 className="heading-1 !text-4xl sm:!text-5xl lg:!text-[72px] lg:leading-[90px] text-white">
+              <h1 className="inner-hero text-white">
                 Work Showcase
               </h1>
 
@@ -69,8 +70,12 @@ export default function PortfolioHeroSection() {
               transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
               className="flex shrink-0 w-fit lg:pb-2"
             >
-              <CyclicButton onClick={handleScrollToWork}>
-                Start a Project
+              <CyclicButton
+                onClick={() => {
+                  window.location.href = "/pricing#contact-pricing";
+                }}
+              >
+                <span>Start a Project</span>
               </CyclicButton>
             </motion.div>
 
