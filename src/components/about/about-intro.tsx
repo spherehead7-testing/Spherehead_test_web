@@ -6,7 +6,7 @@ import { useEffect, useRef } from "react";
 export default function AboutIntro() {
   return (
     <section className="bg-white pt-12 pb-8 lg:pb-10">
-      <div className="mx-auto px-6 lg:px-20 md:">
+      <div className="mx-auto px-6 lg:px-20">
         {/* TEXT */}
         <p className="heading-2 max-w-[1100px] !text-[#01030B]">
           <span className="!text-[#0D54CA]">Spherehead</span> is dedicated to
@@ -88,9 +88,7 @@ function StatItem({
       viewport={{ once: true }}
       className="text-left"
     >
-      <p className="body-large text-gray-500 mb-4">
-        {label}
-      </p>
+      <p className="body-large text-gray-500 mb-4">{label}</p>
 
       <h3 className="about-stat-number !text-[#0B2A5B] text-transparent">
         <span ref={displayRef}>0</span>
