@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import Image from "next/image";
-import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring, useMotionValue } from "framer-motion";
 import SiteContainer from "@/components/layout/site-container";
 import { ServiceCategoryData } from "@/data/service-categories";
 import { useIsMobile } from "@/hooks/use-is-mobile";
@@ -49,18 +49,11 @@ function ServicesIntroMobile({ data }: { data: ServiceCategoryData["intro"] }) {
   );
 }
 
-/**
- * Desktop intro with parallax columns and scroll-controlled navigation.
- *
- * Scroll flow (managed entirely via wheel preventDefault + programmatic scrollTo):
- * 1. Hero zone → animate to intro top, STOP here
- * 2. From intro → next intentional scroll down → animate to approach section
- * 3. From intro → intentional scroll up → animate back to hero (scrollY = 0)
- */
 function ServicesIntroDesktop({ data }: { data: ServiceCategoryData["intro"] }) {
   const containerRef = useRef<HTMLElement>(null);
+  const colContainerRef = useRef<HTMLDivElement>(null);
+  const contentWrapRef = useRef<HTMLDivElement>(null);
 
-  // Framer Motion parallax for the white column curtain
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "start start"],
@@ -72,43 +65,95 @@ function ServicesIntroDesktop({ data }: { data: ServiceCategoryData["intro"] }) 
     mass: 1.2,
   });
 
-  const [scrollDir, setScrollDir] = React.useState<"down" | "up">("down");
+  const scrollDirMV = useMotionValue("down");
 
-  const col1Y = useTransform(smoothProgress, [0, 1], [scrollDir === "down" ? "0%" : "30%", "0%"]);
-  const col2Y = useTransform(smoothProgress, [0, 1], [scrollDir === "down" ? "55%" : "110%", "0%"]);
-  const col3Y = useTransform(smoothProgress, [0, 1], [scrollDir === "down" ? "80%" : "180%", "0%"]);
-  const contentY = useTransform(smoothProgress, [0, 1], [scrollDir === "down" ? "75vh" : "180vh", "0vh"]);
+  const col1Y = useTransform(smoothProgress, (p) => {
+    if (scrollDirMV.get() === "down") return "0%";
+    if (p >= 0.6) return "0vh";
+    if (p <= 0) return "120vh";
+    const t = p / 0.6;
+    return `${120 * (1 - t)}vh`;
+  });
+
+  const col2Y = useTransform(smoothProgress, (p) => {
+    if (scrollDirMV.get() === "down") {
+      return `${55 * (1 - p)}%`;
+    }
+    if (p >= 0.8) return "0vh";
+    if (p <= 0.2) return "120vh";
+    const t = (p - 0.2) / 0.6;
+    return `${120 * (1 - t)}vh`;
+  });
+
+  const col3Y = useTransform(smoothProgress, (p) => {
+    if (scrollDirMV.get() === "down") {
+      return `${80 * (1 - p)}%`;
+    }
+    if (p >= 1) return "0vh";
+    if (p <= 0.4) return "120vh";
+    const t = (p - 0.4) / 0.6;
+    return `${120 * (1 - t)}vh`;
+  });
+
+  const contentY = useTransform(smoothProgress, (p) => {
+    if (scrollDirMV.get() === "down") {
+      return `${75 * (1 - p)}vh`;
+    }
+    if (p >= 0.8) return "0vh";
+    if (p <= 0.2) return "120vh";
+    const t = (p - 0.2) / 0.6;
+    return `${120 * (1 - t)}vh`;
+  });
+
+  const contentOpacity = useTransform(smoothProgress, (p) => {
+    return 1;
+  });
 
   useEffect(() => {
     const section = containerRef.current;
     if (!section) return;
 
-    // Disable CSS scroll-behavior: smooth so our programmatic scroll isn't sluggish
     const html = document.documentElement;
     html.style.scrollBehavior = "auto";
 
-    // --- State machine ---
-    // "idle"       = not controlling scroll (e.g., further down the page)
-    // "atHero"     = user is at the hero, next down-scroll snaps to intro
-    // "atIntro"    = user is at intro, stopped. Next down → approach, next up → hero
-    // "animating"  = a programmatic scroll is in progress, block everything
+
     type State = "idle" | "atHero" | "atIntro" | "animating";
     let state: State = window.scrollY < 50 ? "atHero" : "idle";
 
-    // Track last wheel time for intent detection
     let lastWheelTime = 0;
     let accumulator = 0;
-    let eventCount = 0; // count consecutive same-direction events for Safari trackpad
+    let eventCount = 0;
     let lastDirection: "up" | "down" | null = null;
-    const ACCUMULATOR_THRESHOLD = 50;
-    const EVENT_COUNT_THRESHOLD = 6; // Safari fires many small-delta events; 6 in a row = intent
-    const INTENT_GAP_MS = 400; // increased for Safari's slower event cadence
-    let atIntroSince = 0; // when we entered atIntro state
-    const INTRO_COOLDOWN_MS = 400; // ignore input for this long after arriving at intro
+    const ACCUMULATOR_THRESHOLD = 120;
+    const EVENT_COUNT_THRESHOLD = 10;
+    const INTENT_GAP_MS = 400;
+    let atIntroSince = 0;
+    const INTRO_COOLDOWN_MS = 800;
+    const APPROACH_SNAP_COOLDOWN_MS = 1200;
+    let activeCooldownMs = INTRO_COOLDOWN_MS;
+    let resetTimeoutId: NodeJS.Timeout | null = null;
+    let arrivedFromApproach = false;
+    let momentumSettled = false;
 
     const getIntroTop = () => section.offsetTop;
 
-    // Programmatic smooth scroll using requestAnimationFrame
+    const handleApproachSnap = () => {
+      state = "atIntro";
+      atIntroSince = Date.now();
+      lastWheelTime = Date.now();
+      accumulator = 0;
+      eventCount = 0;
+      lastDirection = null;
+      activeCooldownMs = APPROACH_SNAP_COOLDOWN_MS;
+      arrivedFromApproach = true;
+      momentumSettled = false;
+      // Allow upward scrolling after momentum from the snap has dissipated
+      setTimeout(() => {
+        momentumSettled = true;
+      }, 600);
+    };
+    window.addEventListener("approach-snap-to-intro", handleApproachSnap);
+
     const animateScrollTo = (targetY: number, duration: number, cb?: () => void) => {
       state = "animating";
       const startY = window.scrollY;
@@ -144,15 +189,12 @@ function ServicesIntroDesktop({ data }: { data: ServiceCategoryData["intro"] }) 
       const isDown = e.deltaY > 0;
       const isUp = e.deltaY < 0;
 
-      // --- While animating, block everything ---
       if (state === "animating") {
         e.preventDefault();
         return;
       }
 
-      // --- Determine current state from scroll position if needed ---
       if (state === "idle") {
-        // Don't engage when far below the intro zone
         if (scrollY > introTop + window.innerHeight) return;
 
         if (scrollY < 50) {
@@ -165,27 +207,58 @@ function ServicesIntroDesktop({ data }: { data: ServiceCategoryData["intro"] }) 
         }
       }
 
-      // --- At Hero: block all wheel, snap to intro on scroll down ---
       if (state === "atHero") {
         e.preventDefault();
         if (isDown) {
-          setScrollDir("down");
+          if (resetTimeoutId) {
+            clearTimeout(resetTimeoutId);
+            resetTimeoutId = null;
+          }
+          if (colContainerRef.current) {
+            const c = colContainerRef.current;
+            c.style.position = "";
+            c.style.top = "";
+            c.style.left = "";
+            c.style.width = "";
+            c.style.zIndex = "";
+          }
+          if (contentWrapRef.current) {
+            const cw = contentWrapRef.current;
+            cw.style.position = "";
+            cw.style.top = "";
+            cw.style.left = "";
+            cw.style.width = "";
+            cw.style.height = "";
+            cw.style.zIndex = "";
+            cw.style.display = "";
+            cw.style.alignItems = "";
+          }
+          scrollDirMV.set("down");
           animateScrollTo(introTop, 1000, () => {
             state = "atIntro";
             atIntroSince = Date.now();
             lastWheelTime = Date.now();
             accumulator = 0;
+            eventCount = 0;
+            lastDirection = null;
+            activeCooldownMs = INTRO_COOLDOWN_MS;
           });
         }
         return;
       }
 
-      // --- At Intro: block all wheel, detect intent for next snap ---
       if (state === "atIntro") {
         e.preventDefault();
 
-        // Cooldown: ignore input right after arriving at intro
-        if (now - atIntroSince < INTRO_COOLDOWN_MS) {
+        // Block downward scrolls during the full cooldown (absorb snap momentum)
+        if (isDown && now - atIntroSince < activeCooldownMs) {
+          accumulator = 0;
+          eventCount = 0;
+          return;
+        }
+
+        // Block upward scrolls until momentum from approach snap has settled
+        if (isUp && arrivedFromApproach && !momentumSettled) {
           accumulator = 0;
           eventCount = 0;
           return;
@@ -194,10 +267,8 @@ function ServicesIntroDesktop({ data }: { data: ServiceCategoryData["intro"] }) 
         const gap = now - lastWheelTime;
         lastWheelTime = now;
 
-        // Determine current direction
         const currentDir = isDown ? "down" : "up";
 
-        // Reset accumulator if there's been a long gap (new gesture) or direction changed
         if (gap > INTENT_GAP_MS || currentDir !== lastDirection) {
           accumulator = 0;
           eventCount = 0;
@@ -207,22 +278,42 @@ function ServicesIntroDesktop({ data }: { data: ServiceCategoryData["intro"] }) 
         accumulator += Math.abs(e.deltaY);
         eventCount += 1;
 
-        // Intent detected via delta accumulation OR event count (Safari trackpad fallback)
         const hasIntent = accumulator >= ACCUMULATOR_THRESHOLD || eventCount >= EVENT_COUNT_THRESHOLD;
 
         if (!hasIntent) {
-          return; // Not enough intent yet
+          return;
         }
 
-        // Enough intent detected — determine direction
         if (isDown) {
           accumulator = 0;
           eventCount = 0;
-          setScrollDir("down");
+          if (resetTimeoutId) {
+            clearTimeout(resetTimeoutId);
+            resetTimeoutId = null;
+          }
+          if (colContainerRef.current) {
+            const c = colContainerRef.current;
+            c.style.position = "";
+            c.style.top = "";
+            c.style.left = "";
+            c.style.width = "";
+            c.style.zIndex = "";
+          }
+          if (contentWrapRef.current) {
+            const cw = contentWrapRef.current;
+            cw.style.position = "";
+            cw.style.top = "";
+            cw.style.left = "";
+            cw.style.width = "";
+            cw.style.height = "";
+            cw.style.zIndex = "";
+            cw.style.display = "";
+            cw.style.alignItems = "";
+          }
+          scrollDirMV.set("down");
           const approach = document.getElementById("services-approach");
           if (approach) {
             const approachY = approach.getBoundingClientRect().top + scrollY;
-            // Notify approach section that a snap is incoming
             window.dispatchEvent(new CustomEvent("intro-snap-to-approach"));
             animateScrollTo(approachY, 600, () => {
               state = "idle";
@@ -233,30 +324,67 @@ function ServicesIntroDesktop({ data }: { data: ServiceCategoryData["intro"] }) 
         } else if (isUp) {
           accumulator = 0;
           eventCount = 0;
-          setScrollDir("up");
-          animateScrollTo(0, 600, () => {
+          scrollDirMV.set("up");
+          if (resetTimeoutId) {
+            clearTimeout(resetTimeoutId);
+            resetTimeoutId = null;
+          }
+          if (colContainerRef.current) {
+            const c = colContainerRef.current;
+            c.style.position = "fixed";
+            c.style.top = "0";
+            c.style.left = "0";
+            c.style.width = "100%";
+            c.style.zIndex = "35";
+          }
+          if (contentWrapRef.current) {
+            const cw = contentWrapRef.current;
+            cw.style.position = "fixed";
+            cw.style.top = "0";
+            cw.style.left = "0";
+            cw.style.width = "100%";
+            cw.style.height = "100vh";
+            cw.style.zIndex = "40";
+            cw.style.display = "flex";
+            cw.style.alignItems = "center";
+          }
+          animateScrollTo(0, 1000, () => {
             state = "atHero";
+            resetTimeoutId = setTimeout(() => {
+              if (colContainerRef.current) {
+                const c = colContainerRef.current;
+                c.style.position = "";
+                c.style.top = "";
+                c.style.left = "";
+                c.style.width = "";
+                c.style.zIndex = "";
+              }
+              if (contentWrapRef.current) {
+                const cw = contentWrapRef.current;
+                cw.style.position = "";
+                cw.style.top = "";
+                cw.style.left = "";
+                cw.style.width = "";
+                cw.style.height = "";
+                cw.style.zIndex = "";
+                cw.style.display = "";
+                cw.style.alignItems = "";
+              }
+            }, 800);
           });
         }
         return;
       }
 
-      // --- Below intro (approach/list/etc): let scroll happen naturally ---
-      // But if user scrolls back up to intro zone, catch them
       if (isUp && scrollY <= introTop + 50 && scrollY > 10) {
-        // They're scrolling up right at the intro boundary — don't interfere,
-        // let the approach section's handler manage this
       }
     };
 
-    // Detect when user ends up at intro via other means (e.g. approach snapping up to intro)
     const handleScroll = () => {
       if (state === "animating") return;
       const scrollY = window.scrollY;
       const introTop = getIntroTop();
 
-      // Only manage state when in the hero/intro zone
-      // Don't interfere when user is far below (e.g. at footer)
       if (scrollY > introTop + window.innerHeight) {
         if (state !== "idle") state = "idle";
         return;
@@ -269,6 +397,7 @@ function ServicesIntroDesktop({ data }: { data: ServiceCategoryData["intro"] }) 
         atIntroSince = Date.now();
         lastWheelTime = Date.now();
         accumulator = 0;
+        activeCooldownMs = INTRO_COOLDOWN_MS;
       } else if (scrollY > introTop + 50 && state === "atIntro") {
         state = "idle";
       }
@@ -280,6 +409,7 @@ function ServicesIntroDesktop({ data }: { data: ServiceCategoryData["intro"] }) 
     return () => {
       window.removeEventListener("wheel", handleWheel);
       window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("approach-snap-to-intro", handleApproachSnap);
       html.style.scrollBehavior = "";
     };
   }, []);
@@ -290,15 +420,13 @@ function ServicesIntroDesktop({ data }: { data: ServiceCategoryData["intro"] }) 
       data-hide-navbar
       className="relative z-30 isolate flex h-screen w-full flex-col justify-center overflow-hidden"
     >
-      {/* Parallax white columns (curtain reveal) */}
-      <div className="pointer-events-none absolute inset-0 flex h-[120vh] w-full">
+      <div ref={colContainerRef} className="pointer-events-none absolute inset-0 flex h-[120vh] w-full">
         <motion.div style={{ y: col1Y }} className="h-full w-1/3 bg-white" />
         <motion.div style={{ y: col2Y }} className="h-full w-1/3 bg-white" />
         <motion.div style={{ y: col3Y }} className="h-full w-1/3 bg-white" />
       </div>
 
-      {/* Content */}
-      <motion.div style={{ y: contentY }} className="relative w-full">
+      <motion.div ref={contentWrapRef} style={{ y: contentY, opacity: contentOpacity }} className="relative z-40 w-full">
         <SiteContainer className="relative flex h-full max-h-[950px] flex-col justify-center py-6 lg:py-10">
           <div className="w-full max-w-[1100px]">
             <p

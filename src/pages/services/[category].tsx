@@ -16,7 +16,7 @@ export default function ServiceCategoryPage({ data }: ServiceCategoryPageProps) 
   if (!data) return null;
 
   return (
-    <main className="w-full overflow-x-hidden">
+    <main className="w-full overflow-clip">
       <Head>
         <title>{data.metaTitle} | Spherehead Technologies</title>
       </Head>
