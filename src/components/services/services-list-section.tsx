@@ -23,7 +23,6 @@ export default function ServicesListSection({ data }: { data: ServiceCategoryDat
   const toggleAccordion = (index: number) =>
     setActiveIndex((prev) => (prev === index ? null : index));
 
-  // Handle hash navigation - open accordion and scroll to item
   useEffect(() => {
     const openServiceFromHash = () => {
       const hash = window.location.hash;
@@ -36,14 +35,12 @@ export default function ServicesListSection({ data }: { data: ServiceCategoryDat
       setTimeout(() => {
         if (!listRef.current || !sectionRef.current) return;
 
-        // Scroll the page so the list section is in sticky position
         const sectionRect = sectionRef.current.getBoundingClientRect();
         if (sectionRect.top > 0 || sectionRect.top < -10) {
           const targetPageScroll = window.scrollY + sectionRect.top;
           window.scrollTo({ top: targetPageScroll, behavior: "instant" as ScrollBehavior });
         }
 
-        // Then scroll within the list container to the target item
         const targetEl = document.getElementById(`service-${slug}`);
         if (!targetEl) return;
         const listEl = listRef.current;
@@ -52,7 +49,6 @@ export default function ServicesListSection({ data }: { data: ServiceCategoryDat
       }, 150);
     };
 
-    // Prevent browser's native hash scroll on initial load
     if (window.location.hash) {
       window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
     }
@@ -66,7 +62,6 @@ export default function ServicesListSection({ data }: { data: ServiceCategoryDat
     };
   }, [data.items, router]);
 
-  // Snap-back to approach section when scrolling up at the top of the list
   useEffect(() => {
     if (isMobile) return;
     const section = sectionRef.current;
@@ -75,10 +70,11 @@ export default function ServicesListSection({ data }: { data: ServiceCategoryDat
 
     let isSnapping = false;
     let lockedUntil = 0;
+    let softLandUntil = 0;
 
     const handleSnapEvent = () => {
       lockedUntil = Date.now() + 1200;
-      // Reset scroll position when snapping from approach
+      softLandUntil = Date.now() + 2000;
       if (listRef.current) {
         listRef.current.scrollTop = 0;
       }
@@ -97,6 +93,15 @@ export default function ServicesListSection({ data }: { data: ServiceCategoryDat
         return;
       }
 
+      if (Date.now() < softLandUntil && isStickyEngaged()) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (e.deltaY > 0 && listRef.current) {
+          listRef.current.scrollTop += e.deltaY;
+        }
+        return;
+      }
+
       if (!isStickyEngaged()) return;
 
       const isUp = e.deltaY < 0;
@@ -104,25 +109,20 @@ export default function ServicesListSection({ data }: { data: ServiceCategoryDat
       const list = listRef.current;
 
       if (isDown && list) {
-        // Let native scroll handle scrolling down within the list
         const atBottom = list.scrollTop + list.clientHeight >= list.scrollHeight - 2;
         if (!atBottom) {
-          // List can still scroll down — don't interfere
           e.stopPropagation();
           return;
         }
-        // At bottom of list — allow page scroll to continue past section
         return;
       }
 
       if (isUp && list) {
-        // If list is scrolled down, let native scroll handle it
         if (list.scrollTop > 0) {
           e.stopPropagation();
           return;
         }
 
-        // List is at the very top and user scrolls up — snap back to approach
         const rect = section.getBoundingClientRect();
         if (rect.top > -50 && rect.top <= 80 && !isSnapping) {
           e.preventDefault();
@@ -209,11 +209,10 @@ export default function ServicesListSection({ data }: { data: ServiceCategoryDat
         ref={stickyRef}
         className="h-screen w-full overflow-hidden flex flex-col justify-start pt-[60px] lg:pt-[80px]"
       >
-        <div className="relative z-20 w-full h-full rounded-t-[24px] lg:rounded-t-[40px] flex flex-col bg-white shadow-[0_-20px_50px_rgba(0,0,0,0.25)]">
+        <div className="relative z-20 w-full h-full rounded-t-[12px] lg:rounded-t-[12px] flex flex-col bg-white shadow-[0_-20px_50px_rgba(0,0,0,0.25)]">
           <div className="w-full flex flex-col pt-10 lg:pt-16 pb-10 overflow-hidden h-full">
             <SiteContainer className="flex-grow h-full">
               <div className="grid grid-cols-1 lg:grid-cols-[4.5fr_5.5fr] gap-12 lg:gap-24 items-start h-full">
-                {/* Left column */}
                 <div
                   ref={leftColumnRef}
                   className="hidden lg:flex flex-col h-fit lg:mt-[20px]"
@@ -259,7 +258,6 @@ export default function ServicesListSection({ data }: { data: ServiceCategoryDat
                   </div>
                 </div>
 
-                {/* Right column */}
                 <div className="relative flex flex-col pr-2 lg:pr-6 h-full overflow-hidden">
                   <div
                     className="absolute top-0 left-0 w-full h-[80px] z-30 pointer-events-none"

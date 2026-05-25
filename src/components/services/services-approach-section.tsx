@@ -53,7 +53,7 @@ export default function ServicesApproachSection() {
 
     // Reset page to 0 whenever the section comes into view
     let enteredAt = 0;
-    const ENTRY_COOLDOWN_MS = 600; // absorb trackpad momentum when entering from intro
+    const ENTRY_COOLDOWN_MS = 1000; // absorb trackpad momentum when entering from intro
     let lockedUntil = 0; // Hard lock for snap-back from list section
 
     // Global wheel blocker during snap-back lock period
@@ -111,11 +111,16 @@ export default function ServicesApproachSection() {
 
     let lastEventTime = 0;
     let lastUpEventTime = 0;
+    let lastDownEventTime = 0;
     let consecutiveSmallDeltas = 0;
     let upEventCount = 0; // Safari trackpad event count fallback
     let downEventCount = 0; // Safari trackpad event count fallback for page transitions
+    let downAccumulator = 0; // Accumulated downward delta for stronger intent detection
     const UP_EVENT_COUNT_THRESHOLD = 8; // Safari fires many small events; 8 in a row = intent
-    const DOWN_EVENT_COUNT_THRESHOLD = 4; // Fewer needed for down (more natural direction)
+    const DOWN_EVENT_COUNT_THRESHOLD = 8; // Require sustained intent for page transitions
+    const DOWN_ACCUMULATOR_THRESHOLD = 80; // Minimum accumulated delta for page transition
+    let pageTransitionAt = 0; // When the last page 0→1 transition happened
+    const PAGE_TRANSITION_COOLDOWN_MS = 1200; // Cooldown after page 0→1 before allowing scroll to list
     const isTouchpad = () => consecutiveSmallDeltas > 3;
 
     // Upward exit state
@@ -189,25 +194,48 @@ export default function ServicesApproachSection() {
         // Reset upward state
         upExitAccumulator = 0;
         upEventCount = 0;
+
+        // Decay downward accumulator if there's been a gap (momentum dying down)
+        if (now - lastDownEventTime > 300) {
+          downAccumulator = 0;
+          downEventCount = 0;
+        }
+        lastDownEventTime = now;
         downEventCount += 1;
+        downAccumulator += Math.abs(e.deltaY);
 
         if (pageRef.current === 0) {
-          // Slide to page 1 (use event count fallback for Safari trackpads)
+          // Slide to page 1 — require both event count AND accumulated delta for strong intent
           e.preventDefault();
-          if (downEventCount >= DOWN_EVENT_COUNT_THRESHOLD || Math.abs(e.deltaY) > 10) {
+          const hasDownIntent = (downEventCount >= DOWN_EVENT_COUNT_THRESHOLD && downAccumulator >= DOWN_ACCUMULATOR_THRESHOLD) || Math.abs(e.deltaY) > 50;
+          if (hasDownIntent) {
             downEventCount = 0;
+            downAccumulator = 0;
             setPage(1);
+            pageTransitionAt = Date.now();
             isAnimating.current = true;
             setTimeout(() => {
               isAnimating.current = false;
-            }, isTouchpad() ? 1200 : 800);
+            }, isTouchpad() ? 1400 : 800);
           }
           return;
         }
 
-        // On page 1, snap to the list section precisely
+        // On page 1, snap to the list section — but enforce a cooldown after page transition
         e.preventDefault();
+        if (now - pageTransitionAt < PAGE_TRANSITION_COOLDOWN_MS) {
+          // Still in cooldown from page 0→1 transition, absorb the event
+          downEventCount = 0;
+          downAccumulator = 0;
+          return;
+        }
+        // Require intent to scroll past page 1 as well
+        const hasExitIntent = (downEventCount >= DOWN_EVENT_COUNT_THRESHOLD && downAccumulator >= DOWN_ACCUMULATOR_THRESHOLD) || Math.abs(e.deltaY) > 50;
+        if (!hasExitIntent) {
+          return;
+        }
         downEventCount = 0;
+        downAccumulator = 0;
         const listSection = section.nextElementSibling as HTMLElement;
         if (listSection) {
           const targetY = listSection.getBoundingClientRect().top + window.scrollY;
@@ -258,6 +286,8 @@ export default function ServicesApproachSection() {
         const introSection = document.querySelector<HTMLElement>("[data-hide-navbar]");
         if (introSection) {
           const targetY = introSection.offsetTop;
+          // Notify intro section that a snap is incoming so it absorbs touchpad momentum
+          window.dispatchEvent(new CustomEvent("approach-snap-to-intro"));
           animateScrollTo(targetY, 500);
         }
       }
