@@ -23,13 +23,11 @@ export default function BlogsHero({
     // Mobile: simple static hero
     if (isMobile) {
         return (
-            <section className="relative min-h-[60svh] flex flex-col overflow-hidden text-white">
+            <section className="relative min-h-[80svh] flex flex-col overflow-hidden text-white">
                 <SiteContainer className="relative z-10 flex flex-col h-full flex-grow justify-end pb-10 pt-20">
                     <div className="w-full flex flex-col mt-auto">
                         <div className="w-full h-[1px] bg-white/20 mb-6" />
-                        <h1 className="inner-hero">
-                            Knowledge Hub
-                        </h1>
+                        <h1 className="inner-hero">Knowledge Hub</h1>
                     </div>
                 </SiteContainer>
             </section>
@@ -43,9 +41,7 @@ export default function BlogsHero({
                     style={{ opacity: contentOpacity, y: contentY }}
                     className="flex min-h-[54vh] flex-col justify-end pb-8 lg:min-h-0 lg:pb-24 mb-[50px] md:ml-[50px]"
                 >
-                    <h1 className="inner-hero">
-                        Knowledge Hub
-                    </h1>
+                    <h1 className="inner-hero">Knowledge Hub</h1>
                     <p className="heading-4 mt-7 max-w-[690px] hidden md:block">
                         Leveraging advanced technologies and innovative
                         solutions, we tackle complex business challenges,
