@@ -58,18 +58,105 @@ const MAIN_CARD_W = 650;
 const BASE_DURATION = 0.7;
 
 /* ── Mobile constants ───────────────────────────────────────────── */
-const M_SIDE_W = 44;
-const M_SIDE_GAP = 8;
 const M_IMG_W = 160; // Increased width for the mobile image
 
 type TestimonialSectionProps = {
   snapToScreen?: boolean;
 };
 
+type Card = (typeof testimonials)[number];
+
+const M_SIDE_W = 44;
+const M_SIDE_GAP = 8;
+
 const initialSideStack = Array.from({ length: SIDE_CARD_COUNT }, (_, i) => ({
   uid: i,
   testimonialIndex: (i + 1) % testimonials.length,
 }));
+
+function SideCardInner({ card }: { card: Card }) {
+  return (
+    <>
+      <span className="body-extra-small absolute top-5 left-1/2 [writing-mode:vertical-rl] [transform:translateX(-50%)_rotate(180deg)] !text-[#8A8B8F]">
+        {card.role}
+      </span>
+      <span className="body-small absolute bottom-6 left-1/2 [writing-mode:vertical-rl] [transform:translateX(-50%)_rotate(180deg)] !text-[#01030B]">
+        {card.name}
+      </span>
+    </>
+  );
+}
+
+function MainCard({ card }: { card: Card }) {
+  return (
+    <div
+      className="flex w-full flex-col gap-5 sm:flex-row sm:gap-0"
+      style={{ maxWidth: MAIN_CARD_W, minHeight: CARD_H }}
+    >
+      <div className="shrink-0 relative" style={{ width: IMG_W }}>
+        <div
+          className="relative overflow-hidden rounded-[4px]"
+          style={{ width: IMG_W, height: IMG_H }}
+        >
+          <Image
+            src={card.image}
+            alt=""
+            fill
+            className="object-cover pointer-events-none"
+            draggable={false}
+          />
+        </div>
+        <div className="absolute top-0 right-0 z-10 flex h-10 w-10 items-center justify-center !bg-[#0D54CA]">
+          <Quote className="h-5 w-5 fill-white text-white" />
+        </div>
+      </div>
+      <div className="flex min-h-[320px] flex-col justify-between pt-10 sm:min-h-0 sm:w-[288px] sm:pl-5 sm:pt-11 sm:pb-[74px]">
+        <p className="body-small max-w-[238px] whitespace-pre-line !text-[#01030b] !leading-[1.4]">
+          {card.quote}
+        </p>
+        <div>
+          <h3 className="body-large !text-[#01030b]">{card.name}</h3>
+          <p className="body-extra-small !text-[#01030b]">{card.role}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MobileCard({ card }: { card: Card }) {
+  return (
+    <div className="flex w-full flex-row" style={{ minHeight: 260 }}>
+      {/* Image column — fixed width, full height */}
+      <div className="relative shrink-0" style={{ width: M_IMG_W }}>
+        <div className="relative w-full h-full overflow-hidden rounded-[4px]">
+          <Image
+            src={card.image}
+            alt=""
+            fill
+            className="object-cover object-top pointer-events-none"
+            draggable={false}
+          />
+        </div>
+        <div className="absolute top-0 right-0 z-10 flex h-8 w-8 items-center justify-center !bg-[#0D54CA]">
+          <Quote className="h-4 w-4 fill-white text-white" />
+        </div>
+      </div>
+
+      {/* Middle column — quote + name, same height */}
+      <div className="flex flex-1 min-w-0 flex-col justify-between pl-3 pt-3 pb-3">
+        <p className="body-small whitespace-pre-line !text-[#01030b]">
+          {card.quote}
+        </p>
+        <div>
+          <h3 className="body-large !text-[#01030b] font-semibold leading-tight">
+            {card.name}
+          </h3>
+          <p className="body-extra-small">{card.role}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function TestimonialSection({
   snapToScreen = false,
@@ -183,93 +270,6 @@ export default function TestimonialSection({
     );
   };
 
-  /* ── SideCardInner (shared) ─────────────────────────────────── */
-  const SideCardInner = ({ card }: { card: (typeof testimonials)[number] }) => (
-    <>
-      <span className="body-extra-small absolute top-5 left-1/2 [writing-mode:vertical-rl] [transform:translateX(-50%)_rotate(180deg)] !text-[#8A8B8F]">
-        {card.role}
-      </span>
-      <span className="body-small absolute bottom-6 left-1/2 [writing-mode:vertical-rl] [transform:translateX(-50%)_rotate(180deg)] !text-[#01030B]">
-        {card.name}
-      </span>
-    </>
-  );
-
-  /* ── Desktop MainCard ───────────────────────────────────────── */
-  const MainCard = ({
-    card,
-    showControls = false,
-  }: {
-    card: (typeof testimonials)[number];
-    showControls?: boolean;
-  }) => (
-    <div
-      className="flex w-full flex-col gap-5 sm:flex-row sm:gap-0"
-      style={{ maxWidth: MAIN_CARD_W, minHeight: CARD_H }}
-    >
-      <div className="shrink-0 relative" style={{ width: IMG_W }}>
-        <div
-          className="relative overflow-hidden rounded-[4px]"
-          style={{ width: IMG_W, height: IMG_H }}
-        >
-          <Image
-            src={card.image}
-            alt=""
-            fill
-            className="object-cover pointer-events-none"
-            draggable={false}
-          />
-        </div>
-        <div className="absolute top-0 right-0 z-10 flex h-10 w-10 items-center justify-center !bg-[#0D54CA]">
-          <Quote className="h-5 w-5 fill-white text-white" />
-        </div>
-      </div>
-      <div className="flex min-h-[320px] flex-col justify-between pt-10 sm:min-h-0 sm:w-[288px] sm:pl-5 sm:pt-11 sm:pb-[74px]">
-        <p className="body-small max-w-[238px] whitespace-pre-line !text-[#01030b] !leading-[1.4]">
-          {card.quote}
-        </p>
-        <div>
-          <h3 className="body-large !text-[#01030b]">{card.name}</h3>
-          <p className="body-extra-small !text-[#01030b]">{card.role}</p>
-        </div>
-      </div>
-    </div>
-  );
-
-  /* ── MobileCard ─────────────────────────────────────────────── */
-  const MobileCard = ({ card }: { card: (typeof testimonials)[number] }) => (
-    <div className="flex w-full flex-row" style={{ minHeight: 260 }}>
-      {/* Image column — fixed width, full height */}
-      <div className="relative shrink-0" style={{ width: M_IMG_W }}>
-        <div className="relative w-full h-full overflow-hidden rounded-[4px]">
-          <Image
-            src={card.image}
-            alt=""
-            fill
-            className="object-cover object-top pointer-events-none"
-            draggable={false}
-          />
-        </div>
-        <div className="absolute top-0 right-0 z-10 flex h-8 w-8 items-center justify-center !bg-[#0D54CA]">
-          <Quote className="h-4 w-4 fill-white text-white" />
-        </div>
-      </div>
-
-      {/* Middle column — quote + name, same height */}
-      <div className="flex flex-1 min-w-0 flex-col justify-between pl-3 pt-3 pb-3">
-        <p className="body-small whitespace-pre-line !text-[#01030b]">
-          {card.quote}
-        </p>
-        <div>
-          <h3 className="body-large !text-[#01030b] font-semibold leading-tight">
-            {card.name}
-          </h3>
-          <p className="body-extra-small">{card.role}</p>
-        </div>
-      </div>
-    </div>
-  );
-
   return (
     <section
       ref={sectionRef}
@@ -292,9 +292,7 @@ export default function TestimonialSection({
           Through Results Our Clients Value
         </h2>
 
-        {/* ══════════════════════════════════════════════
-                    DESKTOP layout
-                ══════════════════════════════════════════════ */}
+        {/* Desktop */}
         <div
           className={cn(
             "hidden sm:flex items-start justify-between gap-12",
@@ -361,19 +359,14 @@ export default function TestimonialSection({
                   ease: "easeInOut",
                   opacity: {
                     duration:
-                      direction === "prev"
-                        ? BASE_DURATION * 0.9
-                        : BASE_DURATION * 1.2,
+                      direction === "prev" ? BASE_DURATION * 0.9 : BASE_DURATION * 1.2,
                     ease: "easeOut",
                   },
                 }}
                 className="absolute top-0 left-0 pointer-events-none origin-center"
                 style={{ width: "100%", zIndex: direction === "prev" ? 30 : 0 }}
               >
-                <MainCard
-                  card={testimonials[prevActiveIndex]}
-                  showControls={false}
-                />
+                <MainCard card={testimonials[prevActiveIndex]} />
               </motion.div>
             )}
           </div>
@@ -388,13 +381,14 @@ export default function TestimonialSection({
                 const card = testimonials[item.testimonialIndex];
                 const isIncoming = incomingUid === item.uid;
                 const isIncomingPrev = isIncoming && direction === "prev";
-                let initialAnim: any = false;
-                if (isIncoming) {
-                  initialAnim =
-                    direction === "next"
+
+                const initialAnim: false | { x: number; opacity: number } =
+                  isIncoming
+                    ? direction === "next"
                       ? { x: SIDE_CONTAINER_W, opacity: 0 }
-                      : { x: travelX, opacity: 0 };
-                }
+                      : { x: travelX, opacity: 0 }
+                    : false;
+
                 return (
                   <motion.div
                     key={item.uid}
@@ -407,9 +401,7 @@ export default function TestimonialSection({
                     transition={{
                       duration: BASE_DURATION,
                       ease: "easeInOut",
-                      opacity: isIncomingPrev
-                        ? { times: [0, 0.75, 1] }
-                        : undefined,
+                      opacity: isIncomingPrev ? { times: [0, 0.75, 1] } : undefined,
                     }}
                     className="absolute top-0 rounded bg-[#f1f1f1]"
                     style={{ width: SIDE_CARD_W, height: SIDE_CARD_H }}
@@ -445,20 +437,14 @@ export default function TestimonialSection({
           </div>
         </div>
 
-        {/* ══════════════════════════════════════════════
-                    MOBILE layout
-                ══════════════════════════════════════════════ */}
+        {/* Mobile */}
         <div
           className={cn(
             "flex sm:hidden flex-col",
             snapToScreen ? "mt-8" : "mt-10",
           )}
         >
-          {/* 3-column row: image | quote+name | gray pill */}
-          <div
-            className="relative flex flex-row gap-2"
-            style={{ minHeight: 260 }}
-          >
+          <div className="relative flex flex-row gap-2" style={{ minHeight: 260 }}>
             {/* Static base */}
             <div
               className={cn(
@@ -466,26 +452,11 @@ export default function TestimonialSection({
                 phase === "moving" ? "opacity-0" : "opacity-100",
               )}
             >
+              {/* image + quote/name only */}
               <MobileCard card={activeCard} />
-              {/* Gray pill */}
-              <div
-                className="relative shrink-0 overflow-hidden rounded bg-[#f1f1f1]"
-                style={{ width: M_SIDE_W, alignSelf: "stretch" }}
-              >
-                {(() => {
-                  const item = sideStack[0];
-                  return (
-                    <div key={item.uid} className="absolute inset-0">
-                      <SideCardInner
-                        card={testimonials[item.testimonialIndex]}
-                      />
-                    </div>
-                  );
-                })()}
-              </div>
             </div>
 
-            {/* Incoming - Slides in everything together */}
+            {/* Incoming */}
             {phase === "moving" && (
               <motion.div
                 initial={{
@@ -497,26 +468,10 @@ export default function TestimonialSection({
                 className="absolute inset-0 z-10 bg-white flex flex-row gap-2"
               >
                 <MobileCard card={activeCard} />
-                {/* Gray pill incoming */}
-                <div
-                  className="relative shrink-0 overflow-hidden rounded bg-[#f1f1f1]"
-                  style={{ width: M_SIDE_W, alignSelf: "stretch" }}
-                >
-                  {(() => {
-                    const item = sideStack[0];
-                    return (
-                      <div key={item.uid} className="absolute inset-0">
-                        <SideCardInner
-                          card={testimonials[item.testimonialIndex]}
-                        />
-                      </div>
-                    );
-                  })()}
-                </div>
               </motion.div>
             )}
 
-            {/* Outgoing - Slides out everything together */}
+            {/* Outgoing */}
             {phase === "moving" && (
               <motion.div
                 initial={{ x: 0, opacity: 1 }}
@@ -534,27 +489,10 @@ export default function TestimonialSection({
                 style={{ zIndex: direction === "prev" ? 30 : 0 }}
               >
                 <MobileCard card={testimonials[prevActiveIndex]} />
-                {/* Gray pill outgoing */}
-                <div
-                  className="relative shrink-0 overflow-hidden rounded bg-[#f1f1f1]"
-                  style={{ width: M_SIDE_W, alignSelf: "stretch" }}
-                >
-                  {(() => {
-                    const item = sideStack[0];
-                    return (
-                      <div key={item.uid} className="absolute inset-0">
-                        <SideCardInner
-                          card={testimonials[item.testimonialIndex]}
-                        />
-                      </div>
-                    );
-                  })()}
-                </div>
               </motion.div>
             )}
           </div>
 
-          {/* Arrows row — strictly limited to the image width to align arrows underneath margins */}
           <div
             className="flex items-center justify-between pt-2 pb-1"
             style={{ width: M_IMG_W }}
@@ -581,3 +519,4 @@ export default function TestimonialSection({
     </section>
   );
 }
+

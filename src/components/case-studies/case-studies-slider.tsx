@@ -187,7 +187,9 @@ export default function CaseStudiesSlider() {
                       transition={{ duration: 0.4 }}
                     >
                       <h2 className="heading-2 !text-[#01030B] mb-6">{activeStudy.title}</h2>
-                      <p className="body-small text-[#8A8B8F] mb-8">{activeStudy.description}</p>
+                      <p className="body-small text-[#8A8B8F] mb-8 hidden lg:block">
+                        {activeStudy.description}
+                      </p>
                     </motion.div>
                   </AnimatePresence>
                 </div>

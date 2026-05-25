@@ -5,14 +5,15 @@ import CaseStudiesHero from "@/components/case-studies/case-studies-hero";
 import CaseStudiesSlider from "@/components/case-studies/case-studies-slider";
 import ClientsSection from "@/components/common-sections/testimonial-section";
 import Footer from "@/components/layout/footer";
+import { useIsMobile } from "@/hooks/use-is-mobile";
 
-// Safely use useLayoutEffect in Next.js without throwing server-side warnings
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 export default function CaseStudies() {
   const scrollRef = useRef<HTMLElement | null>(null);
   const { setScrollContainerRef } = useScrollContainerContext();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     setScrollContainerRef(scrollRef);
@@ -21,27 +22,27 @@ export default function CaseStudies() {
     };
   }, [scrollRef, setScrollContainerRef]);
 
-  // State to control when smooth scrolling is turned on
   const [isSmooth, setIsSmooth] = useState(false);
 
   useIsomorphicLayoutEffect(() => {
     const scrollContainer = scrollRef.current;
     if (!scrollContainer) return;
 
-    // 1. Read the saved position
+    if (isMobile) {
+      setIsSmooth(false);
+      return;
+    }
+
     const savedScrollPos = sessionStorage.getItem("caseStudiesScrollPos");
 
     if (savedScrollPos) {
-      // 2. Instantly jump to the saved position BEFORE the browser even paints the screen
       scrollContainer.scrollTop = parseInt(savedScrollPos, 10);
     }
 
-    // 3. Turn smooth scrolling back on AFTER the instant jump is complete
     requestAnimationFrame(() => {
       setIsSmooth(true);
     });
 
-    // 4. Save position whenever the user manually scrolls
     const handleScroll = () => {
       sessionStorage.setItem(
         "caseStudiesScrollPos",
@@ -54,7 +55,7 @@ export default function CaseStudies() {
     return () => {
       scrollContainer.removeEventListener("scroll", handleScroll);
     };
-  }, []);
+  }, [isMobile]);
 
   return (
     <>
@@ -65,34 +66,50 @@ export default function CaseStudies() {
 
       <main
         ref={scrollRef}
-        // FIX: The 'scroll-smooth' class is only added after the initial instant jump
-        className={`relative w-full h-screen overflow-y-auto overflow-x-hidden snap-y snap-mandatory bg-transparent ${
-          isSmooth ? "scroll-smooth" : "auto"
-        }`}
+        // Mobile: No snap. Desktop: Snap mandatory.
+        className={`relative w-full overflow-x-hidden bg-transparent ${
+          isMobile
+            ? "h-auto min-h-screen overflow-y-visible snap-none"
+            : "h-screen overflow-y-auto snap-y snap-mandatory"
+        } ${isMobile ? "auto" : isSmooth ? "scroll-smooth" : "auto"}`}
       >
-        {/* === THE CURTAIN TRACK === */}
-        <div className="relative w-full z-0">
-          {/* SCROLL ZONE 1: STICKY HERO BACKGROUND */}
-          <div className="sticky snap-start top-0 left-0 w-full h-screen z-0">
+        <div className={isMobile ? "relative w-full flex flex-col" : "relative w-full z-0"}>
+          
+          {/* SCROLL ZONE 1: HERO BACKGROUND - Enforces 80svh on mobile */}
+          <div
+            className={
+              isMobile
+                ? "relative w-full h-[80svh] z-0"
+                : "sticky top-0 left-0 w-full h-screen z-0 lg:snap-start"
+            }
+          >
             <CaseStudiesHero />
           </div>
 
-          {/* SCROLL ZONE 2: THE CURTAIN CARD */}
-          <div className="snap-start relative z-10 w-full bg-white rounded-t-xl lg:rounded-t-2xl shadow-[0_-20px_50px_-15px_rgba(0,0,0,0.5)] min-h-screen -mt-32 lg:-mt-48">
-            <section className="w-full pt-16 lg:pt-20 pb-16">
+          {/* SCROLL ZONE 2: THE CURTAIN CARD SLIDER */}
+          <div
+            className={`relative z-10 w-full bg-white lg:rounded-t-2xl min-h-screen ${
+              isMobile
+                ? "rounded-t-[6px] -mt-16 pt-4"
+                : "-mt-32 lg:-mt-48 lg:snap-start"
+            }`}
+          >
+            <section className="w-full pt-8 lg:pt-20 pb-8 lg:pb-16">
               <CaseStudiesSlider />
             </section>
 
-            <section className="snap-start w-full flex items-center min-h-screen">
+            <section className={isMobile ? "w-full" : "snap-start w-full flex items-center min-h-screen lg:min-h-screen"}>
               <div className="w-full min-w-0">
-                <ClientsSection />
+                <div className="lg:-mt-0">
+                  <ClientsSection />
+                </div>
               </div>
             </section>
           </div>
         </div>
 
         {/* === SCROLL ZONE 3: THE TRANSPARENT FOOTER === */}
-        <div className="snap-start relative w-full z-0">
+        <div className={isMobile ? "relative w-full bg-transparent z-0" : "snap-start relative w-full z-0"}>
           <Footer />
         </div>
       </main>

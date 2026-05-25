@@ -7,6 +7,7 @@ import Link from "next/link";
 import { FiArrowLeft } from "react-icons/fi";
 import Footer from "@/components/layout/footer";
 import RotatingDots from "@/components/ui/rotating-dots";
+import { useIsMobile } from "@/hooks/use-is-mobile";
 import {
   AnimatePresence,
   motion,
@@ -154,10 +155,11 @@ export default function CaseStudyDetail() {
   const { slug } = router.query;
   const [activeSection, setActiveSection] = useState("overview");
 
-  const heroRef = useRef<HTMLDivElement>(null);
   const { scrollY } = useScroll();
+  const isMobile = useIsMobile();
 
-  const blueBarY = useTransform(scrollY, [0, 300], [0, -400]);
+  // Desktop parallax hero translation. Overridden to 0 on mobile.
+  const blueBarY = useTransform(scrollY, [0, 300], [0, isMobile ? 0 : -400]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -235,16 +237,18 @@ export default function CaseStudyDetail() {
           {/* ── 1. BLUE HERO SECTION ── */}
           <motion.section
             style={{ y: blueBarY }}
-            initial={{ clipPath: "inset(0 0 100% 0)" }}
+            initial={{ clipPath: isMobile ? "none" : "inset(0 0 100% 0)" }}
             animate={{
-              clipPath: "inset(0 0 0% 0)",
+              clipPath: isMobile ? "none" : "inset(0 0 0% 0)",
               transition: { duration: 0.5, ease: EASE },
             }}
             exit={{
-              clipPath: "inset(0 0 100% 0)",
+              clipPath: isMobile ? "none" : "inset(0 0 100% 0)",
               transition: { duration: 0.6, ease: EASE },
             }}
-            className="w-full bg-[#0A2F76] pt-32 pb-48 lg:pb-64 px-6 lg:px-16 text-white relative z-0"
+            className={`w-full bg-[#0A2F76] px-6 lg:px-16 text-white relative z-0 flex flex-col justify-start lg:block ${
+              isMobile ? "pt-28 pb-32" : "pt-32 pb-48 lg:pb-64"
+            }`}
           >
             <motion.div
               initial={{ opacity: 0, y: -20 }}
@@ -258,20 +262,24 @@ export default function CaseStudyDetail() {
                 y: -40,
                 transition: { duration: 0.45, ease: "easeInOut" },
               }}
-              className="max-w-[1400px] mx-auto"
+              className="max-w-[1400px] mx-auto w-full"
             >
               <button
                 onClick={handleBackClick}
-                className="flex items-center gap-2 text-white hover:text-white transition-colors w-fit mb-12 cursor-pointer"
+                className="flex items-center gap-2 text-white hover:text-white transition-colors w-fit mb-6 lg:mb-12 cursor-pointer"
               >
                 <FiArrowLeft /> Back to Case Studies
               </button>
-              <h1 className="heading-2 max-w-4xl">{study.title}</h1>
+              <h1 className="heading-2 max-w-4xl border-none outline-none">{study.title}</h1>
             </motion.div>
           </motion.section>
 
           {/* ── 2. HERO IMAGE ── */}
-          <div className="relative z-10 pointer-events-none -mt-32 lg:-mt-48">
+          <div
+            className={`relative z-10 pointer-events-none ${
+              isMobile ? "-mt-24" : "-mt-48"
+            }`}
+          >
             <section className="max-w-[1400px] mx-auto px-6 lg:px-16">
               <motion.div
                 layout
@@ -299,17 +307,13 @@ export default function CaseStudyDetail() {
                 />
 
                 <div className="absolute bottom-0 right-0 bg-white pt-6 pl-8 pr-6 rounded-tl-[0.50rem] z-20">
-                  {/* NEW SLIDING BUTTON */}
                   <Link
                     href="/contact-us"
                     className="group relative inline-flex h-[44px] items-center justify-center overflow-hidden rounded-sm bg-animated-gradient px-6 !text-white transition duration-300"
                   >
-                    {/* Invisible placeholder to set width */}
                     <span className="invisible font-medium whitespace-nowrap">
                       Contact Us
                     </span>
-
-                    {/* Sliding column */}
                     <div className="absolute top-0 left-0 flex w-full flex-col transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-1/2">
                       <span className="flex h-[44px] w-full items-center justify-center font-medium whitespace-nowrap">
                         Contact Us
@@ -325,20 +329,10 @@ export default function CaseStudyDetail() {
           </div>
 
           {/* ── 3. CONTENT GRID ── */}
-          <motion.section
-            initial={{ opacity: 0, y: 30 }}
-            animate={{
-              opacity: 1,
-              y: 0,
-              transition: { duration: 0.8, delay: 0.5, ease: "easeOut" },
-            }}
-            // 5. CARD CHOREOGRAPHY: Added y: 80 to make the white card slide DOWN on exit
-            exit={{
-              opacity: 0,
-              y: 80,
-              transition: { duration: 0.5, ease: "easeIn" },
-            }}
-            className="relative z-20 bg-white max-w-[1400px] mx-auto px-6 lg:px-16 pt-24 pb-32"
+          <div
+            className={`relative z-20 bg-white max-w-[1400px] mx-auto px-6 lg:px-16 pb-12 lg:pb-32 ${
+              isMobile ? "pt-12" : "pt-24"
+            }`}
           >
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-start">
               {/* LEFT: STICKY SIDEBAR */}
@@ -352,7 +346,6 @@ export default function CaseStudyDetail() {
                   </span>
                 </div>
 
-                {/* CHANGED: Removed the border classes, but kept the pl-8 padding */}
                 <div className="flex flex-col pl-8">
                   <SidebarLink
                     href="#overview"
@@ -496,7 +489,7 @@ export default function CaseStudyDetail() {
                 </div>
               </div>
             </div>
-          </motion.section>
+          </div>
         </motion.div>
       </main>
       <Footer />
@@ -516,12 +509,10 @@ function SidebarLink({
   return (
     <a
       href={href}
-      // CHANGED: Removed -ml-[2px]
       className={`body-medium py-3 pl-6 border-l-2 transition-colors duration-300 leading-tight ${
         isActive
           ? "border-[#0D54CA] !text-[#0D54CA] font-medium"
-          : // CHANGED: Replaced border-transparent with border-gray-200 (and fixed text-gray-500)
-            "border-gray-200 text-gray-500 hover:text-gray-900"
+          : "border-gray-200 text-gray-500 hover:text-gray-900"
       }`}
     >
       {label}
