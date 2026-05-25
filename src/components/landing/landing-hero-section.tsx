@@ -22,7 +22,7 @@ export default function LandingHeroSection({
       <div className="flex min-h-[80svh] flex-col bg-transparent px-6 pb-10 pt-28">
         <div className="mt-auto flex flex-col justify-center">
           <h1 className="heading-1 text-white">
-            A Comprehensive Technological Sphere Crafted To Fulfil Modern
+            A Comprehensive Technological Sphere Crafted To Fulfill Modern
             Digital Needs
           </h1>
         </div>
