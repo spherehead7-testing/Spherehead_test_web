@@ -66,14 +66,14 @@ export default function PricingIntro() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative h-[150vh] text-[#01030B]">
+    <section ref={sectionRef} className="relative h-[60vh] lg:h-[150vh] text-[#01030B]">
       <div className="sticky top-0 h-screen overflow-hidden">
         <motion.div
           style={{
             y: panelY,
             clipPath: panelClipPath,
           }}
-          className="absolute inset-x-0 top-0 h-[87vh] overflow-hidden rounded-b-[10px] bg-white will-change-transform"
+          className="absolute inset-x-0 top-0 h-[60vh] lg:h-[87vh] overflow-hidden rounded-b-[10px] bg-white will-change-transform"
         >
           <SiteContainer className="flex h-full flex-col pt-[8vh] pb-[7vh] lg:pt-[7vh] lg:pb-[9vh]">
             <motion.div
@@ -98,7 +98,7 @@ export default function PricingIntro() {
 
             <motion.div
               style={{ opacity: contentOpacity, y: bodyY }}
-              className="mt-auto max-w-[620px] pt-16 lg:ml-[620px] lg:pt-0"
+              className="max-w-[620px] pt-16 lg:ml-[620px] lg:pt-0"
             >
               <p className="body-large text-[#808080]">
                 From IT consultation and software development to IoT, web

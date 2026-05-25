@@ -6,7 +6,7 @@ import { useEffect, useRef } from "react";
 export default function AboutIntro() {
   return (
     <section className="bg-white pt-12 pb-8 lg:pb-10">
-      <div className="mx-auto px-6 lg:px-20">
+      <div className="mx-auto px-6 lg:px-20 md:">
         {/* TEXT */}
         <p className="heading-2 max-w-[1100px] !text-[#01030B]">
           <span className="!text-[#0D54CA]">Spherehead</span> is dedicated to
