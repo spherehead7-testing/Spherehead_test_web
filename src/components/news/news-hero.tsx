@@ -3,11 +3,11 @@ import Link from "next/link";
 import { ChevronsDown, ArrowUpRight } from "lucide-react";
 import SiteContainer from "@/components/layout/site-container";
 import RotatingDots from "@/components/ui/rotating-dots";
-import { featuredBlogPosts } from "@/data/blog-posts";
+import { featuredNewsPosts } from "@/data/news-posts";
 import { motion, useTransform, type MotionValue } from "motion/react";
 import { useIsMobile } from "@/hooks/use-is-mobile";
 
-export default function BlogsHero({
+export default function NewsHero({
     progress,
 }: {
     progress: MotionValue<number>;
@@ -27,7 +27,7 @@ export default function BlogsHero({
                 <SiteContainer className="relative z-10 flex flex-col h-full flex-grow justify-end pb-10 pt-20">
                     <div className="w-full flex flex-col mt-auto">
                         <div className="w-full h-[1px] bg-white/20 mb-6" />
-                        <h1 className="inner-hero">Knowledge Hub</h1>
+                        <h1 className="inner-hero">News</h1>
                     </div>
                 </SiteContainer>
             </section>
@@ -41,7 +41,7 @@ export default function BlogsHero({
                     style={{ opacity: contentOpacity, y: contentY }}
                     className="flex min-h-[54vh] flex-col justify-end pb-8 lg:min-h-0 lg:pb-24 mb-[50px] md:ml-[50px]"
                 >
-                    <h1 className="inner-hero">Knowledge Hub</h1>
+                    <h1 className="inner-hero">News</h1>
                     <p className="heading-4 mt-7 max-w-[690px] hidden md:block">
                         Leveraging advanced technologies and innovative
                         solutions, we tackle complex business challenges,
@@ -63,12 +63,12 @@ export default function BlogsHero({
                         </div>
 
                         <div className="space-y-5">
-                            {featuredBlogPosts
+                            {featuredNewsPosts
                                 .slice(0, 2)
                                 .map((post, index) => (
                                     <Link
                                         key={post.slug}
-                                        href={`/blogs/${post.slug}`}
+                                        href={`/news/${post.slug}`}
                                         className="group relative block aspect-[1.54/1] overflow-hidden rounded-[2px] bg-[#0A2F76] text-white"
                                     >
                                         <Image
@@ -90,7 +90,7 @@ export default function BlogsHero({
                         </div>
 
                         <a
-                            href="#blog-list"
+                            href="#news-list"
                             className="mt-auto flex items-center justify-center gap-2 pt-8 transition-opacity hover:opacity-80"
                         >
                             <span className="text-[12px] font-bold uppercase tracking-[0.12em] text-[#0D54CA]">
