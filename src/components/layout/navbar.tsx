@@ -210,10 +210,9 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
           />
         </Link>
 
-        {/* MOBILE BURGER BUTTON */}
         <button
           type="button"
-          className="md:hidden flex flex-col justify-center items-center gap-[5px] p-2 cursor-pointer"
+          className="lg:hidden flex flex-col justify-center items-center gap-[5px] p-2 cursor-pointer"
           onClick={() => setMobileMenuOpen((prev) => !prev)}
           aria-label="Toggle menu"
         >
@@ -222,9 +221,7 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
           <span className={`block w-6 h-[2px] bg-white transition-all duration-300 ${mobileMenuOpen ? "-rotate-45 -translate-y-[7px]" : ""}`} />
         </button>
 
-        {/* MENU */}
-        <nav className="body-extra-small hidden md:flex items-center gap-10 text-white">
-          <Link href="/" onMouseEnter={closeAllMenus}>Home</Link>
+        <nav className="body-extra-small hidden lg:flex items-center gap-5 xl:gap-10 text-white">
           <Link href="/about-us" onMouseEnter={closeAllMenus}>About Us</Link>
 
           {/* SERVICES */}
@@ -307,17 +304,16 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
         </nav>
       </SiteContainer>
 
-      {/* SERVICES MEGA MENU */}
+      {/* SERVICES MEGA MENU (Scaled down on tablet, normal on desktop) */}
       <div
         id="services-mega-menu"
-        className={`absolute left-1/2 top-[calc(100%-1.25rem)] hidden w-[min(1110px,calc(100vw-3rem))] -translate-x-1/2 transition-all duration-200 md:block ${
+        className={`absolute left-1/2 top-[calc(100%-1.25rem)] hidden w-[min(1110px,calc(100vw-3rem))] -translate-x-1/2 transition-all duration-200 lg:block lg:scale-[0.85] xl:scale-100 origin-top ${
           servicesOpen
             ? "pointer-events-auto translate-y-0 opacity-100"
             : "pointer-events-none -translate-y-2 opacity-0"
         }`}
         onMouseEnter={() => setServicesOpen(true)}
       >
-        {/* FIX: Removed min-height, added pl-12 pb-12 to the grid */}
         <div className="grid grid-cols-[1fr_1.05fr_1.25fr_300px] gap-8 rounded-b-sm bg-white pl-12 pb-12 text-[#8A8B8F] shadow-[0_24px_70px_rgba(1,3,11,0.16)]">
           <MegaMenuColumn
             icon={<Box className="h-8 w-8 text-[#FD7624]" strokeWidth={3} />}
@@ -373,7 +369,6 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
             ))}
           </MegaMenuColumn>
 
-          {/* FIX: h-full w-full ensures it stretches perfectly to the edges without weird margins */}
           <div className="relative h-full w-full overflow-hidden rounded-bl-sm">
             <Image
               src="https://res.cloudinary.com/dku9in8sb/image/upload/v1778655466/navbar_services_ztrzax.png"
@@ -385,16 +380,15 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
         </div>
       </div>
 
-      {/* OUR WORK MEGA MENU */}
+      {/* OUR WORK MEGA MENU (Scaled down on tablet, normal on desktop) */}
       <div
-        className={`absolute left-1/2 top-[calc(100%-1.25rem)] hidden w-[min(900px,calc(100vw-3rem))] -translate-x-1/2 transition-all duration-300 md:block ${
+        className={`absolute left-1/2 top-[calc(100%-1.25rem)] hidden w-[min(900px,calc(100vw-3rem))] -translate-x-1/2 transition-all duration-300 lg:block lg:scale-[0.85] xl:scale-100 origin-top ${
           workOpen
             ? "pointer-events-auto translate-y-0 opacity-100"
             : "pointer-events-none -translate-y-4 opacity-0"
         }`}
         onMouseEnter={() => setWorkOpen(true)}
       >
-        {/* CHANGED: Removed min-h-[320px] so the card can be naturally shorter! */}
         <div className="grid grid-cols-[1fr_290px] overflow-hidden rounded-sm bg-[#f5f5f5] pl-12 pb-12 shadow-[0_24px_70px_rgba(1,3,11,0.18)]">
           {/* LEFT */}
           <div className="flex items-center gap-16 pr-12 pt-12">
@@ -439,7 +433,6 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
           </div>
 
           {/* RIGHT IMAGE */}
-          {/* CHANGED: Replaced h-full with h-[260px] to give it a controlled, shorter height! */}
           <div className="relative -mt-12 h-[260px] w-full overflow-hidden rounded-bl-sm">
             <Image
               src="https://res.cloudinary.com/dku9in8sb/image/upload/v1778480700/Rectangle_34625273_tiviz0.webp"
@@ -451,19 +444,17 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
         </div>
       </div>
 
-      {/* NEWS & INSIGHTS MEGA MENU */}
+      {/* NEWS & INSIGHTS MEGA MENU (Scaled down on tablet, normal on desktop) */}
       <div
-        className={`absolute left-1/2 top-[calc(100%-1.25rem)] hidden w-[min(1020px,calc(100vw-3rem))] -translate-x-1/2 transition-all duration-300 md:block ${
+        className={`absolute left-1/2 top-[calc(100%-1.25rem)] hidden w-[min(1020px,calc(100vw-3rem))] -translate-x-1/2 transition-all duration-300 lg:block lg:scale-[0.85] xl:scale-100 origin-top ${
           newsOpen
             ? "pointer-events-auto translate-y-0 opacity-100"
             : "pointer-events-none -translate-y-2 opacity-0"
         }`}
         onMouseEnter={() => setNewsOpen(true)}
       >
-        {/* FIX: Removed hardcoded min-height. pl-12 pb-12 applied directly to the grid. */}
         <div className="grid grid-cols-[1fr_340px] overflow-hidden rounded-sm bg-[#f3f3f3] pl-12 pb-12 shadow-[0_24px_70px_rgba(1,3,11,0.18)]">
           {/* LEFT SIDE */}
-          {/* FIX: items-center perfectly centers the content vertically relative to the image! */}
           <div className="flex items-center gap-12 pr-12 pt-12">
             {/* NEWS */}
             <div>
@@ -549,13 +540,11 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
           )}
         </div>
       </div>
-
-      {/* MOBILE MENU — Full screen white overlay matching Figma */}
     </header>
 
-    {/* Mobile menu rendered OUTSIDE header to avoid clipping */}
+    {/* MOBILE MENU (Hidden on lg+ / 1024px+) */}
     <div
-      className={`fixed inset-0 w-full h-full z-[10000] md:hidden transition-all duration-300 ${
+      className={`fixed inset-0 w-full h-full z-[10000] lg:hidden transition-all duration-300 ${
         mobileMenuOpen ? "pointer-events-auto visible" : "pointer-events-none invisible"
       }`}
     >
@@ -622,7 +611,6 @@ function MegaMenuColumn({
   children: React.ReactNode;
 }) {
   return (
-    // FIX: Replaced margin-hacks with pt-12 so the columns push down naturally.
     <div className="group flex flex-col pt-12">
       <Link
         href={href}

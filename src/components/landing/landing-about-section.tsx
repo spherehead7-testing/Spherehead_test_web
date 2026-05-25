@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { ChevronsDown } from "lucide-react";
 import { motion, MotionValue } from "motion/react";
 import SiteContainer from "@/components/layout/site-container";
@@ -42,6 +43,7 @@ export default function LandingAboutSection({
   labelOpacity,
   isMobile,
 }: Props) {
+  const router = useRouter();
   if (isMobile) {
     return (
       <section className="relative z-20 flex w-full flex-col">
@@ -90,7 +92,11 @@ export default function LandingAboutSection({
               alt="Team member 3"
             />
           </div>
-          <button className="rounded bg-[#1c4ca8] px-10 py-3 body-small !font-medium text-white transition-colors hover:bg-[#0D54CA]">
+          <button
+            type="button"
+            onClick={() => router.push("/about-us")}
+            className="rounded bg-animated-gradient px-10 py-3 body-small text-white"
+          >
             About Us
           </button>
         </div>
@@ -256,8 +262,12 @@ export default function LandingAboutSection({
               />
             </div>
 
-            <button className="group relative flex h-[70px] cursor-pointer items-center justify-center overflow-hidden rounded-md bg-animated-gradient px-10 text-white scale-[0.75] origin-left transition-colors duration-300">
-              <span className="invisible body-large !text-3xl font-medium">
+            <button
+              type="button"
+              onClick={() => router.push("/about-us")}
+              className="group relative flex h-[70px] cursor-pointer items-center justify-center overflow-hidden rounded-md bg-animated-gradient px-10 text-white scale-[0.75] origin-left transition-colors duration-300"
+            >
+              <span className="invisible body-large">
                 About Us
               </span>
               <div className="absolute top-0 left-0 flex w-full flex-col transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-1/2">

@@ -8,6 +8,7 @@ import { ProjectListItemHeader, ProjectDetailView } from "./portfolio-accordion-
 import { projects } from "./data";
 import RotatingDots from "@/components/ui/rotating-dots";
 import Footer from "@/components/layout/footer";
+import { useIsMobile } from "@/hooks/use-is-mobile";
 
 // Durations as constants — single source of truth
 const ENTER_DURATION = 0.8;
@@ -22,9 +23,10 @@ type PortfolioWorkShowcaseSectionProps = {
 export default function WorkShowcaseSection({
   outerScrollContainerRef,
 }: PortfolioWorkShowcaseSectionProps) {
+  const isMobile = useIsMobile();
   const { setScrollContainerRef } = useScrollContainerContext();
   const [isVisible, setIsVisible] = useState(false);
-  const isAnimatingRef = useRef(false); // ← ref instead of state, avoids stale closure
+  const isAnimatingRef = useRef(false);
   const animTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const showcaseRef = useRef<HTMLDivElement>(null);
 
@@ -43,30 +45,39 @@ export default function WorkShowcaseSection({
   const touchStartY = useRef(0);
 
   // Track visibility in a ref so scroll handlers always see current value
-  // without needing to be re-registered on every isVisible change
   const isVisibleRef = useRef(false);
   useEffect(() => {
     isVisibleRef.current = isVisible;
   }, [isVisible]);
 
+  // ── Handle Mobile Initial Mount ──
   useEffect(() => {
-    if (isVisible) {
+    if (isMobile) {
+      setIsVisible(true);
+      setActiveIndex(0); // First item expanded by default on mobile
+      setIntroHidden(false);
+    }
+  }, [isMobile]);
+
+  useEffect(() => {
+    if (isVisible && !isMobile) {
       setActiveIndex(-1);
       setIntroHidden(false);
       stepLockRef.current = false;
       wheelAcc.current = 0;
     }
-  }, [isVisible]);
+  }, [isVisible, isMobile]);
 
   useEffect(() => {
-    if (!isVisible) return;
+    if (isMobile || !isVisible) return;
     setScrollContainerRef(showcaseRef);
     return () => {
       setScrollContainerRef(outerScrollContainerRef);
     };
-  }, [isVisible, outerScrollContainerRef, setScrollContainerRef]);
+  }, [isVisible, outerScrollContainerRef, setScrollContainerRef, isMobile]);
 
   useEffect(() => {
+    if (isMobile) return;
     const container = showcaseRef.current;
     if (!container) return;
 
@@ -89,7 +100,7 @@ export default function WorkShowcaseSection({
     return () => {
       if (snapTimer.current) clearTimeout(snapTimer.current);
     };
-  }, [activeIndex]);
+  }, [activeIndex, isMobile]);
 
   const acquireLock = useCallback(() => {
     if (stepLockRef.current) return false;
@@ -119,7 +130,6 @@ export default function WorkShowcaseSection({
     isAnimatingRef.current = true;
     setIsVisible(true);
     if (animTimerRef.current) clearTimeout(animTimerRef.current);
-    // Lock for the full enter duration + a small buffer
     animTimerRef.current = setTimeout(() => {
       isAnimatingRef.current = false;
     }, ENTER_MS + 100);
@@ -130,16 +140,16 @@ export default function WorkShowcaseSection({
     isAnimatingRef.current = true;
     setIsVisible(false);
     if (animTimerRef.current) clearTimeout(animTimerRef.current);
-    // Lock for the full exit duration + buffer so exit anim completes
     animTimerRef.current = setTimeout(() => {
       isAnimatingRef.current = false;
     }, EXIT_MS + 100);
   }, []);
 
-  // ── Inner panel wheel handler ──────────────────────────────
+  // ── Inner panel wheel handler (Desktop) ──────────────────────────────
   useEffect(() => {
+    if (isMobile || !isVisible) return;
     const container = showcaseRef.current;
-    if (!container || !isVisible) return;
+    if (!container) return;
 
     const handleWheel = (e: WheelEvent) => {
       const lastIndex = projects.length - 1;
@@ -188,12 +198,13 @@ export default function WorkShowcaseSection({
 
     container.addEventListener("wheel", handleWheel, { passive: false });
     return () => container.removeEventListener("wheel", handleWheel);
-  }, [isVisible, activeIndex, stepDown, stepUp, acquireLock]);
+  }, [isVisible, activeIndex, stepDown, stepUp, acquireLock, isMobile]);
 
-  // ── Touch inner panel ──────────────────────────────────────
+  // ── Touch inner panel (Desktop/Tablet) ──────────────────────────────────────
   useEffect(() => {
+    if (isMobile || !isVisible) return;
     const container = showcaseRef.current;
-    if (!container || !isVisible) return;
+    if (!container) return;
 
     const handleTouchStart = (e: TouchEvent) => {
       touchStartY.current = e.touches[0].clientY;
@@ -238,12 +249,13 @@ export default function WorkShowcaseSection({
       container.removeEventListener("touchstart", handleTouchStart);
       container.removeEventListener("touchend", handleTouchEnd);
     };
-  }, [isVisible, activeIndex, stepDown, stepUp, acquireLock]);
+  }, [isVisible, activeIndex, stepDown, stepUp, acquireLock, isMobile]);
 
-  // ── Momentum Clamp ──────────────────
+  // ── Momentum Clamp (Desktop) ──────────────────
   useEffect(() => {
+    if (isMobile || !isVisible) return;
     const container = showcaseRef.current;
-    if (!container || !isVisible) return;
+    if (!container) return;
 
     const handleScroll = () => {
       if (stepLockRef.current) return;
@@ -259,9 +271,9 @@ export default function WorkShowcaseSection({
 
     container.addEventListener("scroll", handleScroll, { passive: true });
     return () => container.removeEventListener("scroll", handleScroll);
-  }, [isVisible, activeIndex]);
+  }, [isVisible, activeIndex, isMobile]);
 
-  // ── Global reveal wheel handler ────────────────────────────
+  // ── Global reveal wheel handler (Desktop) ────────────────────────────
   const revealThreshold = 200;
   const touchRevealThreshold = 100;
   const revealWheelAcc = useRef(0);
@@ -270,11 +282,12 @@ export default function WorkShowcaseSection({
   const revealScrollStartTop = useRef(0);
 
   useEffect(() => {
+    if (isMobile) return;
     const handleWheel = (e: WheelEvent) => {
-      if (isAnimatingRef.current) return; // ← ref read, always fresh
+      if (isAnimatingRef.current) return;
       const scrollTop = showcaseRef.current?.scrollTop ?? 0;
       const isScrollingUp = e.deltaY < 0;
-      const visible = isVisibleRef.current; // ← ref read
+      const visible = isVisibleRef.current;
 
       if (revealWheelAcc.current === 0) {
         revealScrollStartTop.current = scrollTop;
@@ -299,8 +312,6 @@ export default function WorkShowcaseSection({
         return;
       }
 
-      // Fix: only allow hide when panel is scrolled all the way to top
-      // AND the accumulation started from the top (not mid-scroll)
       if (
         visible &&
         scrollTop <= 2 &&
@@ -317,10 +328,10 @@ export default function WorkShowcaseSection({
       window.removeEventListener("wheel", handleWheel);
       if (revealWheelTimer.current) clearTimeout(revealWheelTimer.current);
     };
-  // No dependency on isVisible/isAnimating — refs handle freshness
-  }, [showShowcase, hideShowcase]);
+  }, [showShowcase, hideShowcase, isMobile]);
 
   useEffect(() => {
+    if (isMobile) return;
     const handleTouchStart = (e: TouchEvent) => {
       revealTouchStartY.current = e.touches[0].clientY;
       revealScrollStartTop.current = showcaseRef.current?.scrollTop ?? 0;
@@ -360,10 +371,60 @@ export default function WorkShowcaseSection({
       window.removeEventListener("touchstart", handleTouchStart);
       window.removeEventListener("touchmove", handleTouchMove);
     };
-  }, [showShowcase, hideShowcase]);
+  }, [showShowcase, hideShowcase, isMobile]);
 
   const introHtml = `With a dedicated team focused on creativity and excellence, Spherehead crafts <span class="text-[#0D54CA]">impactful projects</span> that showcase innovation, drive results, and bring <span class="text-[#0D54CA]">ideas to life</span> for our clients.`;
 
+  // ── PURE STATIC MOBILE RENDER ──
+  if (isMobile) {
+    return (
+      <section id="work-showcase" className="relative w-full z-20 bg-white rounded-t-[8px] shadow-none flex flex-col min-h-screen">
+        <div className="w-full flex flex-col flex-1 shrink-0">
+          
+          <section className="relative w-full py-8 text-[#01030B] shrink-0">
+            <SiteContainer className="flex flex-col gap-10 relative z-10">
+              <div className="w-full flex flex-col gap-3 max-w-4xl">
+                <h2 className="heading-2 !text-[#01030B] max-w-5xl leading-tight pt-8 pb-8" dangerouslySetInnerHTML={{ __html: introHtml }} />
+              </div>
+            </SiteContainer>
+          </section>
+
+          <section className="relative w-full flex-1 flex flex-col text-[#01030B]">
+            {projects.map((project, index) => {
+              const isExpanded = activeIndex === index;
+              return (
+                <div key={project.id} className="w-full">
+                  
+                  {/* Hides the Header Bar when expanded */}
+                  {!isExpanded && (
+                    <ProjectListItemHeader
+                      project={project}
+                      isExpanded={isExpanded}
+                      onClick={() => setActiveIndex((prev) => (prev === index ? -1 : index))}
+                    />
+                  )}
+                  
+                  {/* Shows the Content Block when expanded */}
+                  {isExpanded && (
+                    <div className="w-full transition-all duration-300 pt-10 pb-10" style={{ backgroundColor: project.bgColor }}>
+                      <ProjectDetailView project={project} onClose={() => setActiveIndex(-1)} />
+                    </div>
+                  )}
+                  
+                </div>
+              );
+            })}
+          </section>
+        </div>
+
+        <div className="w-full bg-animated-gradient mt-auto shrink-0 flex-grow flex flex-col">
+          <Footer />
+        </div>
+      </section>
+    );
+  }
+
+  // ── DESKTOP ANIMATED RENDER ──
   return (
     <>
       <div id="work-showcase" className="absolute top-0" />
@@ -390,7 +451,7 @@ export default function WorkShowcaseSection({
               ref={showcaseRef}
               className="w-full h-full overflow-y-auto scroll-smooth flex flex-col [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
             >
-              <div className="w-full min-h-full flex flex-col bg-white shrink-0">
+              <div className="w-full min-h-full flex flex-col shrink-0">
                 {/* Intro */}
                 <AnimatePresence mode="sync">
                   {!introHidden && (
@@ -436,21 +497,44 @@ export default function WorkShowcaseSection({
                           }}
                           className="w-full"
                         >
-                          <ProjectListItemHeader
-                            project={project}
-                            isExpanded={isExpanded}
-                            onClick={() => {
-                              if (!acquireLock()) return;
-                              setActiveIndex((prev) =>
-                                prev === index ? -1 : index
-                              );
-                            }}
-                          />
+                          
+                          {/* Hides Header smoothly on Desktop when expanded */}
+                          <AnimatePresence initial={false}>
+                            {!isExpanded && (
+                              <motion.div
+                                key="header"
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{
+                                  height: "auto",
+                                  opacity: 1,
+                                  transition: { height: { duration: 0.4, ease: "easeInOut" } }
+                                }}
+                                exit={{
+                                  height: 0,
+                                  opacity: 0,
+                                  transition: { height: { duration: 0.4, ease: "easeInOut" } }
+                                }}
+                                className="overflow-hidden"
+                              >
+                                <ProjectListItemHeader
+                                  project={project}
+                                  isExpanded={isExpanded}
+                                  onClick={() => {
+                                    if (!acquireLock()) return;
+                                    setActiveIndex((prev) =>
+                                      prev === index ? -1 : index
+                                    );
+                                  }}
+                                />
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
 
-                          <AnimatePresence mode="sync" initial={false}>
+                          {/* Shows Content smoothly on Desktop when expanded */}
+                          <AnimatePresence initial={false}>
                             {isExpanded && (
                               <motion.div
-                                key={project.id}
+                                key="details"
                                 layout
                                 initial={{ height: 0 }}
                                 animate={{
@@ -478,6 +562,7 @@ export default function WorkShowcaseSection({
                               </motion.div>
                             )}
                           </AnimatePresence>
+
                         </div>
                       );
                     })}
@@ -486,7 +571,7 @@ export default function WorkShowcaseSection({
               </div>
 
               {/* Footer */}
-             <div className="w-full bg-animated-gradient mt-auto shrink-0">
+              <div className="w-full bg-animated-gradient mt-auto shrink-0">
                 <Footer />
               </div>
             </div>

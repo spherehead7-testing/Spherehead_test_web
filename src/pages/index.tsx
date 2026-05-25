@@ -110,7 +110,7 @@ export default function HomePage() {
     };
   }, [scrollContainerRef, setScrollContainerRef]);
 
-  const isMobile = useIsMobile(1024);
+  const isMobile = useIsMobile();
 
   const { viewportWidth, viewportHeight, containerWidth } =
     useViewportSizes(measureRef);

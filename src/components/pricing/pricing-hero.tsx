@@ -38,8 +38,12 @@ export default function PricingHero() {
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
             className="flex justify-start lg:justify-end lg:pb-9"
           >
-            <CyclicButton onClick={() => console.log("Start Project Clicked!")}>
-              Start a Project
+            <CyclicButton
+              onClick={() => {
+                window.location.href = "/pricing#contact-pricing";
+              }}
+            >
+              <span>Start a Project</span>
             </CyclicButton>
           </motion.div>
         </div>

@@ -10,7 +10,7 @@ export default function ServicesHeroSection({ data }: { data: ServiceCategoryDat
 
   if (isMobile) {
     return (
-      <section className="relative w-full min-h-[70svh] flex flex-col overflow-hidden bg-animated-gradient">
+      <section className="relative w-full min-h-[80svh] flex flex-col overflow-hidden bg-animated-gradient">
         <SiteContainer className="relative z-10 flex flex-col h-full flex-grow justify-end pb-12 pt-24">
           <div className="w-full flex flex-col mt-auto">
             <div className="w-full h-[1px] bg-white/20 mb-8 origin-left" />
@@ -18,11 +18,12 @@ export default function ServicesHeroSection({ data }: { data: ServiceCategoryDat
               {data.title}
             </h1>
             <div className="flex items-start justify-start mt-6">
-              <CyclicButton onClick={() => {
-                const footer = document.getElementById("site-footer");
-                if (footer) footer.scrollIntoView({ behavior: "smooth" });
-              }}>
-                Start A Project
+              <CyclicButton
+                onClick={() => {
+                  window.location.href = "/pricing#contact-pricing";
+                }}
+              >
+                <span>Start a Project</span>
               </CyclicButton>
             </div>
           </div>
@@ -64,11 +65,14 @@ export default function ServicesHeroSection({ data }: { data: ServiceCategoryDat
               transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
               className="flex items-start justify-start lg:justify-end lg:self-end mt-2 lg:mt-0 lg:pb-2"
             >
-              <CyclicButton onClick={() => {
-                  const footer = document.getElementById("site-footer");
-                  if (footer) footer.scrollIntoView({ behavior: "smooth" });
-                }}>
-                Start a Project
+              <CyclicButton
+                onClick={() => {
+                  document
+                    .getElementById("contact-pricing")
+                    ?.scrollIntoView({ behavior: "smooth", block: "start" });
+                }}
+              >
+                <span className="body-medium">Start a Project</span>
               </CyclicButton>
             </motion.div>
           </div>

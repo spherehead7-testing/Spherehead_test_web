@@ -2,42 +2,42 @@ import Head from "next/head";
 import { useRef, useEffect } from "react";
 import { motion, useScroll, useTransform, useSpring, useMotionValue } from "motion/react";
 import { useScrollContainerContext } from "@/context/ScrollContainerContext";
-import BlogsHero from "@/components/blogs/blogs-hero";
-import BlogsContent from "@/components/blogs/blogs-content";
+import NewsHero from "@/components/news/news-hero";
+import NewsContent from "@/components/news/news-content";
 import Footer from "@/components/layout/footer";
 import { useIsMobile } from "@/hooks/use-is-mobile";
 
-export default function BlogsPage() {
+export default function NewsPage() {
     const isMobile = useIsMobile();
 
     if (isMobile) {
-        return <BlogsMobile />;
+        return <NewsMobile />;
     }
 
-    return <BlogsDesktop />;
+    return <NewsDesktop />;
 }
 
 /** Mobile: flat layout, no scroll hijacking */
-function BlogsMobile() {
+function NewsMobile() {
     const dummyProgress = useMotionValue(0);
 
     return (
         <>
             <Head>
-                <title>Blogs | Spherehead Technologies</title>
+                <title>News | Spherehead Technologies</title>
                 <meta
                     name="description"
-                    content="Technology, innovation, design, and tech stack insights from Spherehead Technologies."
+                    content="Latest news and updates from Spherehead Technologies."
                 />
             </Head>
 
-            <main className="w-full overflow-x-hidden text-[#01030B] bg-transparent">
-                <section className="relative">
-                    <BlogsHero progress={dummyProgress} />
+            <main className="w-full overflow-x-hidden text-[#01030B] bg-white">
+                <section className="relative bg-animated-gradient">
+                    <NewsHero progress={dummyProgress} />
                 </section>
 
                 <section className="relative z-20 bg-white">
-                    <BlogsContent />
+                    <NewsContent />
                 </section>
 
                 <section className="relative z-20 bg-animated-gradient">
@@ -49,7 +49,7 @@ function BlogsMobile() {
 }
 
 /** Desktop: scroll-linked animations with sticky hero */
-function BlogsDesktop() {
+function NewsDesktop() {
     const containerRef = useRef<HTMLElement | null>(null);
     const scrollContainerRef = useRef<HTMLDivElement | null>(null);
     const { setScrollContainerRef } = useScrollContainerContext();
@@ -76,16 +76,16 @@ function BlogsDesktop() {
     return (
         <>
             <Head>
-                <title>Blogs | Spherehead Technologies</title>
+                <title>News | Spherehead Technologies</title>
                 <meta
                     name="description"
-                    content="Technology, innovation, design, and tech stack insights from Spherehead Technologies."
+                    content="Latest news and updates from Spherehead Technologies."
                 />
             </Head>
 
             <main
                 ref={scrollContainerRef}
-                className="w-full h-screen overflow-y-auto overflow-x-hidden text-[#01030B] bg-transparent services-list-scroll"
+                className="w-full h-screen overflow-y-auto overflow-x-hidden text-[#01030B] bg-animated-gradient services-list-scroll"
             >
                 <section
                     ref={containerRef}
@@ -94,12 +94,12 @@ function BlogsDesktop() {
                     <motion.div
                         className="sticky top-0 h-screen w-full overflow-hidden"
                     >
-                        <BlogsHero progress={smoothProgress} />
+                        <NewsHero progress={smoothProgress} />
                     </motion.div>
                 </section>
 
                 <section className="relative z-20 -mt-[50vh] rounded-t-[40px] bg-white shadow-[0_-40px_100px_rgba(0,0,0,0.25)] sm:rounded-t-[60px]">
-                    <BlogsContent />
+                    <NewsContent />
                 </section>
 
                 <section className="relative z-20 bg-animated-gradient">
