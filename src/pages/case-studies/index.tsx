@@ -35,24 +35,45 @@ export default function CaseStudies() {
 
     const savedScrollPos = sessionStorage.getItem("caseStudiesScrollPos");
 
+    // Robust scroll restoration for desktop
     if (savedScrollPos) {
-      scrollContainer.scrollTop = parseInt(savedScrollPos, 10);
+      const parsedPos = parseInt(savedScrollPos, 10);
+      
+      // 1. Attempt immediate restore
+      scrollContainer.scrollTop = parsedPos;
+
+      // 2. Queue a forced restore after the main thread clears (helps with React hydration)
+      setTimeout(() => {
+        if (scrollContainer) scrollContainer.scrollTop = parsedPos;
+      }, 0);
+
+      // 3. Queue a final restore after Framer Motion layouts stabilize
+      setTimeout(() => {
+        if (scrollContainer) scrollContainer.scrollTop = parsedPos;
+      }, 100);
     }
 
     requestAnimationFrame(() => {
       setIsSmooth(true);
     });
 
+    // Use a timeout to avoid saving an incorrect '0' position during the initial render/layout shift
+    let scrollTimeout: NodeJS.Timeout;
+    
     const handleScroll = () => {
-      sessionStorage.setItem(
-        "caseStudiesScrollPos",
-        scrollContainer.scrollTop.toString(),
-      );
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        sessionStorage.setItem(
+          "caseStudiesScrollPos",
+          scrollContainer.scrollTop.toString(),
+        );
+      }, 50); // Debounce the save slightly to ensure accuracy
     };
 
     scrollContainer.addEventListener("scroll", handleScroll, { passive: true });
 
     return () => {
+      clearTimeout(scrollTimeout);
       scrollContainer.removeEventListener("scroll", handleScroll);
     };
   }, [isMobile]);
