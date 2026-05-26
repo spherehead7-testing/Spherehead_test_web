@@ -109,7 +109,7 @@ export default function CaseStudies() {
 
           {/* SCROLL ZONE 2: THE CURTAIN CARD SLIDER */}
           <div
-            className={`relative z-10 w-full bg-white lg:rounded-2xl min-h-screen ${
+            className={`relative z-10 w-full bg-white lg:rounded-b-xl overflow-hidden min-h-screen ${
               isMobile
                 ? "rounded-t-[8px] rounded-b-[8px] -mt-16 pt-4" 
                 : "-mt-32 lg:-mt-48 lg:snap-start"
