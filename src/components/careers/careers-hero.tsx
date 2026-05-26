@@ -11,10 +11,10 @@ export default function CareersHero() {
 
   if (isMobile) {
     return (
-      <section className="w-full min-h-[80svh] flex flex-col overflow-hidden bg-animated-gradient">
+      <section className="w-full min-h-[88svh] flex flex-col overflow-hidden bg-animated-gradient">
         <SiteContainer className="flex flex-col flex-grow justify-end pb-12 pt-24">
           <div className="flex flex-col mt-auto">
-            <div className="w-full h-[1px] bg-white/20 mb-8" />
+            <div className="w-full h-[1px] bg-white mb-8" />
             <h1 className="inner-hero">
               Careers at<br />Spherehead
             </h1>

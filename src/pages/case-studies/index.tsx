@@ -88,9 +88,9 @@ export default function CaseStudies() {
 
           {/* SCROLL ZONE 2: THE CURTAIN CARD SLIDER */}
           <div
-            className={`relative z-10 w-full bg-white lg:rounded-t-2xl min-h-screen ${
+            className={`relative z-10 w-full bg-white lg:rounded-2xl min-h-screen ${
               isMobile
-                ? "rounded-t-[6px] -mt-16 pt-4"
+                ? "rounded-t-[8px] rounded-b-[8px] -mt-16 pt-4" 
                 : "-mt-32 lg:-mt-48 lg:snap-start"
             }`}
           >
@@ -98,7 +98,7 @@ export default function CaseStudies() {
               <CaseStudiesSlider />
             </section>
 
-            <section className={isMobile ? "w-full" : "snap-start w-full flex items-center min-h-screen lg:min-h-screen"}>
+            <section className={isMobile ? "w-full pb-8" : "snap-start w-full flex items-center min-h-screen lg:min-h-screen"}>
               <div className="w-full min-w-0">
                 <div className="lg:-mt-0">
                   <ClientsSection />

@@ -7,31 +7,36 @@ import SiteContainer from "@/components/layout/site-container";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { useIsMobile } from "@/hooks/use-is-mobile";
 
-
 const CASE_STUDIES = [
   {
     id: "01",
     category: "E-commerce",
     title: "Transforming E-Commerce: From Concept to 300% Growth",
-    description: "Our client, a growing retail business, needed a comprehensive e-commerce platform to expand their online presence and increase sales. The existing system was outdated, slow, and couldn't handle the growing customer base.",
+    description:
+      "Our client, a growing retail business, needed a comprehensive e-commerce platform to expand their online presence and increase sales. The existing system was outdated, slow, and couldn't handle the growing customer base.",
     slug: "transforming-ecommerce",
-    image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1777463708/agri_1_jdpgi6.png",
+    image:
+      "https://res.cloudinary.com/dku9in8sb/image/upload/v1777463708/agri_1_jdpgi6.png",
   },
   {
     id: "02",
     category: "Healthcare",
     title: "Revolutionizing Patient Care Through Integrated Healthcare Systems",
-    description: "A leading healthcare provider approached us to modernize their patient management system. They needed a comprehensive solution to streamline operations, improve patient care, and ensure compliance with healthcare regulations.",
+    description:
+      "A leading healthcare provider approached us to modernize their patient management system. They needed a comprehensive solution to streamline operations, improve patient care, and ensure compliance with healthcare regulations.",
     slug: "revolutionizing-healthcare",
-    image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1777462586/medi_2_cnmr4x.png",
+    image:
+      "https://res.cloudinary.com/dku9in8sb/image/upload/v1777462586/medi_2_cnmr4x.png",
   },
   {
     id: "03",
     category: "Supply Chain",
     title: "Transforming Factory Operations Through IoT and Analytics",
-    description: "A leading manufacturing company approached us to implement IoT solutions across their production facilities. They needed to modernize their manufacturing processes, improve efficiency, and reduce operational costs through smart technology integration.",
+    description:
+      "A leading manufacturing company approached us to implement IoT solutions across their production facilities. They needed to modernize their manufacturing processes, improve efficiency, and reduce operational costs through smart technology integration.",
     slug: "transforming-factory-operations",
-    image: "https://res.cloudinary.com/dku9in8sb/image/upload/v1777462587/fac_operations_3_k9enyp.png",
+    image:
+      "https://res.cloudinary.com/dku9in8sb/image/upload/v1777462587/fac_operations_3_k9enyp.png",
   },
 ];
 
@@ -48,34 +53,56 @@ export default function CaseStudiesSlider() {
     }
     return [0, 0];
   });
-  const isMobile = useIsMobile();
 
-  // Save changes to storage whenever page changes
+  const isMobile = useIsMobile();
+  
+  // Animation lock
+  const isAnimating = React.useRef(false);
+
+  // NEW: Mount state to prevent initial hydration fly-in animations
+  const [isMounted, setIsMounted] = useState(false);
+
   useEffect(() => {
+    setIsMounted(true);
     sessionStorage.setItem("spherehead_slider_page", page.toString());
   }, [page]);
-
-  // Keeping the slider responsive behavior based on `useIsMobile()`.
-  useEffect(() => {
-    // no-op
-  }, []);
 
   const totalSlides = CASE_STUDIES.length;
   const currentIndex = ((page % totalSlides) + totalSlides) % totalSlides;
   const nextIndex = (currentIndex + 1) % totalSlides;
-  
+
   const activeStudy = CASE_STUDIES[currentIndex];
   const nextStudy = CASE_STUDIES[nextIndex];
 
-  const handleNext = useCallback(() => setPage([page + 1, 1]), [page]);
-  const handlePrev = useCallback(() => setPage([page - 1, -1]), [page]);
+  const handleNext = useCallback(() => {
+    if (isAnimating.current) return;
+    isAnimating.current = true;
+    
+    setPage((prev) => [prev[0] + 1, 1]);
+    
+    setTimeout(() => {
+      isAnimating.current = false;
+    }, DURATION * 1000);
+  }, []);
+
+  const handlePrev = useCallback(() => {
+    if (isAnimating.current) return;
+    isAnimating.current = true;
+    
+    setPage((prev) => [prev[0] - 1, -1]);
+    
+    setTimeout(() => {
+      isAnimating.current = false;
+    }, DURATION * 1000);
+  }, []);
 
   const mainVariants = {
     enter: (direction: number) => ({
-      x: direction > 0 ? "0%" : "-100%", 
+      x: isMobile ? "0%" : (direction > 0 ? "0%" : "-100%"),
       opacity: direction > 0 ? 1 : 0,
-      scale: direction > 0 ? 1 : 0.8,
+      scale: isMobile ? 1 : (direction > 0 ? 1 : 0.8),
       filter: "grayscale(100%)",
+      zIndex: 10,
     }),
     center: {
       zIndex: 20,
@@ -86,65 +113,58 @@ export default function CaseStudiesSlider() {
     },
     exit: (direction: number) => ({
       zIndex: 0,
-      x: direction > 0 ? "-100%" : "0%", 
-      opacity: 0, 
-      scale: direction > 0 ? 0.7 : 1, 
+      x: isMobile ? "0%" : (direction > 0 ? "-100%" : "0%"),
+      opacity: direction > 0 ? 0 : 1,
+      scale: isMobile ? 1 : (direction > 0 ? 0.8 : 1),
       filter: "grayscale(100%)",
-    })
+    }),
   };
 
   const previewVariants = {
     enter: (direction: number) => ({
-      x: direction > 0 ? "100%" : "0%", 
+      x: isMobile ? "0%" : (direction > 0 ? "100%" : "0%"),
       opacity: direction > 0 ? 0 : 1,
-      filter: direction > 0 ? "grayscale(100%)" : "grayscale(0%)"
+      filter: direction > 0 ? "grayscale(100%)" : "grayscale(0%)",
     }),
     center: {
       zIndex: 10,
       x: "0%",
       opacity: 1,
-      filter: "grayscale(100%)"
+      filter: "grayscale(100%)",
     },
     exit: (direction: number) => ({
       zIndex: 0,
-      x: direction > 0 ? "0%" : "100%", 
-      opacity: 0, 
-      filter: "grayscale(100%)"
-    })
+      x: isMobile ? "0%" : (direction > 0 ? "0%" : "100%"),
+      opacity: direction > 0 ? 1 : 0,
+      filter: "grayscale(100%)",
+    }),
   };
 
   return (
     <SiteContainer>
       <LayoutGroup>
-        <div className="w-full flex flex-col gap-8 pb-12" suppressHydrationWarning>
+        <div
+          className="w-full flex flex-col gap-8 pb-12"
+          suppressHydrationWarning
+        >
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
-
             {/* === LEFT: MAIN SLOT === */}
             <div className="lg:col-span-8 flex flex-col">
-              <div className="w-full h-[250px] sm:h-[300px] lg:h-[380px] relative overflow-visible rounded-sm">
-                {isMobile ? (
-                  <Link
-                    href={`/case-studies/${activeStudy.slug}`}
-                    className="w-full h-full block cursor-pointer absolute inset-0"
-                  >
-                    <img
-                      src={activeStudy.image}
-                      alt={activeStudy.title}
-                      className="w-full h-full object-cover"
-                    />
-                  </Link>
-                ) : (
+              {/* IMAGE ROW */}
+              <div className="flex flex-row gap-4 items-start lg:items-stretch lg:block w-full relative overflow-visible">
+                {/* 1. Main Image - 80% width on mobile */}
+                <div className="w-[80%] lg:w-full h-[220px] sm:h-[280px] lg:h-[380px] relative overflow-visible rounded-sm shrink-0 z-10">
                   <AnimatePresence custom={direction} initial={false}>
                     <motion.div
                       key={`main-slide-${page}`}
-                      layout={isMobile ? false : true}
-                      layoutId={isMobile ? undefined : `shared-slide-${currentIndex}`}
+                      layout={isMounted} // Disabled on initial mount
+                      layoutId={isMounted ? `shared-slide-${currentIndex}` : undefined} // Disabled on initial mount
                       custom={direction}
-                      variants={isMobile ? undefined : mainVariants}
-                      initial={isMobile ? { x: "0%", opacity: 1, scale: 1, filter: "grayscale(0%)" } : "enter"}
-                      animate={isMobile ? { x: "0%", opacity: 1, scale: 1, filter: "grayscale(0%)" } : "center"}
-                      exit={isMobile ? { display: "none" } : "exit"}
-                      transition={isMobile ? { duration: 0 } : { duration: DURATION, ease: EASE }}
+                      variants={mainVariants}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
+                      transition={{ duration: DURATION, ease: EASE }}
                       className="absolute inset-0 w-full h-full overflow-hidden rounded-sm shadow-sm"
                     >
                       <Link
@@ -159,84 +179,128 @@ export default function CaseStudiesSlider() {
                       </Link>
                     </motion.div>
                   </AnimatePresence>
-                )}
+                </div>
+
+                {/* 2. Mobile Preview Image */}
+                <div
+                  className="w-[25%] lg:hidden relative h-[160px] sm:h-[210px] overflow-hidden rounded-sm shrink-0 cursor-pointer z-0"
+                  onClick={handleNext}
+                >
+                  <AnimatePresence custom={direction} initial={false}>
+                    <motion.div
+                      key={`preview-slide-mob-${page}`}
+                      layoutId={isMounted && isMobile ? `shared-slide-${nextIndex}` : undefined}
+                      custom={direction}
+                      variants={previewVariants}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
+                      transition={{ duration: DURATION, ease: EASE }}
+                      className="absolute inset-0 w-full h-full"
+                    >
+                      <img
+                        src={nextStudy.image}
+                        alt="Next Case Study"
+                        className="w-full h-full object-cover"
+                      />
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
               </div>
 
               {/* DISSOLVING CATEGORY AND STATIC CONTROLS */}
               <div className="flex items-center w-full mt-6 mb-4 relative min-h-[32px]">
                 <div className="flex items-center h-full">
-                  {isMobile ? (
-                    <span className="px-3 py-1 bg-blue-50 text-[#0D54CA] text-xs font-semibold uppercase tracking-wider rounded-sm whitespace-nowrap">
+                  <AnimatePresence mode="wait" initial={false}>
+                    <motion.span
+                      key={`category-${page}`}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.4 }}
+                      className="px-3 py-1 bg-blue-50 text-[#0D54CA] text-xs font-semibold uppercase tracking-wider rounded-sm whitespace-nowrap"
+                    >
                       {activeStudy.category}
-                    </span>
-                  ) : (
-                    <AnimatePresence mode="wait" initial={false}>
-                      <motion.span
-                        key={`category-${page}`}
-                        initial={{ opacity: isMobile ? 1 : 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={isMobile ? { display: "none" } : { opacity: 0 }}
-                        transition={{ duration: isMobile ? 0 : 0.4 }}
-                        className="px-3 py-1 bg-blue-50 text-[#0D54CA] text-xs font-semibold uppercase tracking-wider rounded-sm whitespace-nowrap"
-                      >
-                        {activeStudy.category}
-                      </motion.span>
-                    </AnimatePresence>
-                  )}
+                    </motion.span>
+                  </AnimatePresence>
                 </div>
 
                 <div className="flex items-center gap-8 text-gray-500 relative z-10 ml-auto">
-                  <button onClick={handlePrev} className="hover:text-[#0D54CA] transition-colors p-1">
+                  <button
+                    onClick={handlePrev}
+                    className="hover:text-[#0D54CA] transition-colors p-1"
+                  >
                     <FiChevronLeft className="w-6 h-6" />
                   </button>
-                  <button onClick={handleNext} className="hover:text-[#0D54CA] transition-colors p-1">
+                  <button
+                    onClick={handleNext}
+                    className="hover:text-[#0D54CA] transition-colors p-1"
+                  >
                     <FiChevronRight className="w-6 h-6" />
                   </button>
                 </div>
               </div>
 
-              {/* DISSOLVING TEXT CONTENT & STATIC BUTTON */}
-              <div className="max-w-xl lg:max-w-2xl min-h-[160px] flex flex-col justify-between">
-                <div>
-                  {isMobile ? (
-                    <>
-                      <h2 className="heading-2 !text-[#01030B] mb-6">
-                        {activeStudy.title}
-                      </h2>
-                      <p className="body-small text-[#8A8B8F] mb-8 hidden lg:block">
-                        {activeStudy.description}
-                      </p>
-                    </>
-                  ) : (
+              {/* TEXT BLOCK & MOBILE COUNTER ROW */}
+              <div className="flex flex-row gap-4 items-stretch w-full min-h-[160px]">
+                {/* Text Content */}
+                <div className="w-[80%] shrink-0 lg:w-full flex flex-col justify-between pr-2 lg:pr-0">
+                  <div>
                     <AnimatePresence mode="wait" initial={false}>
                       <motion.div
                         key={`text-${page}`}
-                        initial={{ opacity: isMobile ? 1 : 0 }}
+                        initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        exit={isMobile ? { display: "none" } : { opacity: 0 }}
-                        transition={{ duration: isMobile ? 0 : 0.4 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.4 }}
                       >
-                        <h2 className="heading-2 !text-[#01030B] mb-6">{activeStudy.title}</h2>
+                        <h2 className="heading-2 !text-[#01030B] mb-6">
+                          {activeStudy.title}
+                        </h2>
                         <p className="body-small text-[#8A8B8F] mb-8 hidden lg:block">
                           {activeStudy.description}
                         </p>
                       </motion.div>
                     </AnimatePresence>
-                  )}
+                  </div>
+
+                  <div className="pt-2">
+                    <Link
+                      href={`/case-studies/${activeStudy.slug}`}
+                      className="body-extra-small border border-[#0D54CA] !text-[#0D54CA] px-6 py-2.5 transition-colors w-fit block text-center"
+                    >
+                      View Full Case Study
+                    </Link>
+                  </div>
                 </div>
 
-                <div className="pt-2">
-                  <Link
-                    href={`/case-studies/${activeStudy.slug}`}
-                    className="body-extra-small border border-[#0D54CA] !text-[#0D54CA] px-6 py-2.5 transition-colors w-fit block text-center"
-                  >
-                    View Full Case Study
-                  </Link>
+                {/* MOBILE ONLY: Counter */}
+                <div className="flex-1 lg:hidden flex flex-col justify-start pt-1">
+                  <div className="flex items-baseline relative w-fit">
+                    <span className="text-4xl font-light leading-none invisible pointer-events-none">
+                      00
+                    </span>
+                    <AnimatePresence mode="wait" initial={false}>
+                      <motion.span
+                        key={`counter-mob-${page}`}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.4, ease: "easeInOut" }}
+                        className="absolute left-0 bottom-0 text-4xl font-light text-[#0D54CA] leading-none"
+                      >
+                        {activeStudy.id}
+                      </motion.span>
+                    </AnimatePresence>
+                    <span className="text-base font-light text-gray-400 ml-1">
+                      /0{totalSlides}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* === RIGHT: PREVIEW SLOT (Desktop Only) === */}
+            {/* === RIGHT: PREVIEW SLOT & COUNTER (Desktop Only) === */}
             <div className="hidden lg:flex lg:col-span-4 flex-col h-full">
               <div className="w-full lg:h-[380px] relative overflow-visible">
                 <motion.div
@@ -248,13 +312,15 @@ export default function CaseStudiesSlider() {
                 >
                   <div
                     className="h-[300px] cursor-pointer relative overflow-visible"
-                    style={{ width: "calc(100% + 6rem + max(0px, (100vw - 1400px) / 2))" }}
+                    style={{
+                      width: "calc(100% + 6rem + max(0px, (100vw - 1400px) / 2))",
+                    }}
                     onClick={handleNext}
                   >
                     <AnimatePresence custom={direction} initial={false}>
                       <motion.div
                         key={`preview-slide-${page}`}
-                        layoutId={`shared-slide-${nextIndex}`}
+                        layoutId={isMounted && !isMobile ? `shared-slide-${nextIndex}` : undefined}
                         custom={direction}
                         variants={previewVariants}
                         initial="enter"
@@ -274,7 +340,7 @@ export default function CaseStudiesSlider() {
                 </motion.div>
               </div>
 
-              {/* === STATIC COUNTER === */}
+              {/* DESKTOP ONLY: Static Counter */}
               <div className="mt-12 border-l border-gray-200 flex-grow relative min-h-[90px]">
                 <div className="pl-12 flex items-baseline gap-1 pt-2">
                   <div className="relative flex items-baseline">
