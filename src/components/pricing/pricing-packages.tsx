@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { ArrowDownRight } from "lucide-react";
 import SiteContainer from "@/components/layout/site-container";
 import RotatingDots from "@/components/ui/rotating-dots";
@@ -98,16 +101,34 @@ const pricingPackages: PricingPackage[] = [
   },
 ];
 
-function PackageIcon({ type, color }: { type: PricingPackage["icon"]; color: string }) {
+function PackageIcon({
+  type,
+  color,
+}: {
+  type: PricingPackage["icon"];
+  color: string;
+}) {
   const base = "relative h-11 w-11 shrink-0";
 
   if (type === "iot") {
     return (
       <span className={base} aria-hidden="true">
-        <span className="absolute left-0 top-0 h-4 w-4" style={{ backgroundColor: color }} />
-        <span className="absolute right-0 top-0 h-4 w-4" style={{ backgroundColor: color }} />
-        <span className="absolute left-0 bottom-0 h-4 w-4" style={{ backgroundColor: color }} />
-        <span className="absolute bottom-0 right-0 h-4 w-4" style={{ backgroundColor: color }} />
+        <span
+          className="absolute left-0 top-0 h-4 w-4"
+          style={{ backgroundColor: color }}
+        />
+        <span
+          className="absolute right-0 top-0 h-4 w-4"
+          style={{ backgroundColor: color }}
+        />
+        <span
+          className="absolute left-0 bottom-0 h-4 w-4"
+          style={{ backgroundColor: color }}
+        />
+        <span
+          className="absolute bottom-0 right-0 h-4 w-4"
+          style={{ backgroundColor: color }}
+        />
         <span className="absolute left-[14px] top-[14px] h-[13px] w-[13px] bg-white" />
       </span>
     );
@@ -183,62 +204,94 @@ function PackageIcon({ type, color }: { type: PricingPackage["icon"]; color: str
 }
 
 function PricingCard({ item }: { item: PricingPackage }) {
-  return (
-    <article className="grid h-[280px] rounded-[3px] bg-white px-6 py-6 text-[#01030B] lg:grid-cols-[minmax(0,1fr)_1px_minmax(0,1fr)]">
+  const [expanded, setExpanded] = useState(false);
 
-      <div className="flex flex-col">
+  return (
+    <article
+      className="
+        overflow-hidden rounded-[3px] bg-white text-[#01030B]
+        lg:grid lg:h-[280px]
+        lg:grid-cols-[minmax(0,1fr)_1px_minmax(0,1fr)]
+      "
+    >
+      {/* TOP SECTION */}
+      <div className="flex flex-col px-5 py-5 lg:px-6 lg:py-6">
+        {/* HEADER */}
         <div className="flex items-center gap-4">
           <PackageIcon type={item.icon} color={item.accent} />
-          <h3 className="heading-3">
-            {item.title}
-          </h3>
+
+          <h3 className="heading-3 !text-[#01030B]">{item.title}</h3>
         </div>
 
-        <div className="heading-3 mt-auto pt-6">
-          <p className="text-[36px] lg:text-[42px] font-[400] leading-none text-[#155ACD]">
+        {/* CONTENT */}
+        <div className="mt-12 lg:mt-auto lg:pt-6">
+          <p className="text-[36px] font-[400] leading-none text-[#155ACD] lg:text-[42px]">
             {item.price}
           </p>
 
-          <p className="body-extra-small mt-2 max-w-[500px] text-[#8b8b8b]">
+          <p className="body-extra-small mt-4 max-w-[500px] text-[#8b8b8b]">
             {item.description}
           </p>
 
-          <button className="body-small mt-3 bg-[#155ACD] px-6 py-2 text-white hover:bg-[#0A2F76]">
-            Let&apos;s Talk
-          </button>
+          {/* ACTIONS */}
+          <div className="mt-6 flex items-end justify-between">
+            <button className="body-small bg-[#155ACD] px-6 py-2 text-white transition-colors hover:bg-[#0A2F76]">
+              Let&apos;s Talk
+            </button>
+
+            {/* MOBILE ONLY */}
+            <button
+              onClick={() => setExpanded(!expanded)}
+              className="body-small text-[#155ACD] underline lg:hidden"
+            >
+              {expanded ? "Hide Details" : "More Details"}
+            </button>
+          </div>
         </div>
       </div>
 
-      <div className="hidden lg:block w-px bg-[#E3E3E3]" />
+      {/* DESKTOP DIVIDER */}
+      <div className="hidden w-px bg-[#E3E3E3] lg:block" />
 
-      <div className="pt-4 lg:pl-6">
-        <p className="body-medium">
-          What&apos;s Included
-        </p>
+      {/* MOBILE DIVIDER */}
+      <div className="h-px bg-[#E3E3E3] lg:hidden" />
 
-        <ul className="mt-4 space-y-3">
-          {item.included.map((feature) => (
-            <li key={feature} className="body-extra-small flex gap-2">
-              <ArrowDownRight className="h-4 w-4 text-[#155ACD]" />
-              <span>{feature}</span>
-            </li>
-          ))}
-        </ul>
+      {/* INCLUDED SECTION */}
+      <div
+        className={`
+          overflow-hidden transition-all duration-300
+          lg:block lg:overflow-visible
+          ${expanded ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0 lg:max-h-none lg:opacity-100"}
+        `}
+      >
+        <div className="px-5 py-5 lg:pl-6 lg:pr-6 lg:pt-6">
+          <p className="body-medium !text-[#01030B]">What&apos;s Included</p>
+
+          <ul className="mt-5 space-y-5">
+            {item.included.map((feature) => (
+              <li
+                key={feature}
+                className="body-extra-small flex items-start gap-3 !text-[#01030B]"
+              >
+                <ArrowDownRight className="mt-[2px] h-4 w-4 shrink-0 text-[#155ACD]" />
+
+                <span>{feature}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </article>
   );
 }
 
-
 export default function PricingPackages() {
   return (
     <section className="text-white">
-      <SiteContainer className="pt-28 pb-28 lg:pt-32 lg:pb-32">
+      <SiteContainer className="pt-15 pb-28 lg:pt-32 lg:pb-32">
         <div className="flex items-center gap-3">
           <RotatingDots />
-          <p className="body-small">
-            Product Pricing
-          </p>
+          <p className="body-small">Product Pricing</p>
         </div>
 
         <h2 className="heading-2 mt-7 max-w-[940px]">
@@ -247,7 +300,7 @@ export default function PricingPackages() {
           Transparent and Flexible Pricing
         </h2>
 
-        <div className="mt-24 space-y-12 lg:mt-28">
+        <div className="mt-14 space-y-6 lg:mt-2 lg:space-y-12">
           {pricingPackages.map((item) => (
             <PricingCard key={item.title} item={item} />
           ))}

@@ -88,9 +88,7 @@ function StatItem({
       viewport={{ once: true }}
       className="text-left"
     >
-      <p className="body-large text-gray-500 mb-4">
-        {label}
-      </p>
+      <p className="body-large text-gray-500 mb-4">{label}</p>
 
       <h3 className="about-stat-number !text-[#0B2A5B] text-transparent">
         <span ref={displayRef}>0</span>
