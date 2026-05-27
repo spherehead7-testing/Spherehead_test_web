@@ -2,12 +2,14 @@
 
 import { motion, useInView, useMotionValue, useSpring } from "framer-motion";
 import { useEffect, useRef } from "react";
+import SiteContainer from "../layout/site-container";
 
 export default function AboutIntro() {
   return (
-    <section className="bg-white pt-12 pb-8 lg:pb-10">
-      <div className="mx-auto px-6 lg:px-20">
-        {/* TEXT */}
+    <section className="bg-white pt-20 lg:pt-12 pb-8 lg:pb-10 overflow-hidden">
+      
+      {/* INNER CONTENT */}
+      <SiteContainer>
         <p className="heading-2 max-w-[1100px] !text-[#01030B]">
           <span className="!text-[#0D54CA]">Spherehead</span> is dedicated to
           delivering innovative digital solutions that help businesses grow and
@@ -22,23 +24,25 @@ export default function AboutIntro() {
         </p>
 
         {/* STATS */}
-
         <div className="mt-10 grid grid-cols-2 gap-x-8 gap-y-8 md:grid-cols-4 lg:mt-12 lg:gap-x-32">
           <StatItem label="Projects Delivered" value={30} suffix="+" />
           <StatItem label="Client Satisfaction" value={98} suffix="%" />
           <StatItem label="Countries Served" value={16} suffix="+" />
           <StatItem label="Projects Delivered" value={100} suffix="+" />
         </div>
+      </SiteContainer>
 
-        {/* MAP */}
-        <div className="relative -mb-10 mt-8 lg:-mb-40 lg:mt-0">
+    {/* MAP CONTENT - Full width on mobile, standard margins on desktop */}
+      <div className="mx-auto w-full max-w-[1440px] lg:px-10 xl:px-4">
+        <div className="relative w-full flex justify-center -mb-10 mt-8 lg:-mb-40 lg:mt-12">
           <img
             src="https://res.cloudinary.com/dku9in8sb/image/upload/v1776759937/About-Us-World-Map_whcynj.webp"
             alt="world map"
-            className="w-full"
+            className="w-full scale-110 lg:scale-100 object-cover"
           />
         </div>
       </div>
+
     </section>
   );
 }

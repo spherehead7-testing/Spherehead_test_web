@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import RotatingDots from "@/components/ui/rotating-dots";
+import SiteContainer from "../layout/site-container";
 
 const values = [
   {
@@ -38,11 +39,70 @@ const values = [
 export default function CoreValues() {
   const [active, setActive] = useState(0);
 
+  // =========================
+  // REFS
+  // =========================
   const sectionRef = useRef<HTMLElement | null>(null);
   const isAnimating = useRef(false);
 
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
+
+  // Indicator tracking for perfect centering under text
+  const mobileTabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const desktopTabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  
+  const [mobileIndicator, setMobileIndicator] = useState({ width: 0, left: 0 });
+  const [desktopIndicator, setDesktopIndicator] = useState({ width: 0, left: 0 });
+
+  const mobileTabsScrollRef = useRef<HTMLDivElement | null>(null);
+
+  // =========================
+  // MOBILE SWIPE LOGIC
+  // =========================
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.changedTouches[0].screenX;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    touchEndX.current = e.changedTouches[0].screenX;
+    const deltaX = touchStartX.current - touchEndX.current;
+
+    // Minimum swipe distance
+    if (Math.abs(deltaX) < 50) return;
+
+    if (deltaX > 0 && active < values.length - 1) {
+      setActive((prev) => prev + 1); // Swipe left
+    }
+
+    if (deltaX < 0 && active > 0) {
+      setActive((prev) => prev - 1); // Swipe right
+    }
+  };
+
+  // =========================
+  // DYNAMIC ALIGNMENT EFFECT
+  // =========================
+  useEffect(() => {
+    // 1. Align Mobile Progress Bar & Auto-Scroll Tabs
+    if (mobileTabsScrollRef.current && mobileTabRefs.current[active]) {
+      const tab = mobileTabRefs.current[active];
+      const container = mobileTabsScrollRef.current;
+      
+      const centerPos = tab.offsetLeft + tab.offsetWidth / 2;
+      setMobileIndicator({ width: centerPos, left: centerPos });
+
+      const scrollTarget = centerPos - container.clientWidth / 2;
+      container.scrollTo({ left: scrollTarget, behavior: "smooth" });
+    }
+
+    // 2. Align Desktop Progress Bar
+    if (desktopTabRefs.current[active]) {
+      const tab = desktopTabRefs.current[active];
+      const centerPos = tab.offsetLeft + tab.offsetWidth / 2;
+      setDesktopIndicator({ width: centerPos, left: centerPos });
+    }
+  }, [active]);
 
   // =========================
   // DESKTOP WHEEL ANIMATION
@@ -54,13 +114,11 @@ export default function CoreValues() {
     if (!section) return;
 
     let accumulated = 0;
-
     const THRESHOLD = 60;
     const COOLDOWN_MS = 850;
 
     const handleWheel = (e: WheelEvent) => {
       const rect = section.getBoundingClientRect();
-
       const sectionInView = rect.top <= 0 && rect.bottom >= window.innerHeight;
 
       if (!sectionInView) {
@@ -82,170 +140,143 @@ export default function CoreValues() {
       }
 
       const direction = accumulated > 0 ? "down" : "up";
-
       accumulated = 0;
 
       if (direction === "down" && active < values.length - 1) {
         e.preventDefault();
-
         isAnimating.current = true;
-
         setActive((prev) => prev + 1);
-
-        setTimeout(() => {
-          isAnimating.current = false;
-        }, COOLDOWN_MS);
+        setTimeout(() => (isAnimating.current = false), COOLDOWN_MS);
       } else if (direction === "up" && active > 0) {
         e.preventDefault();
-
         isAnimating.current = true;
-
         setActive((prev) => prev - 1);
-
-        setTimeout(() => {
-          isAnimating.current = false;
-        }, COOLDOWN_MS);
+        setTimeout(() => (isAnimating.current = false), COOLDOWN_MS);
       }
     };
 
     window.addEventListener("wheel", handleWheel, { passive: false });
-
-    return () => {
-      window.removeEventListener("wheel", handleWheel);
-    };
+    return () => window.removeEventListener("wheel", handleWheel);
   }, [active]);
-
-  // =========================
-  // MOBILE SWIPE
-  // =========================
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.changedTouches[0].screenX;
-  };
-
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    touchEndX.current = e.changedTouches[0].screenX;
-
-    const deltaX = touchStartX.current - touchEndX.current;
-
-    if (Math.abs(deltaX) < 50) return;
-
-    // swipe left
-    if (deltaX > 0 && active < values.length - 1) {
-      setActive((prev) => prev + 1);
-    }
-
-    // swipe right
-    if (deltaX < 0 && active > 0) {
-      setActive((prev) => prev - 1);
-    }
-  };
 
   return (
     <>
       {/* ========================= */}
       {/* MOBILE */}
       {/* ========================= */}
-      <section className="overflow-hidden bg-[#0A2C82] text-white md:hidden">
-        <div
-          className="px-6 py-14"
+      {/* REMOVED h-[400vh] to allow natural tight padding */}
+      <section className="relative bg-[#0A2C82] text-white md:hidden py-16">
+        <div 
+          className="flex w-full flex-col overflow-hidden"
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
-          {/* HEADER */}
-          <div className="mb-10">
-            <div className="mb-3 flex items-center gap-3">
-              <RotatingDots />
-              <span className="body-small">Our Core Values</span>
-            </div>
+          
+          <SiteContainer className="flex flex-col">
+            {/* HEADER */}
+            <div className="mb-6">
+              <div className="mb-3 flex items-center gap-3">
+                <RotatingDots />
+                <span className="body-small">Our Core Values</span>
+              </div>
 
-            <h2 className="heading-2 max-w-[320px]">
-              Driving Excellence through Strong Values and Purpose
-            </h2>
+              <h2 className="heading-2 max-w-[320px]">
+                Driving Excellence through Strong Values and Purpose
+              </h2>
+            </div>
+            
+            {/* TOP LINE */}
+            <div className="h-[1px] w-full shrink-0 bg-white/30" />
+          </SiteContainer>
+
+          {/* DYNAMIC SCROLLING TABS & PROGRESS */}
+          <div 
+            ref={mobileTabsScrollRef}
+            className="w-full overflow-x-auto shrink-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] touch-pan-x"
+          >
+            <div className="relative flex min-w-max flex-col pb-2 px-6 lg:px-8">
+              
+              {/* Tabs */}
+              <div className="body-small flex gap-10 py-5 whitespace-nowrap">
+                {values.map((item, i) => (
+                  <button
+                    key={i}
+                    ref={(el) => { mobileTabRefs.current[i] = el; }}
+                    onClick={() => setActive(i)}
+                    className={`transition-opacity duration-300 ${
+                      active === i ? "opacity-100" : "opacity-50"
+                    }`}
+                  >
+                    {item.title}
+                  </button>
+                ))}
+              </div>
+
+              {/* Progress Container */}
+              <div className="relative h-4 w-full mt-2">
+                <div className="absolute top-1/2 left-0 right-0 h-[2px] -translate-y-1/2 bg-white/20" />
+                
+                <motion.div
+                  className="absolute top-1/2 left-0 h-[2px] -translate-y-1/2 bg-white"
+                  animate={{ width: mobileIndicator.width }}
+                  transition={{ duration: 0.35, ease: "easeOut" }}
+                />
+
+                <motion.div
+                  className="absolute top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white"
+                  animate={{ left: mobileIndicator.left }}
+                  transition={{ duration: 0.35, ease: "easeOut" }}
+                />
+              </div>
+            </div>
           </div>
 
-          {/* TOP LINE */}
-          <div className="h-px w-full bg-white/30" />
-
-          {/* TABS */}
-          <div className="overflow-x-auto">
-            <div className="body-small flex min-w-max gap-10 py-5 whitespace-nowrap">
+          {/* HORIZONTAL SLIDING CONTENT */}
+          <div className="w-full overflow-hidden pt-4">
+            <motion.div
+              className="flex w-full"
+              animate={{ x: `-${active * 100}%` }}
+              transition={{ type: "tween", ease: "easeInOut", duration: 0.4 }}
+            >
               {values.map((item, i) => (
-                <button
-                  key={i}
-                  onClick={() => setActive(i)}
-                  className={`transition-opacity duration-300 ${
-                    active === i ? "opacity-100" : "opacity-50"
-                  }`}
-                >
-                  {item.title}
-                </button>
+                <div key={i} className="min-w-full flex-shrink-0 flex flex-col">
+                  <SiteContainer className="flex flex-col">
+                    
+                    <div className="mb-5 overflow-hidden flex justify-center">
+                      <img
+                        src={item.image}
+                        alt={item.title}
+                        draggable="false"
+                        className="w-full object-cover max-h-[25vh] pointer-events-none"
+                      />
+                    </div>
+
+                    <div>
+                      <p className="body-small max-w-[320px] text-white/95">
+                        {item.description}
+                      </p>
+                    </div>
+
+                  </SiteContainer>
+                </div>
               ))}
-            </div>
-          </div>
-
-          {/* PROGRESS */}
-          <div className="relative h-[2px] w-full bg-white/20">
-            <motion.div
-              className="absolute left-0 top-0 h-full bg-white"
-              animate={{
-                width: `${((active + 1) / values.length) * 100}%`,
-              }}
-              transition={{
-                duration: 0.35,
-              }}
-            />
-
-            <motion.div
-              className="absolute top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white"
-              animate={{
-                left: `${((active + 1) / values.length) * 100}%`,
-              }}
-              transition={{
-                duration: 0.35,
-              }}
-            />
-          </div>
-
-          {/* CONTENT */}
-          <div className="pt-10">
-            <motion.div
-              key={values[active].image}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.35 }}
-              className="mb-6 overflow-hidden"
-            >
-              <img
-                src={values[active].image}
-                alt={values[active].title}
-                className="w-full object-cover"
-              />
-            </motion.div>
-
-            <motion.div
-              key={values[active].title}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.35 }}
-            >
-              <p className="body-small max-w-[320px] text-white/95">
-                {values[active].description}
-              </p>
             </motion.div>
           </div>
+
         </div>
       </section>
 
       {/* ========================= */}
-      {/* DESKTOP */}
+      {/* DESKTOP*/}
       {/* ========================= */}
       <section
         ref={sectionRef}
         className="relative hidden h-[300vh] text-white md:block"
       >
         <div className="sticky top-0 flex h-screen w-full flex-col overflow-hidden py-12">
+          
           {/* HEADER */}
-          <div className="mx-auto w-full max-w-[1400px] px-6 lg:px-20">
+          <SiteContainer>
             <div className="mb-10">
               <div className="mb-2 flex items-center gap-3">
                 <RotatingDots />
@@ -256,18 +287,20 @@ export default function CoreValues() {
                 Driving Excellence through Strong Values and Purpose
               </h2>
             </div>
-          </div>
+          </SiteContainer>
 
           {/* LINE */}
-          <div className="h-[2px] w-full bg-white/30" />
+          <div className="h-[1px] w-full bg-white/30" />
 
-          {/* TABS */}
+          {/* DYNAMIC TABS & PROGRESS (DESKTOP) */}
           <div className="w-full">
-            <div className="w-full px-6 lg:px-20">
-              <div className="body-medium flex justify-between py-5">
+            <SiteContainer className="relative">
+              
+              <div className="body-medium flex justify-between py-6">
                 {values.map((item, i) => (
                   <button
                     key={i}
+                    ref={(el) => { desktopTabRefs.current[i] = el; }}
                     onClick={() => setActive(i)}
                     className={`transition-opacity duration-300 ${
                       active === i
@@ -279,42 +312,35 @@ export default function CoreValues() {
                   </button>
                 ))}
               </div>
-            </div>
 
-            {/* PROGRESS */}
-            <div className="relative h-[3px] w-full bg-white/25">
-              <motion.div
-                className="absolute left-0 top-0 h-full bg-white"
-                animate={{
-                  width: `${active * 25 + 12.5}%`,
-                }}
-                transition={{
-                  duration: 0.45,
-                  ease: "easeInOut",
-                }}
-              />
+              {/* Progress Container */}
+              <div className="absolute bottom-0 left-4 right-4 h-4">
+                <div className="absolute top-1/2 left-0 right-0 h-[2px] -translate-y-1/2 bg-white/20" />
+                
+                <motion.div
+                  className="absolute top-1/2 left-0 h-[2px] -translate-y-1/2 bg-white"
+                  animate={{ width: desktopIndicator.width }}
+                  transition={{ duration: 0.4, ease: "easeOut" }}
+                />
 
-              <motion.div
-                className="absolute top-1/2 z-10 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white"
-                animate={{
-                  left: `${active * 25 + 12.5}%`,
-                }}
-                transition={{
-                  duration: 0.45,
-                  ease: "easeInOut",
-                }}
-              />
-            </div>
+                <motion.div
+                  className="absolute top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white"
+                  animate={{ left: desktopIndicator.left }}
+                  transition={{ duration: 0.4, ease: "easeOut" }}
+                />
+              </div>
+
+            </SiteContainer>
           </div>
 
           {/* CONTENT */}
-          <div className="mx-auto flex w-full max-w-[1440px] flex-1 items-center px-6 lg:px-20">
-            <div className="grid w-full items-center gap-16 lg:grid-cols-2">
+          <SiteContainer className="flex flex-1 items-center">
+            <div className="grid w-full items-center gap-16 lg:grid-cols-2 mt-12">
               {/* IMAGE */}
               <motion.div
                 key={values[active].image}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
                 className="max-w-[480px] overflow-hidden"
               >
@@ -328,8 +354,8 @@ export default function CoreValues() {
               {/* TEXT */}
               <motion.div
                 key={values[active].title}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
               >
                 <h3 className="body-large mb-6">{values[active].title}</h3>
@@ -339,7 +365,8 @@ export default function CoreValues() {
                 </p>
               </motion.div>
             </div>
-          </div>
+          </SiteContainer>
+
         </div>
       </section>
     </>
