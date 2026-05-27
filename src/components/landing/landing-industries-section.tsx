@@ -4,9 +4,9 @@ import LandingIndustryCarousel from "./landing-industry-carousel";
 
 export default function LandingIndustriesSection() {
     return (
-        <div className="relative lg:absolute inset-x-0 lg:top-[107vh] z-[4] pointer-events-auto bg-white pb-[60px] pt-16 lg:bg-transparent lg:pt-0">
+        <div className="relative inset-x-0 z-[4] bg-white pt-16 pointer-events-auto lg:absolute lg:top-[107vh] lg:min-h-screen lg:pt-0">
             <SiteContainer>
-                <div className="px-6 lg:px-10">
+                <div>
                     <div className="mb-5 flex items-center gap-5">
                         <RotatingDots variant="light" />
                         <p className="body-small !text-[#01030B] !tracking-[1.2px]">
@@ -21,7 +21,7 @@ export default function LandingIndustriesSection() {
                             for Sustainable Growth
                         </h2>
 
-                        <p className="body-small max-w-[460px] !text-[#01030B] lg:pt-24 ">
+                        <p className="body-small max-w-[460px] !text-[#01030B] lg:mt-20">
                             Delivering tailored digital solutions across a wide
                             range of industries, we help businesses of all kinds
                             innovate, adapt, and grow enabling them to stay
@@ -29,7 +29,10 @@ export default function LandingIndustriesSection() {
                             landscape.
                         </p>
                     </div>
-                    <LandingIndustryCarousel />
+                    <div className="lg:mt-30">
+                        <LandingIndustryCarousel />
+                    </div>
+
                 </div>
             </SiteContainer>
         </div>

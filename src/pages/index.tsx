@@ -262,9 +262,6 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* The Blue Bar Separator */}
-          <div className="w-full h-16 bg-animated-gradient" />
-
           {/* White container for Testimonials */}
           <div className="relative z-30 w-full bg-white">
             <TestimonialSection />
@@ -350,7 +347,7 @@ export default function HomePage() {
             ref={testimonialAreaRef}
             className="sticky top-0 h-[100vh] w-full bg-white flex flex-col justify-center overflow-hidden"
           >
-            <TestimonialSection />
+            <TestimonialSection compactDesktop />
           </div>
 
           <div
