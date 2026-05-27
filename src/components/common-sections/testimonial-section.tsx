@@ -226,7 +226,7 @@ export default function TestimonialSection({
             draggable={false}
           />
         </div>
-        <div className="absolute top-0 right-0 z-10 flex h-10 w-10 items-center justify-center !bg-[#0D54CA]">
+        <div className="absolute top-0 right-0 z-10 flex h-10 w-10 items-center justify-center rounded !bg-[#0D54CA]">
           <Quote className="h-5 w-5 fill-white text-white" />
         </div>
       </div>
@@ -261,7 +261,7 @@ export default function TestimonialSection({
             draggable={false}
           />
         </div>
-        <div className="absolute top-0 right-0 z-10 flex h-8 w-8 items-center justify-center !bg-[#0D54CA]">
+        <div className="absolute top-0 right-0 z-10 flex h-8 w-8 items-center justify-center rounded !bg-[#0D54CA]">
           <Quote className="h-4 w-4 fill-white text-white" />
         </div>
       </div>
