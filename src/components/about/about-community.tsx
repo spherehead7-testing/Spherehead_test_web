@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   motion,
   MotionValue,
@@ -133,11 +133,17 @@ export default function OutGreaterCommunity() {
   const sectionRef = useRef<HTMLElement | null>(null);
   const { scrollContainerRef } = useScrollContainerContext();
 
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    container: scrollContainerRef ?? undefined,
-    offset: ["start start", "end end"],
-  });
+  const [mounted, setMounted] = useState(false);
+
+  const { scrollYProgress } = useScroll(
+    mounted
+      ? {
+          target: sectionRef,
+          container: scrollContainerRef ?? undefined,
+          offset: ["start start", "end end"],
+        }
+      : undefined,
+  );
 
   const smoothProgress = useSpring(scrollYProgress, {
     stiffness: 80,
