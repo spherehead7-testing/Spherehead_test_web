@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import GradientButton from "@/components/ui/gradient-button";
 
 type Props = {
   variant?: "flat" | "card";
@@ -109,27 +110,14 @@ export default function ContactCard({ variant = "flat" }: Props) {
         </div>
       )}
 
-      <button
+      <GradientButton
         type="submit"
         disabled={loading}
-        className="group relative flex w-[150px] h-[60px] cursor-pointer items-center justify-center overflow-hidden rounded-md bg-animated-gradient px-2 text-white scale-[0.60] origin-left transition-colors duration-300 disabled:cursor-not-allowed disabled:opacity-50 mt-2"
+        animated
+        className="mt-2 w-fit self-start disabled:cursor-not-allowed disabled:opacity-50"
       >
-        {/* Invisible placeholder */}
-        <span className="invisible body-medium !text-3xl font-medium">
-          {loading ? "Sending..." : "Submit"}
-        </span>
-
-        {/* Sliding column */}
-        <div className="absolute top-0 left-0 flex w-full flex-col transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-1/2">
-          <span className="flex h-[60px] w-full items-center justify-center body-large !text-3xl font-medium">
-            {loading ? "Sending..." : "Submit"}
-          </span>
-
-          <span className="flex h-[60px] w-full items-center justify-center body-large !text-3xl font-medium">
-            {loading ? "Sending..." : "Submit"}
-          </span>
-        </div>
-      </button>
+        {loading ? "Sending..." : "Submit"}
+      </GradientButton>
     </form>
   );
 }

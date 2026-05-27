@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
+import GradientButton from "@/components/ui/gradient-button";
 import RotatingDots from "@/components/ui/rotating-dots";
 import SiteContainer from "../layout/site-container";
 
@@ -139,16 +139,13 @@ export default function FAQSection() {
 
             {/* CONTACT CTA */}
             <div className="pt-8">
-              <p className="mb-3 body-small text-[#01030B">
+              <p className="mb-3 body-small text-[#01030B]">
                 My question is not here.
               </p>
 
-              <Link
-                href="/contact-us"
-                className="body-medium rounded bg-animated-gradient px-6 py-2 text-white"
-              >
+              <GradientButton href="/contact-us" className="!text-white">
                 Contact Us
-              </Link>
+              </GradientButton>
             </div>
           </div>
         </div>

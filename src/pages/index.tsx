@@ -211,7 +211,7 @@ export default function HomePage() {
 
   const rightPanelHeight = useMotionTemplate`calc(${cutHeight} + 2px)`;
   const leftPanelWidth = useMotionTemplate`calc(100% - ${rightPanelWidth})`;
-  const rightPanelClipPath = useMotionTemplate`inset(0% 0% ${rightPanelCutBottom} 0% round 4px 0px 0px 4px)`;
+  const rightPanelClipPath = useMotionTemplate`inset(0% 0% ${rightPanelCutBottom} 0% round 4px)`;
 
   const scrollToBottom = () => {
     scrollContainerRef.current?.scrollTo({
