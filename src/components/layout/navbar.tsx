@@ -187,10 +187,10 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
         scrolled ? "backdrop-blur-md" : ""
       }`}
     >
-      <div 
+      <div
         className={`absolute inset-0 -z-10 bg-animated-gradient transition-opacity duration-300 ${
           scrolled ? "opacity-100" : "opacity-0"
-        }`} 
+        }`}
       />
 
       <SiteContainer
@@ -201,7 +201,7 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
         {/* LOGO */}
         <Link href="/" className="flex items-center">
           <Image
-            src="https://res.cloudinary.com/dku9in8sb/image/upload/v1778040542/Layer_1_lp72bj.png"
+            src="https://res.cloudinary.com/dku9in8sb/image/upload/v1778040542/Layer_1_lp72bj.webp"
             alt="Spherehead Logo"
             width={140}
             height={40}

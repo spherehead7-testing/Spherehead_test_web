@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import RotatingDots from "@/components/ui/rotating-dots";
+import SiteContainer from "../layout/site-container";
 
 const faqs = [
   {
@@ -79,73 +80,79 @@ export default function FAQSection() {
   return (
     <section
       ref={sectionRef}
-      className="h-[100svh] w-full snap-start overflow-hidden py-8 lg:flex lg:items-center lg:py-10"
+      className="min-h-[100svh] w-full snap-start py-8 lg:h-[100svh] lg:overflow-hidden lg:py-10 lg:flex lg:items-center"
     >
-      <div className="mx-auto grid w-full max-w-6xl items-start gap-10 px-6 lg:grid-cols-2 lg:gap-14">
-        {/* LEFT SIDE */}
-        <div className="text-white">
-          <div className="mb-4 flex items-center gap-2">
-            <RotatingDots />
-            <span className="body-small text-white">FAQ</span>
+      <SiteContainer>
+        <div className="grid items-start gap-10 lg:grid-cols-2 lg:gap-14">
+          {/* LEFT SIDE */}
+          <div className="text-white">
+            <div className="mb-4 flex items-center gap-2">
+              <RotatingDots />
+              <span className="body-small text-white">FAQ</span>
+            </div>
+
+            <h2 className="heading-2 max-w-[520px]">
+              Behind every question lies a commitment to clarity and
+              understanding. Every answer is crafted to guide you and build
+              lasting trust.
+            </h2>
           </div>
 
-          <h2 className="heading-2 max-w-[520px]">
-            Behind every question lies a commitment to clarity and
-            understanding. Every answer is crafted to guide you and build
-            lasting trust.
-          </h2>
-        </div>
+          {/* RIGHT SIDE */}
+          <div className="rounded-md bg-white p-5 md:p-6">
+            {faqs.map((faq, index) => {
+              const isOpen = activeIndex === index;
 
-        {/* RIGHT SIDE */}
-        <div className="rounded-md bg-white p-5 md:p-6">
-          {faqs.map((faq, index) => {
-            const isOpen = activeIndex === index;
-
-            return (
-              <div key={index} className="border-b last:border-none">
-                {/* HEADER */}
-                <button
-                  onClick={() => toggle(index)}
-                  className="flex w-full items-center justify-between gap-6 py-3.5 text-left"
-                >
-                  <span className="body-medium text-black">{faq.question}</span>
-
-                  {/* ICON */}
-                  <span
-                    className="text-[35px] font-light"
-                    style={{ color: faq.color }}
+              return (
+                <div key={index} className="border-b last:border-none">
+                  {/* HEADER */}
+                  <button
+                    onClick={() => toggle(index)}
+                    className="flex w-full items-center justify-between gap-6 py-3.5 lg:py-2 text-left"
                   >
-                    {isOpen ? "−" : "+"}
-                  </span>
-                </button>
+                    <span className="body-medium text-black">
+                      {faq.question}
+                    </span>
 
-                {/* CONTENT */}
-                <div
-                  className={`overflow-hidden transition-all duration-300 ${
-                    isOpen ? "max-h-[140px] pb-3" : "max-h-0"
-                  }`}
-                >
-                  <p className="pr-6 body-small text-[#55565C]">{faq.answer}</p>
+                    {/* ICON */}
+                    <span
+                      className="text-[35px] font-light"
+                      style={{ color: faq.color }}
+                    >
+                      {isOpen ? "−" : "+"}
+                    </span>
+                  </button>
+
+                  {/* CONTENT */}
+                  <div
+                    className={`overflow-hidden transition-all duration-300 ${
+                      isOpen ? "max-h-[140px] pb-3" : "max-h-0"
+                    }`}
+                  >
+                    <p className="pr-6 body-small text-[#55565C]">
+                      {faq.answer}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
 
-          {/* CONTACT CTA */}
-          <div className="pt-8">
-            <p className="mb-3 body-small text-[#01030B">
-              My question is not here.
-            </p>
+            {/* CONTACT CTA */}
+            <div className="pt-8">
+              <p className="mb-3 body-small text-[#01030B">
+                My question is not here.
+              </p>
 
-            <Link
-              href="/contact-us"
-              className="body-medium rounded bg-animated-gradient px-6 py-2 text-white"
-            >
-              Contact Us
-            </Link>
+              <Link
+                href="/contact-us"
+                className="body-medium rounded bg-animated-gradient px-6 py-2 text-white"
+              >
+                Contact Us
+              </Link>
+            </div>
           </div>
         </div>
-      </div>
+      </SiteContainer>
     </section>
   );
 }
