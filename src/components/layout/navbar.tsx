@@ -195,7 +195,7 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
 
       <SiteContainer
         className={`transition-all duration-300 flex items-center justify-between ${
-          scrolled ? "py-4" : "py-8"
+          scrolled ? "py-4" : "py-4"
         }`}
       >
         {/* LOGO */}
@@ -203,8 +203,8 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
           <Image
             src="https://res.cloudinary.com/dku9in8sb/image/upload/v1778040542/Layer_1_lp72bj.png"
             alt="Spherehead Logo"
-            width={180}
-            height={50}
+            width={140}
+            height={40}
             priority
             className="h-auto"
           />
@@ -553,17 +553,28 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
           mobileMenuOpen ? "opacity-100" : "opacity-0"
         }`}
       >
-        {/* Close button */}
-        <div className="flex justify-end px-6 pt-6">
+        {/* Logo + Close button — mirrors navbar layout */}
+        <SiteContainer className="flex items-center justify-between py-4">
+          <Link href="/" onClick={() => setMobileMenuOpen(false)}>
+            <Image
+              src="https://res.cloudinary.com/dku9in8sb/image/upload/v1779707135/Layer_1_black_qbeiy4.png"
+              alt="Spherehead Logo"
+              width={140}
+              height={40}
+              className="h-auto"
+            />
+          </Link>
           <button
             type="button"
-            className="text-[#0D54CA] text-2xl cursor-pointer p-2"
+            className="flex flex-col justify-center items-center gap-[5px] p-2 cursor-pointer"
             onClick={() => setMobileMenuOpen(false)}
             aria-label="Close menu"
           >
-            ✕
+            <span className="block w-6 h-[2px] bg-[#01030B] rotate-45 translate-y-[7px]" />
+            <span className="block w-6 h-[2px] bg-[#01030B] opacity-0" />
+            <span className="block w-6 h-[2px] bg-[#01030B] -rotate-45 -translate-y-[7px]" />
           </button>
-        </div>
+        </SiteContainer>
 
         {/* Nav links */}
         <nav className="flex flex-col px-8 pt-12">
