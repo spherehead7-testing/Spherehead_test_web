@@ -160,7 +160,6 @@ export default function OutGreaterCommunity() {
       </section>
 
       {/* WEB VIEW */}
-      {/* Removed pt-16 (changed to pt-0) to close the gap from the top */}
       <section
         ref={sectionRef}
         className="relative hidden h-[300vh] bg-transparent md:block pt-0"

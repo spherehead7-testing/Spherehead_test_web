@@ -252,7 +252,7 @@ export default function CoreValues() {
                     </div>
 
                     <div>
-                      <p className="body-small max-w-[320px] text-white/95">
+                      <p className="body-small max-w-[320px] text-white">
                         {item.description}
                       </p>
                     </div>
