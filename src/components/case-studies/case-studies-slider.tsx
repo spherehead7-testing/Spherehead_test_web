@@ -44,23 +44,27 @@ const DURATION = 1.5;
 const EASE: [number, number, number, number] = [0.76, 0, 0.24, 1];
 
 export default function CaseStudiesSlider() {
-  const [[page, direction], setPage] = useState(() => {
-    if (typeof window !== "undefined") {
-      const saved = sessionStorage.getItem("spherehead_slider_page");
-      if (saved !== null) {
-        return [parseInt(saved, 10), 0];
-      }
+  const [[page, direction], setPage] = useState([0, 0]);
+  const [isMounted, setIsMounted] = useState(false);
+  // 2. Read from sessionStorage ONLY after hydration is complete
+  useEffect(() => {
+    setIsMounted(true);
+
+    const saved = sessionStorage.getItem("spherehead_slider_page");
+    if (saved !== null) {
+      setPage([parseInt(saved, 10), 0]);
     }
-    return [0, 0];
-  });
+  }, []);
+
+  // 3. Save to sessionStorage only after the initial mount,
+  useEffect(() => {
+    if (isMounted) {
+      sessionStorage.setItem("spherehead_slider_page", page.toString());
+    }
+  }, [page, isMounted]);
 
   const isMobile = useIsMobile();
-  
-  // Animation lock
   const isAnimating = React.useRef(false);
-
-  // NEW: Mount state to prevent initial hydration fly-in animations
-  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
@@ -77,9 +81,9 @@ export default function CaseStudiesSlider() {
   const handleNext = useCallback(() => {
     if (isAnimating.current) return;
     isAnimating.current = true;
-    
+
     setPage((prev) => [prev[0] + 1, 1]);
-    
+
     setTimeout(() => {
       isAnimating.current = false;
     }, DURATION * 1000);
@@ -88,9 +92,9 @@ export default function CaseStudiesSlider() {
   const handlePrev = useCallback(() => {
     if (isAnimating.current) return;
     isAnimating.current = true;
-    
+
     setPage((prev) => [prev[0] - 1, -1]);
-    
+
     setTimeout(() => {
       isAnimating.current = false;
     }, DURATION * 1000);
@@ -98,9 +102,9 @@ export default function CaseStudiesSlider() {
 
   const mainVariants = {
     enter: (direction: number) => ({
-      x: isMobile ? "0%" : (direction > 0 ? "0%" : "-100%"),
+      x: isMobile ? "0%" : direction > 0 ? "0%" : "-100%",
       opacity: direction > 0 ? 1 : 0,
-      scale: isMobile ? 1 : (direction > 0 ? 1 : 0.8),
+      scale: isMobile ? 1 : direction > 0 ? 1 : 0.8,
       filter: "grayscale(100%)",
       zIndex: 10,
     }),
@@ -113,16 +117,16 @@ export default function CaseStudiesSlider() {
     },
     exit: (direction: number) => ({
       zIndex: 0,
-      x: isMobile ? "0%" : (direction > 0 ? "-100%" : "0%"),
+      x: isMobile ? "0%" : direction > 0 ? "-100%" : "0%",
       opacity: direction > 0 ? 0 : 1,
-      scale: isMobile ? 1 : (direction > 0 ? 0.8 : 1),
+      scale: isMobile ? 1 : direction > 0 ? 0.8 : 1,
       filter: "grayscale(100%)",
     }),
   };
 
   const previewVariants = {
     enter: (direction: number) => ({
-      x: isMobile ? "0%" : (direction > 0 ? "100%" : "0%"),
+      x: isMobile ? "0%" : direction > 0 ? "100%" : "0%",
       opacity: direction > 0 ? 0 : 1,
       filter: direction > 0 ? "grayscale(100%)" : "grayscale(0%)",
     }),
@@ -134,7 +138,7 @@ export default function CaseStudiesSlider() {
     },
     exit: (direction: number) => ({
       zIndex: 0,
-      x: isMobile ? "0%" : (direction > 0 ? "0%" : "100%"),
+      x: isMobile ? "0%" : direction > 0 ? "0%" : "100%",
       opacity: direction > 0 ? 1 : 0,
       filter: "grayscale(100%)",
     }),
@@ -158,7 +162,9 @@ export default function CaseStudiesSlider() {
                     <motion.div
                       key={`main-slide-${page}`}
                       layout={isMounted} // Disabled on initial mount
-                      layoutId={isMounted ? `shared-slide-${currentIndex}` : undefined} // Disabled on initial mount
+                      layoutId={
+                        isMounted ? `shared-slide-${currentIndex}` : undefined
+                      } // Disabled on initial mount
                       custom={direction}
                       variants={mainVariants}
                       initial="enter"
@@ -189,7 +195,11 @@ export default function CaseStudiesSlider() {
                   <AnimatePresence custom={direction} initial={false}>
                     <motion.div
                       key={`preview-slide-mob-${page}`}
-                      layoutId={isMounted && isMobile ? `shared-slide-${nextIndex}` : undefined}
+                      layoutId={
+                        isMounted && isMobile
+                          ? `shared-slide-${nextIndex}`
+                          : undefined
+                      }
                       custom={direction}
                       variants={previewVariants}
                       initial="enter"
@@ -313,14 +323,19 @@ export default function CaseStudiesSlider() {
                   <div
                     className="h-[300px] cursor-pointer relative overflow-visible"
                     style={{
-                      width: "calc(100% + 6rem + max(0px, (100vw - 1400px) / 2))",
+                      width:
+                        "calc(100% + 6rem + max(0px, (100vw - 1400px) / 2))",
                     }}
                     onClick={handleNext}
                   >
                     <AnimatePresence custom={direction} initial={false}>
                       <motion.div
                         key={`preview-slide-${page}`}
-                        layoutId={isMounted && !isMobile ? `shared-slide-${nextIndex}` : undefined}
+                        layoutId={
+                          isMounted && !isMobile
+                            ? `shared-slide-${nextIndex}`
+                            : undefined
+                        }
                         custom={direction}
                         variants={previewVariants}
                         initial="enter"
