@@ -6,8 +6,7 @@ import SiteContainer from "../layout/site-container";
 
 export default function AboutIntro() {
   return (
-    <section className="bg-white pt-20 lg:pt-12 pb-8 lg:pb-10 overflow-hidden">
-      
+    <section className="bg-white pt-24 lg:pt-24 pb-8 lg:pb-10 overflow-x-hidden [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
       {/* INNER CONTENT */}
       <SiteContainer>
         <p className="heading-2 max-w-[1100px] !text-[#01030B]">
@@ -24,7 +23,7 @@ export default function AboutIntro() {
         </p>
 
         {/* STATS */}
-        <div className="mt-10 grid grid-cols-2 gap-x-8 gap-y-8 md:grid-cols-4 lg:mt-12 lg:gap-x-32">
+        <div className="mt-10 grid grid-cols-2 gap-x-8 gap-y-8 md:grid-cols-4 md:border-t md:border-gray-200 md:pt-10 lg:mt-12 lg:gap-x-32">
           <StatItem label="Projects Delivered" value={30} suffix="+" />
           <StatItem label="Client Satisfaction" value={98} suffix="%" />
           <StatItem label="Countries Served" value={16} suffix="+" />
@@ -32,9 +31,9 @@ export default function AboutIntro() {
         </div>
       </SiteContainer>
 
-    {/* MAP CONTENT - Full width on mobile, standard margins on desktop */}
+      {/* MAP CONTENT - Full width on mobile, standard margins on desktop */}
       <div className="mx-auto w-full max-w-[1440px] lg:px-10 xl:px-4">
-        <div className="relative w-full flex justify-center -mb-10 mt-8 lg:-mb-40 lg:mt-12">
+        <div className="relative w-full flex justify-center -mb-10 mt-8 lg:-mb-40 lg:mt-0">
           <img
             src="https://res.cloudinary.com/dku9in8sb/image/upload/v1776759937/About-Us-World-Map_whcynj.webp"
             alt="world map"
@@ -42,7 +41,6 @@ export default function AboutIntro() {
           />
         </div>
       </div>
-
     </section>
   );
 }
