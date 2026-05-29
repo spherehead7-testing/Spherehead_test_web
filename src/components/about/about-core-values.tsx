@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useScroll, useMotionValueEvent } from "framer-motion";
+import { useScrollContainerContext } from "@/context/ScrollContainerContext";
 import RotatingDots from "@/components/ui/rotating-dots";
+import SiteContainer from "../layout/site-container";
 
 const values = [
   {
@@ -38,85 +40,29 @@ const values = [
 export default function CoreValues() {
   const [active, setActive] = useState(0);
 
+  // =========================
+  // REFS & CONTEXT
+  // =========================
   const sectionRef = useRef<HTMLElement | null>(null);
-  const isAnimating = useRef(false);
+  const { scrollContainerRef } = useScrollContainerContext();
 
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
 
-  // =========================
-  // DESKTOP WHEEL ANIMATION
-  // =========================
-  useEffect(() => {
-    if (window.innerWidth < 768) return;
+  // Indicator tracking for perfect centering under text
+  const mobileTabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const desktopTabRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
-    const section = sectionRef.current;
-    if (!section) return;
+  const [mobileIndicator, setMobileIndicator] = useState({ width: 0, left: 0 });
+  const [desktopIndicator, setDesktopIndicator] = useState({
+    width: 0,
+    left: 0,
+  });
 
-    let accumulated = 0;
-
-    const THRESHOLD = 60;
-    const COOLDOWN_MS = 850;
-
-    const handleWheel = (e: WheelEvent) => {
-      const rect = section.getBoundingClientRect();
-
-      const sectionInView = rect.top <= 0 && rect.bottom >= window.innerHeight;
-
-      if (!sectionInView) {
-        accumulated = 0;
-        return;
-      }
-
-      if (isAnimating.current) {
-        e.preventDefault();
-        accumulated = 0;
-        return;
-      }
-
-      accumulated += e.deltaY;
-
-      if (Math.abs(accumulated) < THRESHOLD) {
-        e.preventDefault();
-        return;
-      }
-
-      const direction = accumulated > 0 ? "down" : "up";
-
-      accumulated = 0;
-
-      if (direction === "down" && active < values.length - 1) {
-        e.preventDefault();
-
-        isAnimating.current = true;
-
-        setActive((prev) => prev + 1);
-
-        setTimeout(() => {
-          isAnimating.current = false;
-        }, COOLDOWN_MS);
-      } else if (direction === "up" && active > 0) {
-        e.preventDefault();
-
-        isAnimating.current = true;
-
-        setActive((prev) => prev - 1);
-
-        setTimeout(() => {
-          isAnimating.current = false;
-        }, COOLDOWN_MS);
-      }
-    };
-
-    window.addEventListener("wheel", handleWheel, { passive: false });
-
-    return () => {
-      window.removeEventListener("wheel", handleWheel);
-    };
-  }, [active]);
+  const mobileTabsScrollRef = useRef<HTMLDivElement | null>(null);
 
   // =========================
-  // MOBILE SWIPE
+  // MOBILE SWIPE LOGIC
   // =========================
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.changedTouches[0].screenX;
@@ -124,20 +70,92 @@ export default function CoreValues() {
 
   const handleTouchEnd = (e: React.TouchEvent) => {
     touchEndX.current = e.changedTouches[0].screenX;
-
     const deltaX = touchStartX.current - touchEndX.current;
 
+    // Minimum swipe distance
     if (Math.abs(deltaX) < 50) return;
 
-    // swipe left
     if (deltaX > 0 && active < values.length - 1) {
-      setActive((prev) => prev + 1);
+      setActive((prev) => prev + 1); // Swipe left
     }
 
-    // swipe right
     if (deltaX < 0 && active > 0) {
-      setActive((prev) => prev - 1);
+      setActive((prev) => prev - 1); // Swipe right
     }
+  };
+
+  // =========================
+  // DYNAMIC ALIGNMENT EFFECT
+  // =========================
+  useEffect(() => {
+    // 1. Align Mobile Progress Bar & Auto-Scroll Tabs
+    if (mobileTabsScrollRef.current && mobileTabRefs.current[active]) {
+      const tab = mobileTabRefs.current[active];
+      const container = mobileTabsScrollRef.current;
+
+      // FIX: Subtract 24 to account for the parent container's px-6 padding
+      const centerPos = tab.offsetLeft + tab.offsetWidth / 2 - 24;
+
+      setMobileIndicator({ width: centerPos, left: centerPos });
+
+      const scrollTarget = centerPos - container.clientWidth / 2;
+      container.scrollTo({ left: scrollTarget, behavior: "smooth" });
+    }
+
+    // 2. Align Desktop Progress Bar
+    if (desktopTabRefs.current[active]) {
+      const tab = desktopTabRefs.current[active];
+
+      // Desktop does not need the padding offset because of its absolute positioning
+      const centerPos = tab.offsetLeft + tab.offsetWidth / 2;
+      setDesktopIndicator({ width: centerPos, left: centerPos });
+    }
+  }, [active]);
+
+  // =========================
+  // DESKTOP SCROLL SYNC
+  // =========================
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    container: scrollContainerRef ?? undefined,
+    offset: ["start start", "end end"],
+  });
+
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    if (window.innerWidth < 768) return;
+
+    // Map the scroll progress (0 to 1) directly to the active slide
+    if (latest < 0.25) setActive(0);
+    else if (latest < 0.5) setActive(1);
+    else if (latest < 0.75) setActive(2);
+    else setActive(3);
+  });
+
+  // =========================
+  // DESKTOP TAB CLICK HANDLER
+  // =========================
+  const handleDesktopTabClick = (index: number) => {
+    setActive(index);
+    if (window.innerWidth < 768) return;
+
+    if (!sectionRef.current || !scrollContainerRef?.current) return;
+
+    const container = scrollContainerRef.current;
+    const section = sectionRef.current;
+
+    const containerRect = container.getBoundingClientRect();
+    const sectionRect = section.getBoundingClientRect();
+
+    // Calculate exact top position relative to the scroll container
+    const sectionTop =
+      container.scrollTop + (sectionRect.top - containerRect.top);
+    const scrollableHeight = section.offsetHeight - container.clientHeight;
+
+    // Smooth scroll to the relevant percentage of the 300vh height
+    const targetScroll =
+      sectionTop + scrollableHeight * (index / (values.length - 1));
+
+    container.scrollTo({ top: targetScroll, behavior: "smooth" });
   };
 
   return (
@@ -145,107 +163,132 @@ export default function CoreValues() {
       {/* ========================= */}
       {/* MOBILE */}
       {/* ========================= */}
-      <section className="overflow-hidden bg-[#0A2C82] text-white md:hidden">
+      <section className="relative bg-transparent text-white md:hidden py-16">
         <div
-          className="px-6 py-14"
+          className="flex w-full flex-col overflow-hidden"
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
-          {/* HEADER */}
-          <div className="mb-10">
-            <div className="mb-3 flex items-center gap-3">
-              <RotatingDots />
-              <span className="body-small">Our Core Values</span>
-            </div>
+          <SiteContainer className="flex flex-col">
+            {/* HEADER */}
+            <div className="mb-6">
+              <div className="mb-3 flex items-center gap-3">
+                <RotatingDots />
+                <span className="body-small">Our Core Values</span>
+              </div>
 
-            <h2 className="heading-2 max-w-[320px]">
-              Driving Excellence through Strong Values and Purpose
-            </h2>
+              <h2 className="heading-2 max-w-[320px]">
+                Driving Excellence through Strong Values and Purpose
+              </h2>
+            </div>
+          </SiteContainer>
+
+          {/* TOP LINE - Moved OUTSIDE of SiteContainer so it ignores padding */}
+          <div className="h-[1px] w-full shrink-0 bg-white/30" />
+
+          {/* DYNAMIC SCROLLING TABS & PROGRESS */}
+          <div
+            ref={mobileTabsScrollRef}
+            className="w-full overflow-x-auto shrink-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] touch-pan-x"
+          >
+            <div className="relative flex min-w-max flex-col pb-2 px-6 lg:px-8">
+              {/* Tabs */}
+              <div className="body-small flex gap-10 py-5 whitespace-nowrap">
+                {values.map((item, i) => (
+                  <button
+                    key={i}
+                    ref={(el) => {
+                      mobileTabRefs.current[i] = el;
+                    }}
+                    onClick={() => setActive(i)}
+                    className={`transition-opacity duration-300 ${
+                      active === i ? "opacity-100" : "opacity-50"
+                    }`}
+                  >
+                    {item.title}
+                  </button>
+                ))}
+              </div>
+
+              {/* Progress Container (MOBILE) */}
+              <div className="relative h-4 w-full mt-2">
+                {/* Background line stretched to negate the px-6 (24px) padding on both sides */}
+                <div className="absolute top-1/2 -left-6 -right-6 h-[2px] -translate-y-1/2 bg-white/30" />
+
+                {/* Active white line starts at left edge of screen (-left-6) and adds 24px to width */}
+                <motion.div
+                  className="absolute top-1/2 -left-6 h-[2px] -translate-y-1/2 bg-white"
+                  animate={{ width: mobileIndicator.width + 24 }}
+                  transition={{ duration: 0.35, ease: "easeOut" }}
+                />
+
+                {/* Dot tracks perfectly under text */}
+                <motion.div
+                  className="absolute top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white"
+                  animate={{ left: mobileIndicator.left }}
+                  transition={{ duration: 0.35, ease: "easeOut" }}
+                />
+              </div>
+            </div>
           </div>
 
-          {/* TOP LINE */}
-          <div className="h-px w-full bg-white/30" />
-
-          {/* TABS */}
-          <div className="overflow-x-auto">
-            <div className="body-small flex min-w-max gap-10 py-5 whitespace-nowrap">
+          {/* HORIZONTAL SLIDING CONTENT */}
+          <div className="w-full overflow-hidden pt-4">
+            <motion.div
+              className="flex w-full"
+              animate={{ x: `-${active * 100}%` }}
+              transition={{ type: "tween", ease: "easeInOut", duration: 0.4 }}
+            >
               {values.map((item, i) => (
-                <button
-                  key={i}
-                  onClick={() => setActive(i)}
-                  className={`transition-opacity duration-300 ${
-                    active === i ? "opacity-100" : "opacity-50"
-                  }`}
-                >
-                  {item.title}
-                </button>
+                <div key={i} className="min-w-full flex-shrink-0 flex flex-col">
+                  <SiteContainer className="flex flex-col">
+                    <div className="mb-5 overflow-hidden flex justify-center">
+                      <img
+                        src={item.image}
+                        alt={item.title}
+                        draggable="false"
+                        className="w-full object-cover max-h-[25vh] pointer-events-none"
+                      />
+                    </div>
+
+                    <div>
+                      <p className="body-small max-w-[320px] text-white">
+                        {item.description}
+                      </p>
+                    </div>
+                  </SiteContainer>
+                </div>
               ))}
-            </div>
+            </motion.div>
           </div>
 
-          {/* PROGRESS */}
-          <div className="relative h-[2px] w-full bg-white/20">
-            <motion.div
-              className="absolute left-0 top-0 h-full bg-white"
-              animate={{
-                width: `${((active + 1) / values.length) * 100}%`,
-              }}
-              transition={{
-                duration: 0.35,
-              }}
-            />
-
-            <motion.div
-              className="absolute top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white"
-              animate={{
-                left: `${((active + 1) / values.length) * 100}%`,
-              }}
-              transition={{
-                duration: 0.35,
-              }}
-            />
-          </div>
-
-          {/* CONTENT */}
-          <div className="pt-10">
-            <motion.div
-              key={values[active].image}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.35 }}
-              className="mb-6 overflow-hidden"
-            >
-              <img
-                src={values[active].image}
-                alt={values[active].title}
-                className="w-full object-cover"
+          {/* BOTTOM DOT INDICATORS */}
+          <div className="mt-8 flex w-full justify-center items-center gap-2 pb-2">
+            {values.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setActive(i)}
+                aria-label={`Go to slide ${i + 1}`}
+                className={`transition-all duration-300 rounded-full ${
+                  active === i
+                    ? "h-2 w-2 bg-blue-500" // Active dot (blue)
+                    : "h-2 w-2 bg-white" // Inactive dot (white transparent)
+                }`}
               />
-            </motion.div>
-
-            <motion.div
-              key={values[active].title}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.35 }}
-            >
-              <p className="body-small max-w-[320px] text-white/95">
-                {values[active].description}
-              </p>
-            </motion.div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ========================= */}
       {/* DESKTOP */}
-      {/* ========================= */}
       <section
         ref={sectionRef}
         className="relative hidden h-[300vh] text-white md:block"
       >
-        <div className="sticky top-0 flex h-screen w-full flex-col overflow-hidden py-12">
+        {/* Removed mt-8 and reduced pb-16 to pb-4 to pull the next section closer */}
+        <div className="sticky top-0 flex h-screen w-full flex-col overflow-hidden pb-4 pt-18">
           {/* HEADER */}
-          <div className="mx-auto w-full max-w-[1400px] px-6 lg:px-20">
+          <SiteContainer>
             <div className="mb-10">
               <div className="mb-2 flex items-center gap-3">
                 <RotatingDots />
@@ -256,19 +299,22 @@ export default function CoreValues() {
                 Driving Excellence through Strong Values and Purpose
               </h2>
             </div>
-          </div>
+          </SiteContainer>
 
           {/* LINE */}
-          <div className="h-[2px] w-full bg-white/30" />
+          <div className="h-[1px] w-full bg-white/30" />
 
-          {/* TABS */}
+          {/* DYNAMIC TABS & PROGRESS (DESKTOP) */}
           <div className="w-full">
-            <div className="w-full px-6 lg:px-20">
-              <div className="body-medium flex justify-between py-5">
+            <SiteContainer className="relative">
+              <div className="body-medium flex justify-between py-6">
                 {values.map((item, i) => (
                   <button
                     key={i}
-                    onClick={() => setActive(i)}
+                    ref={(el) => {
+                      desktopTabRefs.current[i] = el;
+                    }}
+                    onClick={() => handleDesktopTabClick(i)}
                     className={`transition-opacity duration-300 ${
                       active === i
                         ? "text-white opacity-100"
@@ -279,42 +325,44 @@ export default function CoreValues() {
                   </button>
                 ))}
               </div>
-            </div>
 
-            {/* PROGRESS */}
-            <div className="relative h-[3px] w-full bg-white/25">
-              <motion.div
-                className="absolute left-0 top-0 h-full bg-white"
-                animate={{
-                  width: `${active * 25 + 12.5}%`,
-                }}
-                transition={{
-                  duration: 0.45,
-                  ease: "easeInOut",
-                }}
-              />
+              {/* Progress Container (DESKTOP) */}
+              {/* Changed from left-4 right-4 to left-0 right-0 */}
+              <div className="absolute bottom-0 left-0 right-0 h-4">
+                {/* Faint background line stretching full width of viewport */}
+                <div
+                  className="absolute top-1/2 h-[2px] -translate-y-1/2 bg-white/30"
+                  style={{ width: "100vw", left: "calc(-50vw + 50%)" }}
+                />
 
-              <motion.div
-                className="absolute top-1/2 z-10 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white"
-                animate={{
-                  left: `${active * 25 + 12.5}%`,
-                }}
-                transition={{
-                  duration: 0.45,
-                  ease: "easeInOut",
-                }}
-              />
-            </div>
+                {/* Active progress line stretching from viewport left edge to the dot */}
+                <motion.div
+                  className="absolute top-1/2 h-[2px] -translate-y-1/2 bg-white"
+                  animate={{
+                    width: `calc(50vw - 50% + ${desktopIndicator.width}px)`,
+                  }}
+                  style={{ left: "calc(-50vw + 50%)" }}
+                  transition={{ duration: 0.4, ease: "easeOut" }}
+                />
+
+                {/* The animated dot (stays perfectly aligned with text tabs inside the container) */}
+                <motion.div
+                  className="absolute top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white"
+                  animate={{ left: desktopIndicator.left }}
+                  transition={{ duration: 0.4, ease: "easeOut" }}
+                />
+              </div>
+            </SiteContainer>
           </div>
 
           {/* CONTENT */}
-          <div className="mx-auto flex w-full max-w-[1440px] flex-1 items-center px-6 lg:px-20">
-            <div className="grid w-full items-center gap-16 lg:grid-cols-2">
+          <SiteContainer className="flex flex-1 items-center">
+            <div className="grid w-full items-center gap-16 lg:grid-cols-2 mt-12">
               {/* IMAGE */}
               <motion.div
                 key={values[active].image}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
                 className="max-w-[480px] overflow-hidden"
               >
@@ -328,8 +376,8 @@ export default function CoreValues() {
               {/* TEXT */}
               <motion.div
                 key={values[active].title}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
               >
                 <h3 className="body-large mb-6">{values[active].title}</h3>
@@ -339,7 +387,7 @@ export default function CoreValues() {
                 </p>
               </motion.div>
             </div>
-          </div>
+          </SiteContainer>
         </div>
       </section>
     </>
