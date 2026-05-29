@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import CyclicButton from "@/components/ui/cyclic-button";
 import SiteContainer from "../layout/site-container";
 import { useIsMobile } from "@/hooks/use-is-mobile";
@@ -10,7 +9,7 @@ export default function IndustriesHero() {
 
   if (isMobile) {
     return (
-      <section className="w-full min-h-[80svh] flex flex-col overflow-hidden bg-animated-gradient">
+      <section className="w-full min-h-[88svh] flex flex-col overflow-hidden bg-animated-gradient">
         <SiteContainer className="flex flex-col flex-grow justify-end pb-12 pt-24">
           <div className="flex flex-col mt-auto">
             <div className="w-full h-[1px] bg-white/20 mb-8" />
@@ -19,7 +18,9 @@ export default function IndustriesHero() {
             </h1>
             <div className="mt-6">
               <CyclicButton
-                onClick={() => console.log("Start Project Clicked!")}
+                onClick={() => {
+                  window.location.href = "/pricing#contact-pricing";
+                }}
               >
                 Start A Project
               </CyclicButton>
@@ -54,20 +55,15 @@ export default function IndustriesHero() {
 
             {/* RIGHT CTA */}
             <div className="flex justify-start lg:justify-end items-end">
-              <motion.div
-                initial={{ opacity: 0, x: 40 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.5 }}
-                className="flex items-center gap-4 text-white/90 hover:text-white transition"
-              >
+
                 <CyclicButton
                   onClick={() => {
                     window.location.href = "/pricing#contact-pricing";
                   }}
                 >
-                  <span>Start a Project</span>
+                  Start a Project
                 </CyclicButton>
-              </motion.div>
+
             </div>
           </div>
         </div>
