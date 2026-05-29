@@ -23,7 +23,7 @@ type ButtonProps = BaseProps & {
 type GradientButtonProps = LinkProps | ButtonProps;
 
 const baseClassName =
-  "body-medium rounded bg-animated-gradient px-6 py-2 text-white";
+  "body-medium rounded-[3px] bg-animated-gradient px-[22px] py-[12px] lg:px-[25px] lg:py-[8px] text-white";
 
 function content(children: ReactNode, animated?: boolean) {
   if (!animated) return children;

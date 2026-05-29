@@ -138,11 +138,12 @@ export default function FAQSection() {
             })}
 
             {/* CONTACT CTA */}
-            <div className="pt-8">
-              <p className="mb-3 body-small text-[#01030B]">
+            <div className="pt-2">
+              <p className="body-small text-[#01030B]">
                 My question is not here.
               </p>
-
+            </div>
+            <div className="pt-4">
               <GradientButton href="/contact-us" className="!text-white">
                 Contact Us
               </GradientButton>
