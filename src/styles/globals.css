@@ -98,14 +98,15 @@ select {
   font-weight: 300;
   font-size: clamp(40px, 6vw, 72px);
   line-height: 1.1;
-  letter-spacing: 2px;
+  letter-spacing: 0;
   color: #ffffff;
   text-align: left;
 }
 
 @media (max-width: 767px) {
   .heading-1 {
-    line-height: 1.25;
+    line-height: 1;
+    letter-spacing: 0;
   }
 }
 
