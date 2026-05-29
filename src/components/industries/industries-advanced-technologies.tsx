@@ -16,9 +16,9 @@ const rightCards = [...leftCards];
 
 export default function TechScrollSection() {
   return (
-    <section className="bg-[#f5f7fb]">
+    <section className="bg-[#f5f7fb] rounded-md">
       {/* ================= HERO (FIRST VIEW) ================= */}
-      <div className="min-h-screen flex flex-col items-center justify-start pt-12 text-center px-6">
+      <div className="min-h-screen flex flex-col items-center justify-start pt-12 pb-24 text-center px-6">
         {/* Label */}
         <div className="flex items-center gap-2 mb-3">
           <RotatingDots variant="light" />
@@ -37,7 +37,7 @@ export default function TechScrollSection() {
       </div>
 
       {/* ================= SCROLL SECTION ================= */}
-      <section className="relative -mt-42 h-screen overflow-hidden">
+      <section className="relative -mt-62 h-screen overflow-hidden pb-225 ">
         <div className="sticky top-0 h-screen overflow-hidden">
           <div className="mx-auto grid h-full w-full max-w-7xl grid-cols-1 gap-12 px-6 lg:grid-cols-2 lg:px-12">
             {/* LEFT TEXT */}
@@ -73,7 +73,7 @@ export default function TechScrollSection() {
                       key={i}
                       src={src}
                       alt=""
-                      className="rounded-xl shadow-md"
+                      className="rounded-xl"
                     />
                   ))}
                 </div>
@@ -87,7 +87,7 @@ export default function TechScrollSection() {
                       key={i}
                       src={src}
                       alt=""
-                      className="rounded-xl shadow-md"
+                      className="rounded-xl"
                     />
                   ))}
                 </div>

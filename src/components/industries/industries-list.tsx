@@ -68,14 +68,14 @@ export default function IndustriesList() {
           {data.map((item) => (
             <div key={item.id} className="border-b border-[#E7EAF0]">
               {/* NUMBER */}
-              <div className="px-10 pt-8 text-[32px] text-blue-700">
+              <div className="px-8 pt-8 service-whitecard-number">
                 {item.id}
               </div>
 
               {/* CONTENT */}
-              <div className="flex gap-10 px-10 pt-5">
+              <div className="flex gap-10 pl-0 pr-10 -mt-[15px]">
                 {/* IMAGE */}
-                <div className="relative h-[320px] w-[320px] overflow-hidden rounded-sm">
+                <div className="relative h-[320px] w-[320px] flex-shrink-0 overflow-hidden rounded-sm">
                   <Image
                     src={item.img}
                     alt={item.title}
