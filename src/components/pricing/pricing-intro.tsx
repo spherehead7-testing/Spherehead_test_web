@@ -1,13 +1,21 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useSpring, useTransform } from "motion/react";
 import SiteContainer from "@/components/layout/site-container";
 import RotatingDots from "@/components/ui/rotating-dots";
+import { useIsMobile } from "@/hooks/use-is-mobile";
 
 export default function PricingIntro() {
+  const isMobile = useIsMobile();
+  const [mounted, setMounted] = useState(false); // 1. Add mounted state
   const sectionRef = useRef<HTMLElement | null>(null);
   const snapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // 2. Set mounted to true after first render to fix hydration
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -36,7 +44,7 @@ export default function PricingIntro() {
 
   useEffect(() => {
     const section = sectionRef.current;
-    if (!section) return;
+    if (!section || isMobile) return;
 
     const handleScroll = () => {
       if (snapTimerRef.current) {
@@ -46,8 +54,7 @@ export default function PricingIntro() {
       snapTimerRef.current = setTimeout(() => {
         const rect = section.getBoundingClientRect();
         const viewportHeight = window.innerHeight;
-        const shouldLock =
-          rect.top < viewportHeight * 0.42 && rect.top > 8;
+        const shouldLock = rect.top < viewportHeight * 0.42 && rect.top > 8;
 
         if (shouldLock) {
           section.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -63,29 +70,41 @@ export default function PricingIntro() {
         clearTimeout(snapTimerRef.current);
       }
     };
-  }, []);
+  }, [isMobile]);
+
+  // 3. Create a safe mobile check that prevents mismatch during SSR
+  const isSafeMobile = mounted ? isMobile : false;
 
   return (
-    <section ref={sectionRef} className="relative h-[60vh] lg:h-[150vh] text-[#01030B]">
-      <div className="sticky top-0 h-screen overflow-hidden">
+    <section
+      ref={sectionRef}
+      className="relative h-auto lg:h-[150vh] text-[#01030B]"
+    >
+      <div className="sticky top-0 h-auto lg:h-screen overflow-hidden">
         <motion.div
           style={{
-            y: panelY,
-            clipPath: panelClipPath,
+            y: isSafeMobile ? 0 : panelY,
+            clipPath: isSafeMobile ? "none" : panelClipPath,
           }}
-          className="absolute inset-x-0 top-0 h-[60vh] lg:h-[90vh] overflow-hidden rounded-b-[10px] bg-white will-change-transform"
+          className="relative lg:absolute inset-x-0 top-0 h-auto lg:h-[90vh] overflow-hidden rounded-md bg-white will-change-transform"
         >
-          <SiteContainer className="flex h-full flex-col pt-[8vh] pb-[7vh] lg:pt-[7vh] lg:pb-[9vh]">
+          <SiteContainer className="flex h-full flex-col pt-[8vh] pb-20 lg:pt-[7vh] lg:pb-[9vh]">
             <motion.div
-              style={{ opacity: contentOpacity, y: headingY }}
-              className="flex items-center gap-3"
+              style={{
+                opacity: isSafeMobile ? 1 : contentOpacity,
+                y: isSafeMobile ? 0 : headingY,
+              }}
+              className="hidden md:flex items-center gap-3"
             >
               <RotatingDots variant="light" />
               <p className="body-small">Our Pricing</p>
             </motion.div>
 
             <motion.div
-              style={{ opacity: contentOpacity, y: headingY }}
+              style={{
+                opacity: isSafeMobile ? 1 : contentOpacity,
+                y: isSafeMobile ? 0 : headingY,
+              }}
               className="mt-5 max-w-[790px]"
             >
               <h2 className="heading-2 !text-black">
@@ -97,8 +116,11 @@ export default function PricingIntro() {
             </motion.div>
 
             <motion.div
-              style={{ opacity: contentOpacity, y: bodyY }}
-              className="max-w-[620px] pt-16 lg:ml-[620px] lg:pt-20"
+              style={{
+                opacity: isSafeMobile ? 1 : contentOpacity,
+                y: isSafeMobile ? 0 : bodyY,
+              }}
+              className="max-w-[620px] pt-8 lg:ml-[620px] lg:pt-20"
             >
               <p className="body-large text-[#808080]">
                 From IT consultation and software development to IoT, web
