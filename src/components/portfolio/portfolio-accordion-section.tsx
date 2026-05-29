@@ -84,7 +84,7 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
   // ── PURE STATIC MOBILE LAYOUT ──
   if (isMobile) {
     return (
-      <div style={{ backgroundColor: project.bgColor }} className="w-full">
+      <div style={{ backgroundColor: project.bgColor }} className="w-full rounded-b-[8px]">
         <SiteContainer className="h-full flex flex-col py-4 pb-6">
           <div className="flex items-center justify-between gap-6 pb-4 border-b border-white flex-shrink-0">
             <h2 className="body-large text-white">
@@ -130,7 +130,7 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
   return (
     <div
       style={{ backgroundColor: project.bgColor, minHeight: "62vh" }}
-      className="w-full"
+      className="w-full rounded-b-[24px]"
     >
       <SiteContainer className="h-full flex flex-col py-6 lg:py-8">
         {/* ... [Keep all your existing desktop grid/motion code here] ... */}

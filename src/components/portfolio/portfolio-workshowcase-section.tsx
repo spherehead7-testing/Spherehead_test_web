@@ -378,18 +378,18 @@ export default function WorkShowcaseSection({
   // ── PURE STATIC MOBILE RENDER ──
   if (isMobile) {
     return (
-      <section id="work-showcase" className="relative w-full z-20 bg-white rounded-t-[8px] shadow-none flex flex-col min-h-screen">
+      <section id="work-showcase" className="relative w-full z-20 bg-white rounded-[8px] shadow-none flex flex-col min-h-screen">
         <div className="w-full flex flex-col flex-1 shrink-0">
           
-          <section className="relative w-full py-8 text-[#01030B] shrink-0">
-            <SiteContainer className="flex flex-col gap-10 relative z-10">
-              <div className="w-full flex flex-col gap-3 max-w-4xl">
+          <section className="relative w-full py-12 text-[#01030B] shrink-0 ">
+            <SiteContainer className="flex flex-col gap-10 relative z-10 ">
+              <div className="w-full flex flex-col gap-3 max-w-4xl ">
                 <h2 className="heading-2 !text-[#01030B] max-w-5xl leading-tight pt-8 pb-8" dangerouslySetInnerHTML={{ __html: introHtml }} />
               </div>
             </SiteContainer>
           </section>
 
-          <section className="relative w-full flex-1 flex flex-col text-[#01030B]">
+          <section className="relative w-full flex-1 flex flex-col text-[#01030B] ">
             {projects.map((project, index) => {
               const isExpanded = activeIndex === index;
               return (
@@ -444,7 +444,7 @@ export default function WorkShowcaseSection({
               transformOrigin: "bottom left",
               transition: { duration: EXIT_DURATION, ease: [0.32, 0.72, 0, 1] },
             }}
-            className="fixed inset-0 z-20 bg-white rounded-t-[24px] shadow-[0_-8px_40px_rgba(0,0,0,0.12)]"
+            className="fixed inset-0 z-20 bg-white rounded-[24px] shadow-[0_-8px_40px_rgba(0,0,0,0.12)]"
             style={{ willChange: "transform" }}
           >
             <div
@@ -549,7 +549,7 @@ export default function WorkShowcaseSection({
                                     height: { duration: 0.4, ease: "easeInOut" },
                                   },
                                 }}
-                                className="overflow-hidden"
+                                className="overflow-hidden rounded-b-[24px]"
                                 style={{ backgroundColor: project.bgColor }}
                               >
                                 <ProjectDetailView
