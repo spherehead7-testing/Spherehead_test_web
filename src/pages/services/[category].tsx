@@ -29,7 +29,7 @@ export default function ServiceCategoryPage({ data }: ServiceCategoryPageProps) 
       <ServicesApproachSection />
       <ServicesListSection data={data} />
 
-      <div className="hidden md:block w-full bg-white py-6 z-50">
+      <div className="hidden md:block w-full bg-white pb-15 z-50 rounded-b-[12px]">
         <TechStackCarousel />
       </div>
 

@@ -71,6 +71,8 @@ export default function ServicesListSection({ data }: { data: ServiceCategoryDat
     let isSnapping = false;
     let lockedUntil = 0;
     let softLandUntil = 0;
+    let lockedFromBelow = false;
+    let softLandFromBelowUntil = 0;
 
     const handleSnapEvent = () => {
       lockedUntil = Date.now() + 1200;
@@ -84,6 +86,13 @@ export default function ServicesListSection({ data }: { data: ServiceCategoryDat
     const isStickyEngaged = () => {
       const rect = section.getBoundingClientRect();
       return rect.top <= 80 && rect.bottom > 0;
+    };
+
+    // Detect when user scrolls up and the section bottom enters the viewport from below
+    const isSectionJustBelow = () => {
+      const rect = section.getBoundingClientRect();
+      // Section bottom is near or just below viewport bottom (entering from below while scrolling up)
+      return rect.bottom >= window.innerHeight - 5 && rect.top < window.innerHeight && rect.top > 80;
     };
 
     const handleWheel = (e: WheelEvent) => {
@@ -102,7 +111,67 @@ export default function ServicesListSection({ data }: { data: ServiceCategoryDat
         return;
       }
 
-      if (!isStickyEngaged()) return;
+      // Handle locked-from-below state (after snapping up from footer)
+      if (lockedFromBelow) {
+        e.preventDefault();
+        e.stopPropagation();
+        return;
+      }
+
+      if (Date.now() < softLandFromBelowUntil && isStickyEngaged()) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (e.deltaY < 0 && listRef.current) {
+          listRef.current.scrollTop += e.deltaY;
+        }
+        return;
+      }
+
+      if (!isStickyEngaged()) {
+        // Check if scrolling UP and section is just below viewport — snap to it
+        const isUp = e.deltaY < 0;
+        if (isUp && isSectionJustBelow() && !isSnapping) {
+          e.preventDefault();
+          e.stopPropagation();
+          isSnapping = true;
+
+          // Snap page so section top aligns with viewport top
+          const sectionRect = section.getBoundingClientRect();
+          const targetY = window.scrollY + sectionRect.top;
+          const startY = window.scrollY;
+          const distance = targetY - startY;
+          const t0 = performance.now();
+
+          // Set list scroll to bottom before snapping
+          if (listRef.current) {
+            listRef.current.scrollTop = listRef.current.scrollHeight - listRef.current.clientHeight;
+          }
+
+          lockedFromBelow = true;
+          setTimeout(() => {
+            lockedFromBelow = false;
+            softLandFromBelowUntil = Date.now() + 2000;
+          }, 1200);
+
+          const step = (ts: number) => {
+            const elapsed = ts - t0;
+            const t = Math.min(elapsed / 400, 1);
+            const ease = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+            window.scrollTo({
+              top: Math.round(startY + distance * ease),
+              behavior: "instant" as ScrollBehavior,
+            });
+            if (t < 1) {
+              requestAnimationFrame(step);
+            } else {
+              isSnapping = false;
+            }
+          };
+          requestAnimationFrame(step);
+          return;
+        }
+        return;
+      }
 
       const isUp = e.deltaY < 0;
       const isDown = e.deltaY > 0;
@@ -111,7 +180,9 @@ export default function ServicesListSection({ data }: { data: ServiceCategoryDat
       if (isDown && list) {
         const atBottom = list.scrollTop + list.clientHeight >= list.scrollHeight - 2;
         if (!atBottom) {
+          e.preventDefault();
           e.stopPropagation();
+          list.scrollTop += e.deltaY;
           return;
         }
         return;
@@ -119,7 +190,9 @@ export default function ServicesListSection({ data }: { data: ServiceCategoryDat
 
       if (isUp && list) {
         if (list.scrollTop > 0) {
+          e.preventDefault();
           e.stopPropagation();
+          list.scrollTop += e.deltaY;
           return;
         }
 
@@ -219,14 +292,14 @@ export default function ServicesListSection({ data }: { data: ServiceCategoryDat
                 >
                   <div className="flex items-center gap-4 mb-6">
                     <RotatingDots variant="light" />
-                    <span className="body-small tracking-[0.1em] text-[#0D54CA] font-bold">
+                    <span className="body-small tracking-[0.1em] text-black font-bold">
                       {data.metaTitle}
                     </span>
                   </div>
                   <h2 className="heading-2 !text-[#01030B] mb-2 max-w-md">
                     {data.listTitle}
                   </h2>
-                  <div className="mt-8 bg-animated-gradient w-full max-w-[360px] overflow-hidden">
+                  <div className="mt-8 bg-animated-gradient w-full max-w-[360px] overflow-hidden rounded-md">
                     <div className="relative w-full aspect-[4/3]">
                       <AnimatePresence mode="wait">
                         <motion.div
@@ -299,7 +372,7 @@ function ServiceListItem({
   return (
     <div
       id={`service-${service.slug}`}
-      className="border-b border-[#e8e8e8] py-5 lg:py-6"
+      className="border-b border-black/10 py-5 lg:py-6"
     >
       <div
         className="flex items-center justify-between cursor-pointer group"

@@ -64,12 +64,19 @@ export default function ServicesApproachSection() {
       }
     };
 
+    // Track whether we're snapping back from the list section
+    let snappedFromListUntil = 0;
+
     // Listen for snap-back from list section (hard trackpad swipe)
     const handleSnapBack = () => {
       // Block wheel events for 1200ms (400ms animation + 800ms momentum)
       lockedUntil = Date.now() + 1200;
       // Reset upward accumulator to prevent stale momentum from triggering intro snap
       upExitAccumulator = 0;
+      // Show page 1 (04-06) first when coming back from list
+      // Protect from observer resets for the full lock duration
+      snappedFromListUntil = Date.now() + 1200;
+      setPage(1);
       // Add global blocker to catch momentum events at window level
       window.addEventListener("wheel", globalWheelBlocker, { passive: false, capture: true });
       // Remove it after the lock period
@@ -94,9 +101,14 @@ export default function ServicesApproachSection() {
     const visibilityObserver = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          // Always reset to page 0 when section enters view
-          if (pageRef.current !== 0) {
-            setPage(0);
+          // If we snapped back from the list, keep page 1 (04-06) — don't reset
+          if (Date.now() < snappedFromListUntil) {
+            // Do nothing — preserve page 1
+          } else {
+            // Reset to page 0 when section enters view from other directions
+            if (pageRef.current !== 0) {
+              setPage(0);
+            }
           }
           enteredAt = Date.now();
           // Reset upward accumulator so it's ready for immediate use after cooldown
@@ -120,7 +132,8 @@ export default function ServicesApproachSection() {
     const DOWN_EVENT_COUNT_THRESHOLD = 8; // Require sustained intent for page transitions
     const DOWN_ACCUMULATOR_THRESHOLD = 80; // Minimum accumulated delta for page transition
     let pageTransitionAt = 0; // When the last page 0→1 transition happened
-    const PAGE_TRANSITION_COOLDOWN_MS = 1200; // Cooldown after page 0→1 before allowing scroll to list
+    let upPageTransitionAt = 0; // When the last page 1→0 transition happened
+    const PAGE_TRANSITION_COOLDOWN_MS = 1200; // Cooldown after page transitions before allowing further navigation
     const isTouchpad = () => consecutiveSmallDeltas > 3;
 
     // Upward exit state
@@ -252,14 +265,40 @@ export default function ServicesApproachSection() {
       // --- Scrolling Up ---
       if (isUp) {
         if (pageRef.current === 1) {
-          // Shouldn't normally happen (page resets on entry), but handle it
+          // On page 1 (04-06), accumulate intent before sliding to page 0 (01-03)
           e.preventDefault();
+          // Reset downward state
+          downEventCount = 0;
+          downAccumulator = 0;
+
+          // Enforce cooldown after arriving from list snap
+          if (now < snappedFromListUntil) {
+            return;
+          }
+
+          // Decay accumulator if there's been a gap (momentum dying down)
+          if (now - lastUpEventTime > 250) {
+            upExitAccumulator = 0;
+            upEventCount = 0;
+          }
+          lastUpEventTime = now;
+          upExitAccumulator += Math.abs(e.deltaY);
+          upEventCount += 1;
+
+          const hasUpIntent = (upEventCount >= UP_EVENT_COUNT_THRESHOLD && upExitAccumulator >= ACCUMULATOR_THRESHOLD) || Math.abs(e.deltaY) > 50;
+          if (!hasUpIntent) {
+            return;
+          }
+          upExitAccumulator = 0;
+          upEventCount = 0;
           setPage(0);
+          upPageTransitionAt = Date.now();
           isAnimating.current = true;
           setTimeout(() => {
             isAnimating.current = false;
             upExitAccumulator = 0;
-          }, 400);
+            upEventCount = 0;
+          }, isTouchpad() ? 1400 : 800);
           return;
         }
 
@@ -267,6 +306,12 @@ export default function ServicesApproachSection() {
         e.preventDefault();
         // Reset downward state
         downEventCount = 0;
+        // Enforce cooldown after page 1→0 transition to absorb momentum
+        if (now - upPageTransitionAt < PAGE_TRANSITION_COOLDOWN_MS) {
+          upExitAccumulator = 0;
+          upEventCount = 0;
+          return;
+        }
         // Decay accumulator if there's been a gap (momentum dying down)
         if (now - lastUpEventTime > 250) {
           upExitAccumulator = 0;
