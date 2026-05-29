@@ -200,15 +200,6 @@ export default function CaseStudyDetail() {
       sessionStorage.setItem("spherehead_slider_page", studyIndex.toString());
     }
     
-    // --- NEW MOBILE ROUTING LOGIC ---
-    if (isMobile) {
-      // Set a flag to tell the main page to scroll down to the slider
-      sessionStorage.setItem("mobile_return_to_slider", "true");
-      router.push("/case-studies");
-      return;
-    }
-    // --------------------------------
-    
     if (window.history.length > 1) {
       router.back();
     } else {

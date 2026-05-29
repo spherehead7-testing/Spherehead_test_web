@@ -28,10 +28,32 @@ export default function CaseStudies() {
     const scrollContainer = scrollRef.current;
     if (!scrollContainer) return;
 
+    // Mobile: if we returned from a case-study detail page,
+    // scroll to the slider section.
     if (isMobile) {
+      const shouldReturn =
+        sessionStorage.getItem("mobile_return_to_slider") === "true";
+
+      if (shouldReturn) {
+        // Ensure we land at the slider TOP (ignore any previously saved scroll position)
+        sessionStorage.removeItem("caseStudiesScrollPos");
+
+        const sliderEl = document.getElementById("case-studies-slider");
+        if (sliderEl) {
+          // Wait a tick so the DOM/layout is fully mounted.
+          setTimeout(() => {
+            sliderEl.scrollIntoView({ behavior: "auto", block: "start" });
+          }, 0);
+        }
+
+        sessionStorage.removeItem("mobile_return_to_slider");
+      }
+
+
       setIsSmooth(false);
       return;
     }
+
 
     const savedScrollPos = sessionStorage.getItem("caseStudiesScrollPos");
 
@@ -115,9 +137,13 @@ export default function CaseStudies() {
                 : "-mt-32 lg:-mt-48 lg:snap-start"
             }`}
           >
-            <section className="w-full pt-8 lg:pt-20 pb-8 lg:pb-16">
+            <section
+              id="case-studies-slider"
+              className="w-full pt-8 lg:pt-20 pb-8 lg:pb-16"
+            >
               <CaseStudiesSlider />
             </section>
+
 
             <section className={isMobile ? "w-full pb-8" : "snap-start w-full flex items-center min-h-screen lg:min-h-screen"}>
               <div className="w-full min-w-0">

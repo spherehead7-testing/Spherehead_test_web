@@ -8,7 +8,6 @@ import CyclicButton from "@/components/ui/cyclic-button";
 export default function CaseStudiesHero() {
   return (
     // 1. Changed justify-start to justify-end so the space is pushed to the top
-    // 2. Set mobile bottom padding to pb-24 so the white slider card (-mt-16) doesn't cover the button
     <section className="relative h-full flex flex-col justify-end overflow-hidden pt-32 pb-24 lg:pt-0 lg:pb-56 border-none">
       <SiteContainer className="relative z-10 flex flex-col">
         
