@@ -41,7 +41,7 @@ export default function CareersPage() {
   return (
     <main
       ref={scrollContainerRef}
-      className="w-full snap-y snap-mandatory h-screen overflow-y-auto"
+      className="w-full h-screen overflow-y-auto"
     >
       <CareersHero />
 
