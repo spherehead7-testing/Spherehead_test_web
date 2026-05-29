@@ -73,7 +73,7 @@ export default function PricingIntro() {
             y: panelY,
             clipPath: panelClipPath,
           }}
-          className="absolute inset-x-0 top-0 h-[60vh] lg:h-[87vh] overflow-hidden rounded-b-[10px] bg-white will-change-transform"
+          className="absolute inset-x-0 top-0 h-[60vh] lg:h-[90vh] overflow-hidden rounded-b-[10px] bg-white will-change-transform"
         >
           <SiteContainer className="flex h-full flex-col pt-[8vh] pb-[7vh] lg:pt-[7vh] lg:pb-[9vh]">
             <motion.div
