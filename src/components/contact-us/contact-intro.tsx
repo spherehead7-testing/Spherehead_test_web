@@ -3,6 +3,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import SiteContainer from "@/components/layout/site-container";
+import RotatingDots from "@/components/ui/rotating-dots";
 
 export default function ContactIntro() {
   return (
@@ -17,6 +18,10 @@ export default function ContactIntro() {
             viewport={{ once: true }}
             className="lg:col-span-12 flex flex-col gap-6"
           >
+            <div className="hidden lg:flex items-center gap-3">
+              <RotatingDots variant="light" />
+              <span className="body-small font-[500] text-[#334164]">About Us</span>
+            </div>
             <h2 className="heading-2 !text-[#01030B] lg:whitespace-nowrap">
               Located in the Heart of{" "}
               <span className="text-[#0D54CA]">Delaware USA</span>
@@ -31,7 +36,7 @@ export default function ContactIntro() {
             transition={{ delay: 0.2 }}
             className="lg:col-span-7 lg:col-start-6 flex"
           >
-            <p className="body-large text-[#8A8B8F] !leading-[1.4]">
+            <p className="body-large text-[#8A8B8F] !leading-[1.4] py-12">
               Based in Delaware, USA, our company is committed to delivering
               innovative and reliable solutions tailored to meet modern business
               needs. With a strong focus on quality, integrity, and customer

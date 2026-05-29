@@ -11,7 +11,7 @@ export default function ContactHero() {
 
   if (isMobile) {
     return (
-      <section className="w-full min-h-[80svh] flex flex-col overflow-hidden">
+      <section className="w-full min-h-[88svh] flex flex-col overflow-hidden">
         <SiteContainer className="flex flex-col flex-grow justify-end pb-12 pt-24">
           <div className="flex flex-col mt-auto">
             <div className="w-full h-[1px] bg-white/20 mb-8" />

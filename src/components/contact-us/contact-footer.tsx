@@ -12,27 +12,53 @@ export default function ContactFooter() {
         {/* Divider */}
         <div className="w-full h-[1px] bg-white/20 mb-8" />
 
-        {/* Mobile: stacked layout / Desktop: row layout */}
+        {/* Footer Content */}
         <div className="w-full flex flex-col md:flex-row md:justify-between md:items-end gap-6">
+          
           {/* Social Icons */}
           <div className="flex items-center gap-5 text-white">
-            <a href="#" className="hover:opacity-70 transition"><FaFacebookF size={18} /></a>
-            <a href="#" className="hover:opacity-70 transition"><FaInstagram size={18} /></a>
-            <a href="#" className="hover:opacity-70 transition"><FaXTwitter size={18} /></a>
-            <a href="#" className="hover:opacity-70 transition"><FaLinkedinIn size={18} /></a>
+            <a href="#" className="hover:opacity-70 transition">
+              <FaFacebookF size={18} />
+            </a>
+
+            <a href="#" className="hover:opacity-70 transition">
+              <FaInstagram size={18} />
+            </a>
+
+            <a href="#" className="hover:opacity-70 transition">
+              <FaXTwitter size={18} />
+            </a>
+
+            <a href="#" className="hover:opacity-70 transition">
+              <FaLinkedinIn size={18} />
+            </a>
           </div>
 
-          {/* Legal Links */}
-          <p className="body-extra-small text-white/60 flex gap-2">
-            <a href="#" className="hover:opacity-100 transition">Legal Policies</a> /
-            <a href="#" className="hover:opacity-100 transition">Terms of Services</a> /
-            <a href="#" className="hover:opacity-100 transition">Privacy Policies</a>
-          </p>
+          {/* Right Side */}
+          <div className="flex flex-col gap-2 md:items-end">
+            
+            {/* Legal Links */}
+            <p className="body-extra-small text-white flex flex-wrap gap-2">
+              <a href="#" className="hover:opacity-100 transition">
+                Legal Policies
+              </a>
+              /
 
-          {/* Copyright */}
-          <p className="body-extra-small text-white">
-            © 2026 All Rights Reserved. Designed and Developed by Spherehead
-          </p>
+              <a href="#" className="hover:opacity-100 transition">
+                Terms of Services
+              </a>
+              /
+
+              <a href="#" className="hover:opacity-100 transition">
+                Privacy Policies
+              </a>
+            </p>
+
+            {/* Copyright */}
+            <p className="body-extra-small text-white">
+              © 2026 All Rights Reserved. Designed and Developed by Spherehead
+            </p>
+          </div>
         </div>
       </SiteContainer>
     </footer>
