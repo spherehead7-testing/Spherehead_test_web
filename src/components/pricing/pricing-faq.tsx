@@ -39,7 +39,7 @@ const faqs = [
 ];
 
 export default function FAQSection() {
-  const [activeIndex, setActiveIndex] = useState<number | null>(0);
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const sectionRef = useRef<HTMLElement | null>(null);
   const snapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -83,7 +83,7 @@ export default function FAQSection() {
       className="min-h-[100svh] w-full snap-start py-8 lg:h-[100svh] lg:overflow-hidden lg:py-10 lg:flex lg:items-center"
     >
       <SiteContainer>
-        <div className="grid items-start gap-10 lg:grid-cols-2 lg:gap-14">
+        <div className="grid items-start gap-10 lg:grid-cols-2 lg:gap-6">
           {/* LEFT SIDE */}
           <div className="text-white">
             <div className="mb-4 flex items-center gap-2">
@@ -93,59 +93,65 @@ export default function FAQSection() {
 
             <h2 className="heading-2 max-w-[520px]">
               Behind every question lies a commitment to clarity and
-              understanding. Every answer is crafted to guide you and build
-              lasting trust.
+              understanding. <br />
+              Every answer is crafted to guide you and build lasting trust.
             </h2>
           </div>
 
           {/* RIGHT SIDE */}
-          <div className="rounded-md bg-white p-5 md:p-6">
-            {faqs.map((faq, index) => {
-              const isOpen = activeIndex === index;
+          <div className="flex flex-col justify-between rounded-sm bg-white p-8 md:p-10 lg:py-12 lg:px-12 h-[750px]">
+            <div className="flex flex-col">
+              {faqs.map((faq, index) => {
+                const isOpen = activeIndex === index;
 
-              return (
-                <div key={index} className="border-b last:border-none">
-                  {/* HEADER */}
-                  <button
-                    onClick={() => toggle(index)}
-                    className="flex w-full items-center justify-between gap-6 py-3.5 lg:py-2 text-left"
-                  >
-                    <span className="body-medium text-black">
-                      {faq.question}
-                    </span>
-
-                    {/* ICON */}
-                    <span
-                      className="text-[35px] font-light"
-                      style={{ color: faq.color }}
-                    >
-                      {isOpen ? "−" : "+"}
-                    </span>
-                  </button>
-
-                  {/* CONTENT */}
+                return (
                   <div
-                    className={`overflow-hidden transition-all duration-300 ${
-                      isOpen ? "max-h-[140px] pb-3" : "max-h-0"
-                    }`}
+                    key={index}
+                    className="border-b border-[#B0B1B3] last:border-none"
                   >
-                    <p className="pr-6 body-small text-[#55565C]">
-                      {faq.answer}
-                    </p>
+                    {/* HEADER */}
+                    <button
+                      onClick={() => toggle(index)}
+                      className="flex w-full items-center justify-between gap-6 py-4 lg:py-[18px] text-left"
+                    >
+                      <span className="body-medium text-black">
+                        {faq.question}
+                      </span>
+
+                      {/* ICON */}
+                      <span
+                        className="text-[35px] font-light"
+                        style={{ color: faq.color }}
+                      >
+                        {isOpen ? "−" : "+"}
+                      </span>
+                    </button>
+
+                    {/* CONTENT */}
+                    <div
+                      className={`overflow-hidden transition-all duration-300 ${
+                        isOpen ? "max-h-[160px] pb-4" : "max-h-0"
+                      }`}
+                    >
+                      <p className="pr-6 body-small text-[#55565C]">
+                        {faq.answer}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
 
             {/* CONTACT CTA */}
-            <div className="pt-8">
-              <p className="mb-3 body-small text-[#01030B">
+            {/* Removed the large mt-16; justify-between pushes it to the bottom naturally */}
+            <div className="pt-6">
+              <p className="mb-3 body-small text-[#01030B]">
                 My question is not here.
               </p>
 
               <Link
                 href="/contact-us"
-                className="body-medium rounded bg-animated-gradient px-6 py-2 text-white"
+                className="body-medium rounded bg-animated-gradient px-8 py-3 !text-white hover:bg-blue-700 transition-colors inline-block"
               >
                 Contact Us
               </Link>
