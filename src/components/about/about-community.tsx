@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useSpring, useTransform } from "framer-motion";
 import { useScrollContainerContext } from "@/context/ScrollContainerContext";
 import RotatingDots from "../ui/rotating-dots";
@@ -85,6 +85,10 @@ export default function OutGreaterCommunity() {
   const { scrollContainerRef } = useScrollContainerContext();
 
   const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const { scrollYProgress } = useScroll(
     mounted
