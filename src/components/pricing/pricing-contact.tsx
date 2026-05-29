@@ -50,7 +50,7 @@ export default function ContactSection() {
         {/* LABEL */}
         <div className="mb-2 flex items-center justify-center gap-2">
           <RotatingDots variant="light" />
-          <span className="body-small text-gray-500">
+          <span className="body-small">
             Let’s Start the Conversation
           </span>
         </div>
