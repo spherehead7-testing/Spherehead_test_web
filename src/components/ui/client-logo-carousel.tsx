@@ -40,7 +40,7 @@ export default function ClientLogoCarousel() {
               <img 
                 src={logo.url} 
                 alt={logo.name} 
-                className="max-h-10 lg:max-h-14 max-w-full object-contain brightness-0 invert" 
+                className="max-h-14 lg:max-h-14 max-w-full object-contain brightness-0 invert" 
               />
             </div>
           ))}
@@ -51,12 +51,12 @@ export default function ClientLogoCarousel() {
           {LOGO_GROUP.map((logo, index) => (
             <div 
               key={`logo-2-${index}`} 
-              className="flex-shrink-0 flex items-center justify-center w-[120px] lg:w-[150px] opacity-70 hover:opacity-100 transition-opacity duration-300"
+              className="flex-shrink-0 flex items-center justify-center w-[120px] lg:w-[160px] opacity-70 hover:opacity-100 transition-opacity duration-300"
             >
               <img 
                 src={logo.url} 
                 alt={logo.name} 
-                className="max-h-10 lg:max-h-14 max-w-full object-contain brightness-0 invert" 
+                className="max-h-12 lg:max-h-16 max-w-full object-contain brightness-0 invert" 
               />
             </div>
           ))}

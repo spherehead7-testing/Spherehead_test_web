@@ -16,14 +16,7 @@ export default function Footer() {
         <SiteContainer>
           {/* Heading */}
           <div className="text-white pt-12 pb-10">
-            <h1
-              className="font-light leading-[1.2]"
-              style={{
-                fontFamily: "var(--font-archivo)",
-                fontSize: "36px",
-                letterSpacing: "1px",
-              }}
-            >
+            <h1 className="heading-1">
               Let&apos;s Build
               <br />
               Something
