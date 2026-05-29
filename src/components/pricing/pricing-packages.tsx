@@ -288,7 +288,7 @@ function PricingCard({ item }: { item: PricingPackage }) {
 export default function PricingPackages() {
   return (
     <section className="text-white">
-      <SiteContainer className="pt-15 pb-28 lg:pt-32 lg:pb-32">
+      <SiteContainer>
         <div className="flex items-center gap-3">
           <RotatingDots />
           <p className="body-small">Product Pricing</p>

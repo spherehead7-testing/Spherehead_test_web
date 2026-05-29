@@ -98,7 +98,7 @@ export default function PricingIntro() {
 
             <motion.div
               style={{ opacity: contentOpacity, y: bodyY }}
-              className="max-w-[620px] pt-16 lg:ml-[620px] lg:pt-0"
+              className="max-w-[620px] pt-16 lg:ml-[620px] lg:pt-20"
             >
               <p className="body-large text-[#808080]">
                 From IT consultation and software development to IoT, web
