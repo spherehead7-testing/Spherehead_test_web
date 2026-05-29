@@ -80,6 +80,12 @@ export default function CaseStudiesSlider() {
   const nextStudy = CASE_STUDIES[nextIndex];
 
   const handleNext = useCallback(() => {
+    // Bypass animation lock for fast clicking on mobile
+    if (isMobile) {
+      setPage((prev) => [prev[0] + 1, 1]);
+      return;
+    }
+
     if (isAnimating.current) return;
     isAnimating.current = true;
 
@@ -88,9 +94,15 @@ export default function CaseStudiesSlider() {
     setTimeout(() => {
       isAnimating.current = false;
     }, DURATION * 1000);
-  }, []);
+  }, [isMobile]);
 
   const handlePrev = useCallback(() => {
+    // Bypass animation lock for fast clicking on mobile
+    if (isMobile) {
+      setPage((prev) => [prev[0] - 1, -1]);
+      return;
+    }
+
     if (isAnimating.current) return;
     isAnimating.current = true;
 
@@ -99,7 +111,7 @@ export default function CaseStudiesSlider() {
     setTimeout(() => {
       isAnimating.current = false;
     }, DURATION * 1000);
-  }, []);
+  }, [isMobile]);
 
   const mainVariants = {
     enter: (direction: number) => ({
