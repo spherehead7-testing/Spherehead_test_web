@@ -23,7 +23,7 @@ export default function NewsHero({
     // Mobile: simple static hero
     if (isMobile) {
         return (
-            <section className="relative min-h-[80svh] flex flex-col overflow-hidden text-white">
+            <section className="relative min-h-[88svh] flex flex-col overflow-hidden text-white">
                 <SiteContainer className="relative z-10 flex flex-col h-full flex-grow justify-end pb-10 pt-20">
                     <div className="w-full flex flex-col mt-auto">
                         <div className="w-full h-[1px] bg-white/20 mb-6" />
@@ -93,7 +93,7 @@ export default function NewsHero({
                             href="#news-list"
                             className="mt-auto flex items-center justify-center gap-2 pt-8 transition-opacity hover:opacity-80"
                         >
-                            <span className="text-[12px] font-bold uppercase tracking-[0.12em] text-[#0D54CA]">
+                            <span className="body-extra-small uppercase tracking-[0.12em] text-[#0D54CA]">
                                 SCROLL TO READ MORE
                             </span>
                             <ChevronsDown

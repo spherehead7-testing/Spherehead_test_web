@@ -65,7 +65,7 @@ export default function NewsContent({
 
   return (
     <div id={sectionId} className={`scroll-mt-20 bg-white ${className}`}>
-      <SiteContainer className="pt-20 pb-20 lg:pt-24 lg:pb-28">
+      <SiteContainer className="py-12 lg:pt-24 lg:pb-28">
         <section>
           <div className="flex items-center gap-3">
             <RotatingDots variant="light" />
@@ -77,7 +77,7 @@ export default function NewsContent({
 
         <section className="mt-10 lg:mt-12" aria-labelledby="featured-title">
           {/* Mobile: horizontal scroll carousel */}
-          <div className="md:hidden">
+          <div className="md:hidden -mx-4 sm:-mx-6">
             <FeaturedCarousel posts={featuredNewsPosts.slice(0, 4)} />
           </div>
 
@@ -119,9 +119,10 @@ export default function NewsContent({
         </section>
 
         <section className="mt-14 lg:mt-16" aria-labelledby="latest-title">
-          <div className="-mx-4 mb-8 px-4 py-4 lg:-mx-8 lg:px-8">
-            <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-              <label className="relative w-full max-w-[455px] order-first lg:order-last lg:mb-0">
+          <div className="mb-8 py-4">
+            {/* Search — full width on mobile, right-aligned on desktop */}
+            <div className="mb-6 lg:flex lg:items-end lg:justify-between">
+              <label className="relative block w-full max-w-[455px] lg:order-last">
                 <span className="sr-only">Search by keywords</span>
                 <input
                   type="search"
@@ -135,16 +136,18 @@ export default function NewsContent({
                   strokeWidth={1.7}
                 />
               </label>
+            </div>
 
-              <div>
-                <h2 id="latest-title" className="sr-only">
-                  Latest insights
-                </h2>
-
-                <div
-                  className="flex flex-nowrap overflow-x-auto gap-2 pb-2 -mx-1 px-1"
-                  aria-label="Filter news categories"
-                >
+            {/* Pills row — bleeds to screen edges on mobile */}
+            <div className="relative">
+              <h2 id="latest-title" className="sr-only">
+                Latest insights
+              </h2>
+              <div
+                className="flex flex-nowrap overflow-x-auto gap-2 pb-2 lg:flex-wrap"
+                aria-label="Filter news categories"
+                style={{ marginLeft: 'calc(-1 * var(--site-px, 1rem))', paddingLeft: 'var(--site-px, 1rem)', width: 'calc(100% + 2 * var(--site-px, 1rem))' }}
+              >
                   {categoryFilters.map((category) => {
                     const isSelected = selectedCategory === category;
 
@@ -165,7 +168,6 @@ export default function NewsContent({
                     );
                   })}
                 </div>
-              </div>
             </div>
           </div>
 
@@ -175,7 +177,7 @@ export default function NewsContent({
             </div>
           ) : null}
 
-          <motion.div layout className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5 xl:grid-cols-3">
+          <motion.div layout className="mt-5 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-7 xl:grid-cols-3">
             <AnimatePresence mode="popLayout">
               {paginatedPosts.map((post, index) => (
                 <motion.article
@@ -190,7 +192,7 @@ export default function NewsContent({
                   }}
                   exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
                   key={post.slug}
-                  className="group relative min-h-[220px] md:min-h-[334px] overflow-hidden bg-[#f3f3f4] p-5 md:p-7 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_24px_70px_rgba(38,102,210,0.12)] rounded-xs"
+                  className="group relative min-h-[280px] md:min-h-[400px] overflow-hidden bg-[#f3f3f4] p-5 md:p-7 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_24px_70px_rgba(38,102,210,0.12)] rounded-xs"
                 >
                   <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                     <div className="absolute inset-0 bg-gradient-to-br from-[#f8fbff] via-[#edf5ff] to-[#e4efff]" />
@@ -198,16 +200,16 @@ export default function NewsContent({
 
                   <div className="relative z-10 flex h-full flex-col">
                     <div className="mb-3 md:mb-4">
-                      <span className="inline-flex bg-white px-2 py-1 md:px-3 md:py-2 body-extra-small leading-none text-[#2666D2] rounded-xs">
+                      <span className="inline-block bg-white px-2 py-1 md:px-3 md:py-2 body-extra-small leading-none text-[#2666D2] rounded-xs">
                         {post.category}
                       </span>
                     </div>
 
-                    <h3 className="max-w-[92%] text-[18px] md:text-[24px] font-[400] leading-[1.3] md:leading-[1.22] text-[#01030B] mb-6 md:mb-28">
+                    <h3 className="body-large max-w-[92%] text-[#01030B] mb-6 md:mb-28">
                       {post.title}.
                     </h3>
 
-                    <p className="mt-auto max-w-[82%] pb-0 text-[14px] md:text-[18px] leading-[1.4] md:leading-[1.32] text-[#8b8f98]">
+                    <p className="body-small mt-auto max-w-[82%] text-[#8b8f98]">
                       {post.excerpt}
                     </p>
                   </div>
@@ -332,7 +334,7 @@ function FeaturedCarousel({ posts }: { posts: NewsPost[] }) {
             <ArrowUpRight className="absolute right-3 top-3 z-10 h-5 w-5 text-white" />
 
             <div className="absolute inset-x-0 bottom-0 z-10 p-3">
-              <h3 className="body-extra-small leading-[1.25] text-white max-w-[90%]">
+              <h3 className="body-large text-white max-w-[90%]">
                 {post.title}
               </h3>
             </div>
