@@ -10,7 +10,7 @@ export default function ServicesHeroSection({ data }: { data: ServiceCategoryDat
 
   if (isMobile) {
     return (
-      <section className="relative w-full min-h-[80svh] flex flex-col overflow-hidden bg-animated-gradient">
+      <section className="relative w-full min-h-[88svh] flex flex-col overflow-hidden bg-animated-gradient">
         <SiteContainer className="relative z-10 flex flex-col h-full flex-grow justify-end pb-12 pt-24">
           <div className="w-full flex flex-col mt-auto">
             <div className="w-full h-[1px] bg-white/20 mb-8 origin-left" />
@@ -49,7 +49,7 @@ export default function ServicesHeroSection({ data }: { data: ServiceCategoryDat
               initial={{ opacity: 0, y: 36 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
-              className="flex flex-col gap-6 lg:gap-10"
+              className="flex flex-col gap-6 lg:gap-0"
             >
               <h1 className="inner-hero text-white">
                 {data.title}
