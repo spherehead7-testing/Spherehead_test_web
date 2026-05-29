@@ -224,7 +224,7 @@ export default function LandingAboutSection({
         className="absolute bottom-0 right-0 z-[4] overflow-hidden"
       >
         <div className="flex h-full flex-col items-start rounded-tl bg-[#ffffff] px-6 pl-6 pt-10 pb-8 sm:px-8 lg:px-14 lg:pl-14">
-          <p className="body-small text-[#55565C] max-w-[420px] !leading-[1.4]">
+          <p className="body-small text-[#55565C] max-w-[420px]">
             Driven by client satisfaction and continuous feedback, we deliver
             tailored digital solutions that empower businesses worldwide,
             building lasting partnerships through trust, innovation, and

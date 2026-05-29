@@ -323,7 +323,7 @@ export default function TestimonialSection({
           compactDesktop ? "sm:pt-7 sm:pb-12" : "sm:pt-11 sm:pb-[74px]",
         )}
       >
-        <p className="body-small max-w-[238px] whitespace-pre-line !text-[#01030b] !leading-[1.4]">
+        <p className="body-small max-w-[238px] whitespace-pre-line !text-[#01030b]">
           {card.quote}
         </p>
         <div>
@@ -359,7 +359,7 @@ export default function TestimonialSection({
           {card.quote}
         </p>
         <div>
-          <h3 className="body-large !text-[#01030b] font-semibold leading-tight">
+          <h3 className="body-large !text-[#01030b] font-semibold">
             {card.name}
           </h3>
           <p className="body-extra-small">{card.role}</p>
