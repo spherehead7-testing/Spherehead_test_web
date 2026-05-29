@@ -27,8 +27,7 @@ export default function PortfolioHeroSection() {
     <section 
       className={
         isMobile 
-          // CHANGED: h-[100svh] to h-[80svh] for mobile
-          ? "relative w-full h-[80svh] flex flex-col overflow-hidden bg-transparent z-10" 
+          ? "relative w-full h-[88svh] flex flex-col overflow-hidden bg-transparent z-10" 
           : "fixed top-0 left-0 z-0 w-full h-[100svh] flex flex-col overflow-hidden"
       }
     >
