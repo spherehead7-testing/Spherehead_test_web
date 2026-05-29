@@ -257,7 +257,7 @@ export default function HomePage() {
           <div className="bg-white">
             <LandingServicesSection />
             <LandingIndustriesSection />
-            <div className="relative z-30 w-full bg-white">
+            <div className="relative z-30 w-full bg-white mt-5">
               <TechnologiesSection />
             </div>
           </div>

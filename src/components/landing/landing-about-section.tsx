@@ -50,7 +50,6 @@ export default function LandingAboutSection({
       <section className="relative z-20 flex w-full flex-col">
         <div className="flex flex-col items-center bg-white px-6 pb-12 pt-8 text-center">
           <div className="mb-8 scale-[1.3]">
-            <RotatingDots variant="light" />
           </div>
           {/* Applied heading-2 here */}
           <h2 className="heading-2 mb-6 max-w-[400px] !text-[#01030B] !text-center">
@@ -98,14 +97,14 @@ export default function LandingAboutSection({
           </GradientButton>
         </div>
 
-        <div className="px-6 py-16">
+        <div className="px-6 py-20">
           <div className="mx-auto grid max-w-[400px] grid-cols-2 gap-x-4 gap-y-14 text-center">
             {statsData.map((stat) => (
               <div key={stat.id} className="flex flex-col items-center">
-                <span className="heading-1 mb-3 !leading-none text-white">
+                <span className="heading-1 mb-3 !leading-none text-white !tracking-none">
                   {stat.value}
                 </span>
-                <span className="body-small text-[#e8e8e8] !tracking-[0.08em]">
+                <span className="body-small text-white">
                   {stat.label}
                 </span>
               </div>
@@ -203,7 +202,6 @@ export default function LandingAboutSection({
                 <span className="about-stat-number">
                   {stat.value}
                 </span>
-                {/* You can also use your pre-existing about-stat-label here if you want! */}
                 <span className="body-small !text-[#e8e8e8] mt-2 xl:mt-3 leading-snug tracking-normal xl:tracking-[1.2px] xl:whitespace-nowrap">
                   {stat.label}
                 </span>

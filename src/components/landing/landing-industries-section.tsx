@@ -4,12 +4,12 @@ import LandingIndustryCarousel from "./landing-industry-carousel";
 
 export default function LandingIndustriesSection() {
     return (
-        <div className="relative inset-x-0 z-[4] bg-white pt-16 pointer-events-auto lg:absolute lg:top-[107vh] lg:min-h-screen lg:pt-0">
+        <div className="relative inset-x-0 z-[4] bg-white pt-6 pointer-events-auto lg:absolute lg:top-[107vh] lg:min-h-screen lg:pt-0">
             <SiteContainer>
                 <div>
                     <div className="mb-5 flex items-center gap-5">
                         <RotatingDots variant="light" />
-                        <p className="body-small !text-[#01030B] !tracking-[1.2px]">
+                        <p className="body-small !text-[#01030B]">
                             Industries
                         </p>
                     </div>
@@ -29,7 +29,7 @@ export default function LandingIndustriesSection() {
                             landscape.
                         </p>
                     </div>
-                    <div className="lg:mt-30">
+                    <div className="lg:mt-30 mt-15">
                         <LandingIndustryCarousel />
                     </div>
 
