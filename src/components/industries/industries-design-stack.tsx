@@ -8,6 +8,7 @@ import {
   Variants,
 } from "framer-motion";
 import RotatingDots from "../ui/rotating-dots";
+import { useIsMobile } from "@/hooks/use-is-mobile";
 
 // ── Icon Box (supports image URL) ──
 type IconBoxProps = {
@@ -155,8 +156,54 @@ const fadeUp: Variants = {
   },
 };
 
-// ── MAIN ──
-export default function DesignStack() {
+// ── Mobile version ──
+function DesignStackMobile() {
+  // Match Figma layout order: row by row (left | right)
+  const mobileRows = [
+    { left: columns[0][0], right: columns[1][0] }, // Adobe Illustrator | Adobe After Effects
+    { left: columns[0][1], right: columns[1][1] }, // Blender | Figma
+    { left: columns[2][0], right: columns[2][1] }, // Autodesk 3ds Max | Adobe Mixamo
+    { left: columns[0][2], right: columns[1][2] }, // SketchUp | Adobe Substance 3D
+    { left: columns[2][2], right: columns[0][3] }, // Cinema 4D | Houdini
+    { left: columns[2][3], right: columns[1][3] }, // CorelDRAW | V-Ray
+  ];
+
+  return (
+    <section className="bg-animated-gradient relative w-full py-16 overflow-hidden">
+      <div className="px-6">
+        {/* Label */}
+        <div className="flex items-center gap-2 mb-6">
+          <RotatingDots />
+          <span className="body-small text-white">Design Stack</span>
+        </div>
+
+        {/* Heading */}
+        <h1 className="heading-2 text-white mb-10">
+          Driving Innovation through Our Design Tools and Technology Stack
+        </h1>
+
+        {/* 2-column grid rows */}
+        <div className="flex flex-col">
+          {mobileRows.map((row, idx) => (
+            <div key={idx} className="grid grid-cols-2 gap-x-6">
+              <div className="flex items-center gap-3 py-4 border-b border-white/40">
+                <div className="shrink-0">{row.left.icon}</div>
+                <span className="body-small text-white">{row.left.name}</span>
+              </div>
+              <div className="flex items-center gap-3 py-4 border-b border-white/40">
+                <div className="shrink-0">{row.right.icon}</div>
+                <span className="body-small text-white">{row.right.name}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ── Desktop version ──
+function DesignStackDesktop() {
   const ref = useRef<HTMLElement | null>(null);
   const lastProgress = useRef(0);
   const hasSnapped = useRef(false);
@@ -232,4 +279,15 @@ export default function DesignStack() {
       </div>
     </section>
   );
+}
+
+// ── MAIN ──
+export default function DesignStack() {
+  const isMobile = useIsMobile();
+
+  if (isMobile) {
+    return <DesignStackMobile />;
+  }
+
+  return <DesignStackDesktop />;
 }

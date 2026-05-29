@@ -2,6 +2,7 @@
 
 import RotatingDots from "@/components/ui/rotating-dots";
 import TechStackCarousel from "@/components/ui/tech-stack-carousel";
+import { useIsMobile } from "@/hooks/use-is-mobile";
 
 const leftCards = [
   "https://res.cloudinary.com/dku9in8sb/image/upload/v1776839143/Industries-Big-Data_lhvogj.webp",
@@ -14,7 +15,91 @@ const leftCards = [
 
 const rightCards = [...leftCards];
 
+// Upper row: Big Data, Machine Learning (placeholder), Data Science, Cloud Computing
+const upperRowCards = [
+  "https://res.cloudinary.com/dku9in8sb/image/upload/v1776839143/Industries-Big-Data_lhvogj.webp",
+  "https://res.cloudinary.com/dku9in8sb/image/upload/v1776839143/Industries-Big-Data_lhvogj.webp",
+  "https://res.cloudinary.com/dku9in8sb/image/upload/v1776839143/Industries-Data-Science_va9nzk.webp",
+  "https://res.cloudinary.com/dku9in8sb/image/upload/v1776839143/Industries-Cloud-Computing_ngcrbu.webp",
+];
+
+// Lower row: Data Science, Cloud Computing, Virtual Reality, Artificial Intelligence
+const lowerRowCards = [
+  "https://res.cloudinary.com/dku9in8sb/image/upload/v1776839143/Industries-Data-Science_va9nzk.webp",
+  "https://res.cloudinary.com/dku9in8sb/image/upload/v1776839143/Industries-Cloud-Computing_ngcrbu.webp",
+  "https://res.cloudinary.com/dku9in8sb/image/upload/v1776839477/Industries-Virtual-Reality_uussk4.webp",
+  "https://res.cloudinary.com/dku9in8sb/image/upload/v1776839477/Industries-Artificial-Inteligence_towg6p.webp",
+];
+
 export default function TechScrollSection() {
+  const isMobile = useIsMobile();
+
+  if (isMobile) {
+    return (
+      <section className="bg-[#f5f7fb] py-16">
+        {/* Technologies carousel */}
+        <div className="flex flex-col items-center text-center px-6 mb-12">
+          {/* Label */}
+          <div className="flex items-center gap-2 mb-6">
+            <RotatingDots variant="light" />
+            <span className="body-small !text-[#01030B]">Technologies</span>
+          </div>
+
+          {/* Icons Row */}
+          <TechStackCarousel />
+        </div>
+
+        {/* Content Part */}
+        <div className="px-6 mb-8">
+          <div className="flex items-center gap-2 mb-4">
+            <RotatingDots variant="light" />
+            <span className="body-small !text-[#01030B]">
+              AdvancedTechnologies
+            </span>
+          </div>
+
+          <h2 className="heading-2 !text-[#01030B]">
+            Driving Innovation and Impact through Advanced Technologies
+            Worldwide
+          </h2>
+        </div>
+
+        {/* Auto-scrolling category cards - 2 rows, opposite directions */}
+        <div className="flex flex-col gap-4 overflow-hidden">
+          {/* Row 1 - scrolls to the right */}
+          <div className="relative overflow-hidden">
+            <div className="flex gap-4 animate-scrollRight w-max">
+              {[...upperRowCards, ...upperRowCards].map((src, i) => (
+                <div key={i} className="w-[60vw] flex-shrink-0">
+                  <img
+                    src={src}
+                    alt=""
+                    className="rounded-lg w-full"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Row 2 - scrolls to the left */}
+          <div className="relative overflow-hidden">
+            <div className="flex gap-4 animate-scrollLeft w-max">
+              {[...lowerRowCards, ...lowerRowCards].map((src, i) => (
+                <div key={i} className="w-[60vw] flex-shrink-0">
+                  <img
+                    src={src}
+                    alt=""
+                    className="rounded-lg w-full"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="bg-[#f5f7fb]">
       {/* ================= HERO (FIRST VIEW) ================= */}
@@ -41,7 +126,6 @@ export default function TechScrollSection() {
         <div className="sticky top-0 h-screen overflow-hidden">
           <div className="mx-auto grid h-full w-full max-w-7xl grid-cols-1 gap-12 px-6 lg:grid-cols-2 lg:px-12">
             {/* LEFT TEXT */}
-            {/* <div className="flex flex-col justify-start pt-12"> */}
             <div className="flex h-full flex-col pb-20 pt-24">
               <div className="flex items-center gap-2 mb-6">
                 <RotatingDots variant="light" />

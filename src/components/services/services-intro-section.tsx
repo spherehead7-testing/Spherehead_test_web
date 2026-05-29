@@ -21,27 +21,31 @@ export default function ServicesIntroSection({
 
 function ServicesIntroMobile({ data }: { data: ServiceCategoryData["intro"] }) {
   return (
-    <section className="relative z-30 w-full bg-white py-10 rounded-[6px]">
+    <section className="relative z-30 w-full bg-white py-20 rounded-[6px]">
       <SiteContainer>
+        {/* Main headline with blue highlights */}
         <div className="w-full">
           <p
-            className="!text-[#01030B]"
-            style={{ fontFamily: "var(--font-archivo)", fontSize: "24px" }}
+            className="heading-2 !text-[#01030B]"
             dangerouslySetInnerHTML={{ __html: data.mainText }}
           />
         </div>
-        <p className="body-small mt-6" style={{ color: "#8A8B8F", lineHeight: "1.6" }}>
-          {data.p1}
-        </p>
-        <div className="relative mt-8 aspect-[4/3] w-full max-w-[280px] overflow-hidden rounded-[4px] bg-animated-gradient">
-          <div className="absolute inset-5 z-10 overflow-hidden rounded-xl">
-            <Image src={data.image} alt="Section Image" fill sizes="280px" className="object-contain" />
-          </div>
-        </div>
-        <p className="body-small mt-8 italic" style={{ color: "#8A8B8F", lineHeight: "1.6" }}>
+
+        {/* Heading paragraph */}
+        <p className="body-medium mt-6 !text-black">
           {data.heading}
         </p>
-        <p className="body-small mt-6" style={{ color: "#8A8B8F", lineHeight: "1.6" }}>
+        <div className="relative mt-8 w-[65%] aspect-[3/4] overflow-hidden rounded-[4px] bg-animated-gradient">
+          <div className="absolute inset-5 z-10 overflow-hidden rounded-xl">
+            <Image src={data.image} alt="Section Image" fill sizes="65vw" className="object-contain" />
+          </div>
+        </div>
+
+        {/* p1 and p2 below image */}
+        <p className="body-small mt-8 !text-[#8A8B8F]">
+          {data.p1}
+        </p>
+        <p className="body-small mt-6 !text-[#8A8B8F]">
           {data.p2}
         </p>
       </SiteContainer>
@@ -116,7 +120,6 @@ function ServicesIntroDesktop({ data }: { data: ServiceCategoryData["intro"] }) 
     const html = document.documentElement;
     html.style.scrollBehavior = "auto";
 
-
     type State = "idle" | "atHero" | "atIntro" | "animating";
     let state: State = window.scrollY < 50 ? "atHero" : "idle";
 
@@ -134,6 +137,8 @@ function ServicesIntroDesktop({ data }: { data: ServiceCategoryData["intro"] }) 
     let resetTimeoutId: NodeJS.Timeout | null = null;
     let arrivedFromApproach = false;
     let momentumSettled = false;
+    let hadDirectionChange = false;
+    let lastApproachEventTime = 0;
 
     const getIntroTop = () => section.offsetTop;
 
@@ -147,10 +152,7 @@ function ServicesIntroDesktop({ data }: { data: ServiceCategoryData["intro"] }) 
       activeCooldownMs = APPROACH_SNAP_COOLDOWN_MS;
       arrivedFromApproach = true;
       momentumSettled = false;
-      // Allow upward scrolling after momentum from the snap has dissipated
-      setTimeout(() => {
-        momentumSettled = true;
-      }, 600);
+      hadDirectionChange = false;
     };
     window.addEventListener("approach-snap-to-intro", handleApproachSnap);
 
@@ -250,24 +252,46 @@ function ServicesIntroDesktop({ data }: { data: ServiceCategoryData["intro"] }) 
       if (state === "atIntro") {
         e.preventDefault();
 
-        // Block downward scrolls during the full cooldown (absorb snap momentum)
         if (isDown && now - atIntroSince < activeCooldownMs) {
           accumulator = 0;
           eventCount = 0;
+          if (arrivedFromApproach && !momentumSettled) {
+            hadDirectionChange = true;
+          }
           return;
         }
 
-        // Block upward scrolls until momentum from approach snap has settled
         if (isUp && arrivedFromApproach && !momentumSettled) {
-          accumulator = 0;
-          eventCount = 0;
-          return;
+          const timeSinceArrival = now - atIntroSince;
+          if (hadDirectionChange) {
+            momentumSettled = true;
+          } else if (timeSinceArrival > 1500) {
+            momentumSettled = true;
+          } else {
+            const eventGap = now - lastApproachEventTime;
+            lastApproachEventTime = now;
+            if (eventGap > 120 && timeSinceArrival > 300) {
+              momentumSettled = true;
+            } else {
+              accumulator = 0;
+              eventCount = 0;
+              return;
+            }
+          }
+        }
+
+        if (arrivedFromApproach && !momentumSettled) {
+          lastApproachEventTime = now;
         }
 
         const gap = now - lastWheelTime;
         lastWheelTime = now;
 
         const currentDir = isDown ? "down" : "up";
+
+        if (isDown && arrivedFromApproach && !momentumSettled) {
+          hadDirectionChange = true;
+        }
 
         if (gap > INTENT_GAP_MS || currentDir !== lastDirection) {
           accumulator = 0;
