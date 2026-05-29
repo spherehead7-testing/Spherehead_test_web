@@ -557,7 +557,7 @@ export default function Navbar({ scrollContainer }: NavbarProps) {
         <SiteContainer className="flex items-center justify-between py-4">
           <Link href="/" onClick={() => setMobileMenuOpen(false)}>
             <Image
-              src="https://res.cloudinary.com/dku9in8sb/image/upload/v1779707135/Layer_1_black_qbeiy4.png"
+              src="https://res.cloudinary.com/dku9in8sb/image/upload/v1779707135/Layer_1_black_qbeiy4.webp"
               alt="Spherehead Logo"
               width={140}
               height={40}

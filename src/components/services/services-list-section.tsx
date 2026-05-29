@@ -328,7 +328,7 @@ function ServiceListItem({
         transition={{ duration: 0.3, ease: "easeInOut" }}
         className="overflow-hidden"
       >
-        <p className="body-small text-[#55565C] pt-2 pb-2 leading-relaxed max-w-[280px] ml-9 lg:ml-20">
+        <p className="body-small text-[#55565C] pt-2 pb-2 max-w-[280px] ml-9 lg:ml-20">
           {service.desc}
         </p>
       </motion.div>

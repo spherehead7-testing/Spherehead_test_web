@@ -317,7 +317,7 @@ export default function ServicesApproachSection() {
         }`}
     >
       <span
-        className="text-[48px] lg:text-[64px] font-light text-white/90 leading-none mb-3"
+        className="text-[48px] lg:text-[64px] font-light text-white leading-none mb-3"
         style={{ fontFamily: "var(--font-archivo)" }}
       >
         {item.num}
@@ -350,7 +350,7 @@ export default function ServicesApproachSection() {
             {approaches.map((item) => (
               <div key={item.num} className="flex flex-col items-center text-center gap-3">
                 <span
-                  className="text-[48px] font-light text-white/90 leading-none pb-1"
+                  className="text-[48px] font-light text-white leading-none pb-1"
                   style={{ fontFamily: "var(--font-archivo)" }}
                 >
                   {item.num}
