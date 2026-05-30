@@ -157,15 +157,12 @@ export default function CaseStudiesSlider() {
   return (
     <SiteContainer>
       <LayoutGroup>
-        <div
-          className="w-full flex flex-col gap-8 pb-12"
-          suppressHydrationWarning
-        >
+        <div className="w-full flex flex-col gap-8 pb-12">
           {/* === MOBILE & TABLET VIEW === */}
           {isMobile && (
-            <div className="w-full flex flex-col gap-6 md:max-w-3xl mx-auto md:px-0">
+            <div className="w-full flex flex-col gap-6 sm:max-w-[90%] md:max-w-4xl mx-auto px-0">
               {/* Tablet adjustments: taller image, wider max-width constraint */}
-              <div className="w-full h-[240px] md:h-[400px] relative overflow-hidden rounded-sm">
+              <div className="w-full h-[240px] sm:h-[360px] md:h-[480px] relative overflow-hidden rounded-sm">
                 <Link
                   href={`/case-studies/${activeStudy.slug}`}
                   className="w-full h-full block cursor-pointer"
@@ -182,7 +179,10 @@ export default function CaseStudiesSlider() {
 
               <div className="flex flex-col gap-5 px-1">
                 <div className="flex justify-between items-center">
-                  <span suppressHydrationWarning className="bg-[#F0F5FF] text-[#0D54CA] px-3 py-1 text-sm rounded-sm">
+                  <span
+                    suppressHydrationWarning
+                    className="bg-[#F0F5FF] text-[#0D54CA] px-3 py-1 text-sm rounded-sm"
+                  >
                     {activeStudy.category}
                   </span>
                   <div className="flex gap-4 items-center text-[#55565C]">
@@ -202,16 +202,22 @@ export default function CaseStudiesSlider() {
                 </div>
 
                 <div className="flex items-stretch justify-between gap-6">
-                  <h3 suppressHydrationWarning className="text-[22px] font-medium leading-snug text-[#01030B] flex-1">
+                  <h3
+                    suppressHydrationWarning
+                    className="text-[22px] sm:text-[28px] font-medium leading-snug text-[#01030B] flex-1"
+                  >
                     {activeStudy.title}
                   </h3>
 
                   <div className="flex items-start pl-6 border-l border-gray-200">
                     <div className="flex items-baseline">
-                      <span suppressHydrationWarning className="text-[32px] font-medium text-[#0D54CA] leading-none">
+                      <span
+                        suppressHydrationWarning
+                        className="text-[32px] sm:text-[40px] font-medium text-[#0D54CA] leading-none"
+                      >
                         {activeStudy.id}
                       </span>
-                      <span className="text-sm font-medium text-gray-400 ml-[2px]">
+                      <span className="text-sm sm:text-base font-medium text-gray-400 ml-[2px]">
                         /0{totalSlides}
                       </span>
                     </div>
@@ -317,10 +323,16 @@ export default function CaseStudiesSlider() {
                           exit={{ opacity: 0 }}
                           transition={{ duration: 0.4 }}
                         >
-                          <h2 suppressHydrationWarning className="heading-2 !text-[#01030B] mb-6">
+                          <h2
+                            suppressHydrationWarning
+                            className="heading-2 !text-[#01030B] mb-6"
+                          >
                             {activeStudy.title}
                           </h2>
-                          <p suppressHydrationWarning className="body-small text-[#8A8B8F] mb-8 hidden md:block">
+                          <p
+                            suppressHydrationWarning
+                            className="body-small text-[#8A8B8F] mb-8 hidden md:block"
+                          >
                             {activeStudy.description}
                           </p>
                         </motion.div>
