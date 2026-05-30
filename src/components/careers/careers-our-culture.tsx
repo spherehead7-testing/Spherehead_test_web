@@ -39,11 +39,6 @@ export default function WhyWorkWithUs() {
 
       <SiteContainer className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-start relative pt-10 lg:pt-20 pb-10 lg:pb-32">
         <div className="lg:col-span-6 sticky top-20 lg:top-24 flex flex-col justify-start items-start gap-6">
-          <div className="flex items-center gap-4 inter-tight">
-            <RotatingDots variant="light" />
-            <span className="body-small">Why Work With Us</span>
-          </div>
-
           <h2 className="heading-2 !text-[#01030B] max-w-[530px]">
             Empowering Careers through Growth, Innovation, and Collaborative
             Culture
