@@ -4,8 +4,9 @@ import { useState, useEffect } from "react";
  * Returns true when the viewport is below the md breakpoint (768px).
  * Uses matchMedia for efficiency — no resize listener needed.
  */
-export function useIsMobile(breakpoint = 1368): boolean {
+export function useIsMobile(breakpoint = 1024): boolean {
   const [isMobile, setIsMobile] = useState(false);
+
 
   useEffect(() => {
     const mql = window.matchMedia(`(max-width: ${breakpoint - 1}px)`);

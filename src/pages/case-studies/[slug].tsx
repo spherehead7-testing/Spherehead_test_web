@@ -8,11 +8,7 @@ import { FiArrowLeft } from "react-icons/fi";
 import Footer from "@/components/layout/footer";
 import RotatingDots from "@/components/ui/rotating-dots";
 import { useIsMobile } from "@/hooks/use-is-mobile";
-import {
-  motion,
-  useScroll,
-  useTransform,
-} from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 const CASE_STUDY_DETAILS = [
   {
@@ -153,6 +149,7 @@ export default function CaseStudyDetail() {
   const router = useRouter();
   const { slug } = router.query;
   const [activeSection, setActiveSection] = useState("overview");
+  const [isExiting, setIsExiting] = useState(false);
 
   const { scrollY } = useScroll();
   const isMobile = useIsMobile();
@@ -196,19 +193,20 @@ export default function CaseStudyDetail() {
 
   const handleBackClick = (e: React.MouseEvent) => {
     e.preventDefault();
+    if (isExiting) return;
+    setIsExiting(true);
+
     if (studyIndex >= 0) {
       sessionStorage.setItem("spherehead_slider_page", studyIndex.toString());
     }
-    
+
+    // Go immediately back so layout transition fires instantly
     if (window.history.length > 1) {
       router.back();
     } else {
       router.push("/case-studies");
     }
   };
-
-  // Ensure we never render below in an invalid JSX state.
-  // (This file previously had a broken JSX structure / missing tag.)
 
   if (!study) {
     return (
@@ -231,16 +229,13 @@ export default function CaseStudyDetail() {
 
       <main className="w-full bg-white font-sans min-h-screen">
         {isMobile ? (
-              <div key="page-content" className="w-full">
+          <div key="page-content" className="w-full">
             {/* ── 1. BLUE HERO SECTION ── */}
             <section
               className={`w-full bg-[#0A2F76] px-6 lg:px-16 text-white relative z-0 flex flex-col justify-end lg:justify-start lg:block h-[80svh] pb-28 pt-24`}
             >
               <div className="max-w-[1400px] mx-auto w-full flex flex-col">
-                {/* Horizontal line applied on mobile */}
                 <div className="w-full h-[1px] bg-white mb-8 block lg:hidden order-1" />
-
-                {/* Flex ordering pushes back button below title on mobile */}
                 <button
                   onClick={handleBackClick}
                   className="flex items-center gap-2 text-white hover:text-white transition-colors w-fit mt-8 lg:mt-0 mb-0 lg:mb-12 cursor-pointer order-3 lg:order-1"
@@ -272,7 +267,6 @@ export default function CaseStudyDetail() {
                     className="w-full h-[300px] lg:h-[600px] object-cover rounded-[4px]"
                   />
 
-                  {/* Hidden on mobile, block on lg */}
                   <div className="hidden lg:block absolute bottom-0 right-0 bg-white pt-6 pl-8 pr-6 rounded-tl-[0.50rem] z-20 border-0 shadow-none outline-none ring-0">
                     <Link
                       href="/contact-us"
@@ -298,7 +292,6 @@ export default function CaseStudyDetail() {
             {/* ── 3. CONTENT GRID ── */}
             <div className="relative z-20 bg-white max-w-[1400px] mx-auto px-6 lg:px-16 pb-12 lg:pb-32 pt-12 lg:pt-24">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-start">
-                {/* LEFT: STICKY SIDEBAR */}
                 <div className="hidden lg:block lg:col-span-3 sticky top-32 self-start">
                   <div className="flex items-center gap-8 mb-10">
                     <div className="w-5 h-5">
@@ -348,7 +341,6 @@ export default function CaseStudyDetail() {
                   </div>
                 </div>
 
-                {/* RIGHT: TEXT CONTENT */}
                 <div className="lg:col-span-9 flex flex-col gap-16 text-[#333]">
                   <div id="overview" className="scroll-mt-32">
                     <p className="whitespace-pre-wrap leading-relaxed text-[#55565C] mb-10">
@@ -453,7 +445,7 @@ export default function CaseStudyDetail() {
             </div>
           </div>
         ) : (
-        <div className="w-full">
+          <div className="w-full">
             {/* ── 1. BLUE HERO SECTION ── */}
             <motion.section
               style={{ y: blueBarY }}
@@ -492,17 +484,16 @@ export default function CaseStudyDetail() {
                 }
                 className="max-w-[1400px] mx-auto w-full flex flex-col"
               >
-                {/* Horizontal line applied on mobile */}
                 <div className="w-full h-[1px] bg-white/30 mb-8 block lg:hidden order-1" />
-
-                {/* Flex ordering pushes back button below title on mobile */}
                 <button
                   onClick={handleBackClick}
                   className="flex items-center gap-2 text-white hover:text-white transition-colors w-fit mt-8 lg:mt-0 mb-0 lg:mb-12 cursor-pointer order-3 lg:order-1"
                 >
                   <FiArrowLeft /> Back to Case Studies
                 </button>
-                <h1 className="heading-2 max-w-4xl border-none outline-none order-2 lg:order-2">{study.title}</h1>
+                <h1 className="heading-2 max-w-4xl border-none outline-none order-2 lg:order-2">
+                  {study.title}
+                </h1>
               </motion.div>
             </motion.section>
 
@@ -514,21 +505,22 @@ export default function CaseStudyDetail() {
             >
               <section className="max-w-[1400px] mx-auto px-6 lg:px-16">
                 <motion.div
-                  layout={isMobile ? false : true}
-                  layoutId={isMobile ? undefined : `shared-slide-${studyIndex}`}
-                  initial={isMobile ? { opacity: 1 } : false}
+                  layout={!isMobile}
+                  layoutId={!isMobile ? `shared-slide-${studyIndex}` : undefined}
+                  initial={false}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 1 }}
-                  transition={
-                    isMobile
-                      ? { duration: 0 }
-                      : {
-                          duration: 1.0,
-                          ease: EASE,
-                          layout: { duration: 1.0, ease: EASE },
-                        }
-                  }
-                  style={{ transformOrigin: "left top" }}
+                  transition={{
+                    layout: {
+                      type: "tween",
+                      ease: [0.76, 0, 0.24, 1],
+                      duration: 1.2,
+                    },
+                  }}
+                  style={{
+                    transformOrigin: "left top",
+                    zIndex: isExiting ? 50 : 1,
+                  }}
                   className="w-full relative pointer-events-auto"
                 >
                   <div className="absolute top-6 right-6 bg-white px-4 py-1.5 body-extra-small text-[#0A2F76] rounded-sm z-20">
@@ -542,7 +534,6 @@ export default function CaseStudyDetail() {
                     className="w-full h-[300px] lg:h-[600px] object-cover rounded-[4px]"
                   />
 
-                  {/* Hidden on mobile, block on lg */}
                   <div className="hidden lg:block absolute bottom-0 right-0 bg-white pt-6 pl-8 pr-6 rounded-tl-[0.50rem] z-20 border-0 shadow-none outline-none ring-0">
                     <Link
                       href="/contact-us"
@@ -568,7 +559,6 @@ export default function CaseStudyDetail() {
             {/* ── 3. CONTENT GRID ── */}
             <div className="relative z-20 bg-white max-w-[1400px] mx-auto px-6 lg:px-16 pb-12 lg:pb-32 pt-12 lg:pt-24">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-start">
-                {/* LEFT: STICKY SIDEBAR */}
                 <div className="hidden lg:block lg:col-span-3 sticky top-32 self-start">
                   <div className="flex items-center gap-8 mb-10">
                     <div className="w-5 h-5">
@@ -618,7 +608,6 @@ export default function CaseStudyDetail() {
                   </div>
                 </div>
 
-                {/* RIGHT: TEXT CONTENT */}
                 <div className="lg:col-span-9 flex flex-col gap-16 text-[#333]">
                   <div id="overview" className="scroll-mt-32">
                     <p className="whitespace-pre-wrap leading-relaxed text-[#55565C] mb-10">

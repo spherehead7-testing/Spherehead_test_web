@@ -40,35 +40,34 @@ const CASE_STUDIES = [
   },
 ];
 
-const DURATION = 1.5;
+const DURATION = 1.2;
 const EASE: [number, number, number, number] = [0.76, 0, 0.24, 1];
 
+const TRANSITION = {
+  duration: DURATION,
+  ease: EASE,
+  layout: {
+    type: "tween",
+    ease: EASE,
+    duration: DURATION,
+  },
+};
+
 export default function CaseStudiesSlider() {
-  const [[page, direction], setPage] = useState([0, 0]);
-  const [isMounted, setIsMounted] = useState(false);
-  
-  // 2. Read from sessionStorage ONLY after hydration is complete
-  useEffect(() => {
-    setIsMounted(true);
-
-    const saved = sessionStorage.getItem("spherehead_slider_page");
-    if (saved !== null) {
-      setPage([parseInt(saved, 10), 0]);
+  const [[page, direction], setPage] = useState(() => {
+    if (typeof window !== "undefined") {
+      const saved = sessionStorage.getItem("spherehead_slider_page");
+      if (saved !== null) {
+        return [parseInt(saved, 10), 0];
+      }
     }
-  }, []);
-
-  // 3. Save to sessionStorage only after the initial mount,
-  useEffect(() => {
-    if (isMounted) {
-      sessionStorage.setItem("spherehead_slider_page", page.toString());
-    }
-  }, [page, isMounted]);
+    return [0, 0];
+  });
 
   const isMobile = useIsMobile();
   const isAnimating = React.useRef(false);
 
   useEffect(() => {
-    setIsMounted(true);
     sessionStorage.setItem("spherehead_slider_page", page.toString());
   }, [page]);
 
@@ -80,7 +79,6 @@ export default function CaseStudiesSlider() {
   const nextStudy = CASE_STUDIES[nextIndex];
 
   const handleNext = useCallback(() => {
-    // Bypass animation lock for fast clicking on mobile
     if (isMobile) {
       setPage((prev) => [prev[0] + 1, 1]);
       return;
@@ -97,7 +95,6 @@ export default function CaseStudiesSlider() {
   }, [isMobile]);
 
   const handlePrev = useCallback(() => {
-    // Bypass animation lock for fast clicking on mobile
     if (isMobile) {
       setPage((prev) => [prev[0] - 1, -1]);
       return;
@@ -164,16 +161,18 @@ export default function CaseStudiesSlider() {
           className="w-full flex flex-col gap-8 pb-12"
           suppressHydrationWarning
         >
-          {/* === MOBILE VIEW === */}
+          {/* === MOBILE & TABLET VIEW === */}
           {isMobile && (
-            <div className="w-full flex flex-col gap-6 max-w-lg mx-auto">
-              {/* Hero Image */}
-              <div className="w-full h-[240px] relative overflow-hidden rounded-sm">
-                <Link 
+            <div className="w-full flex flex-col gap-6 md:max-w-3xl mx-auto md:px-0">
+              {/* Tablet adjustments: taller image, wider max-width constraint */}
+              <div className="w-full h-[240px] md:h-[400px] relative overflow-hidden rounded-sm">
+                <Link
                   href={`/case-studies/${activeStudy.slug}`}
                   className="w-full h-full block cursor-pointer"
+                  suppressHydrationWarning
                 >
                   <img
+                    suppressHydrationWarning
                     src={activeStudy.image}
                     alt={activeStudy.title}
                     className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
@@ -182,32 +181,34 @@ export default function CaseStudiesSlider() {
               </div>
 
               <div className="flex flex-col gap-5 px-1">
-                {/* Category & Nav Controls */}
                 <div className="flex justify-between items-center">
-                  <span className="bg-[#F0F5FF] text-[#0D54CA] px-3 py-1 text-sm rounded-sm">
+                  <span suppressHydrationWarning className="bg-[#F0F5FF] text-[#0D54CA] px-3 py-1 text-sm rounded-sm">
                     {activeStudy.category}
                   </span>
                   <div className="flex gap-4 items-center text-[#55565C]">
-                    <button onClick={handlePrev} className="hover:text-[#0D54CA] transition-colors cursor-pointer">
+                    <button
+                      onClick={handlePrev}
+                      className="hover:text-[#0D54CA] transition-colors cursor-pointer"
+                    >
                       <FiChevronLeft size={20} />
                     </button>
-                    <button onClick={handleNext} className="hover:text-[#0D54CA] transition-colors cursor-pointer">
+                    <button
+                      onClick={handleNext}
+                      className="hover:text-[#0D54CA] transition-colors cursor-pointer"
+                    >
                       <FiChevronRight size={20} />
                     </button>
                   </div>
                 </div>
 
-                {/* Title & Counter Row */}
                 <div className="flex items-stretch justify-between gap-6">
-                  {/* Title */}
-                  <h3 className="text-[22px] font-medium leading-snug text-[#01030B] flex-1">
+                  <h3 suppressHydrationWarning className="text-[22px] font-medium leading-snug text-[#01030B] flex-1">
                     {activeStudy.title}
                   </h3>
-                  
-                  {/* Vertical Divider & Counter */}
+
                   <div className="flex items-start pl-6 border-l border-gray-200">
                     <div className="flex items-baseline">
-                      <span className="text-[32px] font-medium text-[#0D54CA] leading-none">
+                      <span suppressHydrationWarning className="text-[32px] font-medium text-[#0D54CA] leading-none">
                         {activeStudy.id}
                       </span>
                       <span className="text-sm font-medium text-gray-400 ml-[2px]">
@@ -217,11 +218,11 @@ export default function CaseStudiesSlider() {
                   </div>
                 </div>
 
-                {/* Call to Action Button */}
                 <div className="mt-2">
                   <Link
                     href={`/case-studies/${activeStudy.slug}`}
                     className="body-extra-small border border-[#0D54CA] !text-[#0D54CA] px-6 py-2.5 transition-colors w-fit block text-center"
+                    suppressHydrationWarning
                   >
                     View Full Case Study
                   </Link>
@@ -232,33 +233,34 @@ export default function CaseStudiesSlider() {
 
           {/* === DESKTOP VIEW === */}
           {!isMobile && (
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-start">
               {/* LEFT: MAIN SLOT */}
-              <div className="lg:col-span-8 flex flex-col">
+              <div className="md:col-span-8 flex flex-col">
                 {/* IMAGE ROW */}
-                <div className="flex flex-row gap-4 items-start lg:items-stretch lg:block w-full relative overflow-visible">
+                <div className="flex flex-row gap-4 items-start md:items-stretch md:block w-full relative overflow-visible">
                   {/* 1. Main Image */}
-                  <div className="w-[80%] lg:w-full h-[220px] sm:h-[280px] lg:h-[380px] relative overflow-visible rounded-sm shrink-0 z-10">
+                  <div className="w-[80%] md:w-full h-[220px] sm:h-[280px] md:h-[380px] relative overflow-visible rounded-sm shrink-0 z-10">
                     <AnimatePresence custom={direction} initial={false}>
                       <motion.div
                         key={`main-slide-${page}`}
-                        layout={isMounted}
-                        layoutId={
-                          isMounted ? `shared-slide-${currentIndex}` : undefined
-                        }
+                        layout={true}
+                        layoutId={`shared-slide-${currentIndex}`}
                         custom={direction}
                         variants={mainVariants}
                         initial="enter"
                         animate="center"
                         exit="exit"
-                        transition={{ duration: DURATION, ease: EASE }}
+                        transition={TRANSITION}
                         className="absolute inset-0 w-full h-full overflow-hidden rounded-sm shadow-sm"
+                        suppressHydrationWarning
                       >
                         <Link
                           href={`/case-studies/${activeStudy.slug}`}
                           className="w-full h-full block cursor-pointer"
+                          suppressHydrationWarning
                         >
                           <img
+                            suppressHydrationWarning
                             src={activeStudy.image}
                             alt={activeStudy.title}
                             className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
@@ -280,6 +282,7 @@ export default function CaseStudiesSlider() {
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.4 }}
                         className="px-3 py-1 bg-blue-50 text-[#0D54CA] text-xs font-semibold uppercase tracking-wider rounded-sm whitespace-nowrap"
+                        suppressHydrationWarning
                       >
                         {activeStudy.category}
                       </motion.span>
@@ -304,8 +307,7 @@ export default function CaseStudiesSlider() {
 
                 {/* TEXT BLOCK & DESKTOP DESCRIPTIONS */}
                 <div className="flex flex-row gap-4 items-stretch w-full min-h-[160px]">
-                  {/* Text Content */}
-                  <div className="w-[80%] shrink-0 lg:w-full flex flex-col justify-between pr-2 lg:pr-0">
+                  <div className="w-[80%] shrink-0 md:w-full flex flex-col justify-between pr-2 md:pr-0">
                     <div>
                       <AnimatePresence mode="wait" initial={false}>
                         <motion.div
@@ -315,10 +317,10 @@ export default function CaseStudiesSlider() {
                           exit={{ opacity: 0 }}
                           transition={{ duration: 0.4 }}
                         >
-                          <h2 className="heading-2 !text-[#01030B] mb-6">
+                          <h2 suppressHydrationWarning className="heading-2 !text-[#01030B] mb-6">
                             {activeStudy.title}
                           </h2>
-                          <p className="body-small text-[#8A8B8F] mb-8 hidden lg:block">
+                          <p suppressHydrationWarning className="body-small text-[#8A8B8F] mb-8 hidden md:block">
                             {activeStudy.description}
                           </p>
                         </motion.div>
@@ -329,6 +331,7 @@ export default function CaseStudiesSlider() {
                       <Link
                         href={`/case-studies/${activeStudy.slug}`}
                         className="body-extra-small border border-[#0D54CA] !text-[#0D54CA] px-6 py-2.5 transition-colors w-fit block text-center"
+                        suppressHydrationWarning
                       >
                         View Full Case Study
                       </Link>
@@ -338,8 +341,8 @@ export default function CaseStudiesSlider() {
               </div>
 
               {/* === RIGHT: PREVIEW SLOT & COUNTER (Desktop Only) === */}
-              <div className="hidden lg:flex lg:col-span-4 flex-col h-full">
-                <div className="w-full lg:h-[380px] relative overflow-visible">
+              <div className="hidden md:flex md:col-span-4 flex-col h-full">
+                <div className="w-full md:h-[380px] relative overflow-visible">
                   <motion.div
                     initial={{ y: 0 }}
                     whileInView={{ y: 80 }}
@@ -358,20 +361,19 @@ export default function CaseStudiesSlider() {
                       <AnimatePresence custom={direction} initial={false}>
                         <motion.div
                           key={`preview-slide-${page}`}
-                          layoutId={
-                            isMounted && !isMobile
-                              ? `shared-slide-${nextIndex}`
-                              : undefined
-                          }
+                          layout={true}
+                          layoutId={`shared-slide-${nextIndex}`}
                           custom={direction}
                           variants={previewVariants}
                           initial="enter"
                           animate="center"
                           exit="exit"
-                          transition={{ duration: DURATION, ease: EASE }}
+                          transition={TRANSITION}
                           className="absolute inset-0 w-full h-full overflow-hidden rounded-sm"
+                          suppressHydrationWarning
                         >
                           <img
+                            suppressHydrationWarning
                             src={nextStudy.image}
                             alt="Next Case Study"
                             className="w-full h-full object-cover"
@@ -397,6 +399,7 @@ export default function CaseStudiesSlider() {
                           exit={{ opacity: 0 }}
                           transition={{ duration: 0.4, ease: "easeInOut" }}
                           className="absolute left-0 bottom-0 text-7xl font-light text-[#0D54CA] leading-none"
+                          suppressHydrationWarning
                         >
                           {activeStudy.id}
                         </motion.span>
