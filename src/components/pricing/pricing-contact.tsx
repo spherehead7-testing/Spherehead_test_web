@@ -3,8 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 import RotatingDots from "@/components/ui/rotating-dots";
 import SiteContainer from "@/components/layout/site-container";
+import { useIsMobile } from "@/hooks/use-is-mobile";
 
 export default function ContactSection() {
+  const isMobile = useIsMobile();
   const [mode, setMode] = useState<"consultation" | "quotation">(
     "consultation",
   );
@@ -12,6 +14,8 @@ export default function ContactSection() {
   const snapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
+    if (isMobile) return;
+
     const section = sectionRef.current;
     if (!section) return;
 
@@ -39,7 +43,7 @@ export default function ContactSection() {
         clearTimeout(snapTimerRef.current);
       }
     };
-  }, []);
+  }, [isMobile]);
 
   return (
     <section

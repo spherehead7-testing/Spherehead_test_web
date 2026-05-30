@@ -207,7 +207,7 @@ function PricingCard({ item }: { item: PricingPackage }) {
           <h3 className="heading-3 !text-[#01030B]">{item.title}</h3>
         </div>
 
-        <div className="mt-8 lg:mt-14 flex flex-col">
+        <div className="mt-14 lg:mt-14 flex flex-col">
           <p className="body-extra-small max-w-[500px] text-[#8b8b8b]">
             {item.description}
           </p>
@@ -261,16 +261,16 @@ export default function PricingPackages() {
   return (
     <section className="text-white">
       <SiteContainer className="pt-12 lg:pt-0 pb-12 lg:pb-20">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <RotatingDots />
           <p className="body-small">Product Pricing</p>
         </div>
-        <h2 className="heading-2 mt-7 max-w-[940px]">
+        <h2 className="heading-2 mt-5 max-w-[940px]">
           Delivering Value through
           <br />
           Transparent and Flexible Pricing
         </h2>
-        <div className="mt-14 space-y-6 lg:mt-12 lg:space-y-8">
+        <div className="mt-10 space-y-4 lg:mt-12 lg:space-y-8">
           {pricingPackages.map((item) => (
             <PricingCard key={item.title} item={item} />
           ))}

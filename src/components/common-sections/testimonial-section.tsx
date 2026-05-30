@@ -456,7 +456,7 @@ export default function TestimonialSection({
         >
           {/* 3-column row: image | quote+name | gray pill */}
           <div
-            className="relative flex flex-row gap-2"
+            className="relative w-full overflow-hidden"
             style={{ minHeight: 260 }}
           >
             {/* Static base */}

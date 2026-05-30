@@ -23,9 +23,15 @@ export default function PricingPage() {
       <PricingPackages />
       <ContactSection />
       <FAQSection />
-      <div className="relative z-30 w-full bg-white lg:snap-start">
-        <TestimonialSection />
+      <div className="relative z-30 w-full bg-white">
+        <div className="hidden lg:block lg:snap-start">
+          <TestimonialSection snapToScreen />
+        </div>
+        <div className="block lg:hidden">
+          <TestimonialSection />
+        </div>
       </div>
+
       <Footer />
     </>
   );

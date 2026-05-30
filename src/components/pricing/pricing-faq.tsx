@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useIsMobile } from "@/hooks/use-is-mobile";
+
 import Link from "next/link";
 import RotatingDots from "@/components/ui/rotating-dots";
 import SiteContainer from "../layout/site-container";
@@ -39,6 +41,7 @@ const faqs = [
 ];
 
 export default function FAQSection() {
+  const isMobile = useIsMobile();
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const sectionRef = useRef<HTMLElement | null>(null);
   const snapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -48,6 +51,8 @@ export default function FAQSection() {
   };
 
   useEffect(() => {
+    if (isMobile) return;
+
     const section = sectionRef.current;
     if (!section) return;
 
@@ -75,7 +80,7 @@ export default function FAQSection() {
         clearTimeout(snapTimerRef.current);
       }
     };
-  }, []);
+  }, [isMobile]);
 
   return (
     <section
