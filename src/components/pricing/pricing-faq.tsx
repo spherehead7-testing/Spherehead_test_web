@@ -85,7 +85,7 @@ export default function FAQSection() {
   return (
     <section
       ref={sectionRef}
-      className="min-h-[100svh] w-full snap-start py-8 lg:h-[100svh] lg:overflow-hidden lg:py-10 lg:flex lg:items-center"
+      className="w-full snap-start py-14 lg:min-h-[100svh] lg:h-[100svh] lg:overflow-hidden lg:py-10 lg:flex lg:items-center"
     >
       <SiteContainer>
         <div className="grid items-start gap-10 lg:grid-cols-2 lg:gap-6">
@@ -104,7 +104,7 @@ export default function FAQSection() {
           </div>
 
           {/* RIGHT SIDE */}
-          <div className="flex flex-col justify-between rounded-sm bg-white p-8 md:p-10 lg:py-12 lg:px-12 h-[750px]">
+          <div className="flex flex-col justify-between rounded-sm bg-white p-8 md:p-10 lg:py-12 lg:px-12 h-auto lg:h-[750px]">
             <div className="flex flex-col">
               {faqs.map((faq, index) => {
                 const isOpen = activeIndex === index;
@@ -148,17 +148,16 @@ export default function FAQSection() {
             </div>
 
             {/* CONTACT CTA */}
-            {/* Removed the large mt-16; justify-between pushes it to the bottom naturally */}
-            <div className="pt-6">
-              <p className="mb-3 body-small text-[#01030B]">
-                My question is not here.
+            <div className="pt-6 flex flex-row-reverse items-center justify-between lg:block lg:pt-6">
+              <p className="mb-0 body-small text-[#01030B] text-right lg:mb-3 lg:text-left">
+                My question Is not here.
               </p>
 
               <Link
                 href="/contact-us"
-                className="body-medium rounded bg-animated-gradient px-8 py-3 !text-white hover:bg-blue-700 transition-colors inline-block"
+                className="body-medium inline-block rounded bg-animated-gradient px-8 py-3 !text-white transition-colors hover:bg-blue-700"
               >
-                Contact Us
+                Submit
               </Link>
             </div>
           </div>
