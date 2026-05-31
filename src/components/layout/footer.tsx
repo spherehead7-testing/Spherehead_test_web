@@ -17,12 +17,7 @@ export default function Footer() {
           {/* Heading */}
           <div className="text-white pt-12 pb-10">
             <h1
-              className="font-light leading-[1.2]"
-              style={{
-                fontFamily: "var(--font-archivo)",
-                fontSize: "36px",
-                letterSpacing: "1px",
-              }}
+              className="heading-1"
             >
               Let&apos;s Build
               <br />

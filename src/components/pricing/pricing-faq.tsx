@@ -2,8 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useIsMobile } from "@/hooks/use-is-mobile";
-
-import Link from "next/link";
+import GradientButton from "@/components/ui/gradient-button";
 import RotatingDots from "@/components/ui/rotating-dots";
 import SiteContainer from "../layout/site-container";
 
@@ -154,12 +153,10 @@ export default function FAQSection() {
                 My question Is not here.
               </p>
 
-              <Link
-                href="/contact-us"
-                className="body-medium inline-block rounded bg-animated-gradient px-8 py-3 !text-white transition-colors hover:bg-blue-700"
-              >
-                Submit
-              </Link>
+              <div className="pt-4">
+              <GradientButton href="/contact-us" className="!text-white">
+                Contact Us
+              </GradientButton>
             </div>
           </div>
         </div>

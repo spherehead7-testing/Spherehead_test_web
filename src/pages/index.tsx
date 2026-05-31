@@ -211,7 +211,7 @@ export default function HomePage() {
 
   const rightPanelHeight = useMotionTemplate`calc(${cutHeight} + 2px)`;
   const leftPanelWidth = useMotionTemplate`calc(100% - ${rightPanelWidth})`;
-  const rightPanelClipPath = useMotionTemplate`inset(0% 0% ${rightPanelCutBottom} 0% round 4px 0px 0px 4px)`;
+  const rightPanelClipPath = useMotionTemplate`inset(0% 0% ${rightPanelCutBottom} 0% round 4px)`;
 
   const scrollToBottom = () => {
     scrollContainerRef.current?.scrollTo({
@@ -257,13 +257,10 @@ export default function HomePage() {
           <div className="bg-white">
             <LandingServicesSection />
             <LandingIndustriesSection />
-            <div className="relative z-30 w-full bg-white">
+            <div className="relative z-30 w-full bg-white mt-5">
               <TechnologiesSection />
             </div>
           </div>
-
-          {/* The Blue Bar Separator */}
-          <div className="w-full h-16 bg-animated-gradient" />
 
           {/* White container for Testimonials */}
           <div className="relative z-30 w-full bg-white">
@@ -350,7 +347,7 @@ export default function HomePage() {
             ref={testimonialAreaRef}
             className="sticky top-0 h-[100vh] w-full bg-white flex flex-col justify-center overflow-hidden"
           >
-            <TestimonialSection />
+            <TestimonialSection compactDesktop />
           </div>
 
           <div

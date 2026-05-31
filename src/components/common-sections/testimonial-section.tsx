@@ -43,16 +43,11 @@ const testimonials = [
 const IMG_W = 350;
 const IMG_H = 450;
 const NAV_H = 32;
-const CARD_H = IMG_H + NAV_H;
 
 const SIDE_CARD_COUNT = 4;
 const SIDE_CARD_W = 68;
 const SIDE_CARD_GAP = 8;
-const SIDE_CARD_STEP = SIDE_CARD_W + SIDE_CARD_GAP;
 const SIDE_CARD_H = 450;
-
-const SIDE_CONTAINER_W =
-  SIDE_CARD_COUNT * SIDE_CARD_W + (SIDE_CARD_COUNT - 1) * SIDE_CARD_GAP;
 
 const MAIN_CARD_W = 650;
 const BASE_DURATION = 0.7;
@@ -61,6 +56,7 @@ const BASE_DURATION = 0.7;
 const M_IMG_W = 160; // Increased width for the mobile image
 
 type TestimonialSectionProps = {
+  compactDesktop?: boolean;
   snapToScreen?: boolean;
 };
 
@@ -159,6 +155,7 @@ function MobileCard({ card }: { card: Card }) {
 }
 
 export default function TestimonialSection({
+  compactDesktop = false,
   snapToScreen = false,
 }: TestimonialSectionProps) {
   const uidRef = useRef(SIDE_CARD_COUNT);
@@ -182,6 +179,15 @@ export default function TestimonialSection({
   const [travelX, setTravelX] = useState(-800);
 
   const activeCard = testimonials[activeIndex];
+  const desktopImgW = compactDesktop ? 300 : IMG_W;
+  const desktopImgH = compactDesktop ? 370 : IMG_H;
+  const desktopCardH = desktopImgH + NAV_H;
+  const desktopMainCardW = compactDesktop ? 590 : MAIN_CARD_W;
+  const sideCardW = compactDesktop ? 62 : SIDE_CARD_W;
+  const sideCardStep = sideCardW + SIDE_CARD_GAP;
+  const sideCardH = compactDesktop ? 370 : SIDE_CARD_H;
+  const sideContainerW =
+    SIDE_CARD_COUNT * sideCardW + (SIDE_CARD_COUNT - 1) * SIDE_CARD_GAP;
 
   useEffect(() => {
     const measureDistance = () => {
@@ -270,6 +276,98 @@ export default function TestimonialSection({
     );
   };
 
+  /* ── SideCardInner (shared) ─────────────────────────────────── */
+  const SideCardInner = ({ card }: { card: (typeof testimonials)[number] }) => (
+    <>
+      <span className="body-extra-small absolute top-5 left-1/2 [writing-mode:vertical-rl] [transform:translateX(-50%)_rotate(180deg)] !text-[#8A8B8F]">
+        {card.role}
+      </span>
+      <span className="body-small absolute bottom-6 left-1/2 [writing-mode:vertical-rl] [transform:translateX(-50%)_rotate(180deg)] !text-[#01030B]">
+        {card.name}
+      </span>
+    </>
+  );
+
+  /* ── Desktop MainCard ───────────────────────────────────────── */
+  const MainCard = ({
+    card,
+    showControls = false,
+  }: {
+    card: (typeof testimonials)[number];
+    showControls?: boolean;
+  }) => (
+    <div
+      className="flex w-full flex-col gap-5 sm:flex-row sm:gap-0"
+      style={{ maxWidth: desktopMainCardW, minHeight: desktopCardH }}
+    >
+      <div className="shrink-0 relative" style={{ width: desktopImgW }}>
+        <div
+          className="relative overflow-hidden rounded-[4px]"
+          style={{ width: desktopImgW, height: desktopImgH }}
+        >
+          <Image
+            src={card.image}
+            alt=""
+            fill
+            className="object-cover pointer-events-none"
+            draggable={false}
+          />
+        </div>
+        <div className="absolute top-0 right-0 z-10 flex h-10 w-10 items-center justify-center rounded !bg-[#0D54CA]">
+          <Quote className="h-5 w-5 fill-white text-white" />
+        </div>
+      </div>
+      <div
+        className={cn(
+          "flex min-h-[320px] flex-col justify-between pt-10 sm:min-h-0 sm:w-[288px] sm:pl-5",
+          compactDesktop ? "sm:pt-7 sm:pb-12" : "sm:pt-11 sm:pb-[74px]",
+        )}
+      >
+        <p className="body-small max-w-[238px] whitespace-pre-line !text-[#01030b]">
+          {card.quote}
+        </p>
+        <div>
+          <h3 className="body-large !text-[#01030b]">{card.name}</h3>
+          <p className="body-extra-small !text-[#01030b]">{card.role}</p>
+        </div>
+      </div>
+    </div>
+  );
+
+  /* ── MobileCard ─────────────────────────────────────────────── */
+  const MobileCard = ({ card }: { card: (typeof testimonials)[number] }) => (
+    <div className="flex w-full flex-row" style={{ minHeight: 260 }}>
+      {/* Image column — fixed width, full height */}
+      <div className="relative shrink-0" style={{ width: M_IMG_W }}>
+        <div className="relative w-full h-full overflow-hidden rounded-[4px]">
+          <Image
+            src={card.image}
+            alt=""
+            fill
+            className="object-cover object-top pointer-events-none"
+            draggable={false}
+          />
+        </div>
+        <div className="absolute top-0 right-0 z-10 flex h-8 w-8 items-center justify-center rounded !bg-[#0D54CA]">
+          <Quote className="h-4 w-4 fill-white text-white" />
+        </div>
+      </div>
+
+      {/* Middle column — quote + name, same height */}
+      <div className="flex flex-1 min-w-0 flex-col justify-between pl-3 pt-3 pb-3">
+        <p className="body-small whitespace-pre-line !text-[#01030b]">
+          {card.quote}
+        </p>
+        <div>
+          <h3 className="body-large !text-[#01030b] font-semibold">
+            {card.name}
+          </h3>
+          <p className="body-extra-small">{card.role}</p>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <section
       ref={sectionRef}
@@ -277,7 +375,9 @@ export default function TestimonialSection({
         "bg-white select-none",
         snapToScreen
           ? "h-[100svh] w-full snap-start overflow-hidden py-8 lg:flex lg:items-center"
-          : "py-16 sm:py-[62px]",
+          : compactDesktop
+            ? "py-16 sm:py-4"
+            : "py-16 sm:py-[62px]",
       )}
     >
       <SiteContainer>
@@ -296,19 +396,26 @@ export default function TestimonialSection({
         <div
           className={cn(
             "hidden sm:flex items-start justify-between gap-12",
-            snapToScreen ? "mt-8 lg:mt-10" : "mt-16 lg:mt-[76px]",
+            snapToScreen
+              ? "mt-8 lg:mt-10"
+              : compactDesktop
+                ? "mt-8 lg:mt-4"
+                : "mt-16 lg:mt-[76px]",
           )}
         >
           <div
             ref={mainContainerRef}
-            className="relative w-full sm:mt-[27px]"
-            style={{ maxWidth: MAIN_CARD_W, minHeight: CARD_H }}
+            className={cn(
+              "relative w-full",
+              compactDesktop ? "sm:mt-2" : "sm:mt-[27px]",
+            )}
+            style={{ maxWidth: desktopMainCardW, minHeight: desktopCardH }}
           >
             <div
               className="absolute left-0 z-40 flex items-center justify-between bg-white px-1"
               style={{
-                width: "min(100%, " + IMG_W + "px)",
-                top: IMG_H,
+                width: "min(100%, " + desktopImgW + "px)",
+                top: desktopImgH,
                 height: NAV_H,
               }}
             >
@@ -371,11 +478,16 @@ export default function TestimonialSection({
             )}
           </div>
 
-          <div className="hidden shrink-0 lg:flex mt-[27px]">
+          <div
+            className={cn(
+              "hidden shrink-0 lg:flex",
+              compactDesktop ? "mt-2" : "mt-[27px]",
+            )}
+          >
             <div
               ref={sideContainerRef}
               className="relative"
-              style={{ width: SIDE_CONTAINER_W, height: SIDE_CARD_H }}
+              style={{ width: sideContainerW, height: sideCardH }}
             >
               {sideStack.map((item, index) => {
                 const card = testimonials[item.testimonialIndex];
@@ -385,7 +497,7 @@ export default function TestimonialSection({
                 const initialAnim: false | { x: number; opacity: number } =
                   isIncoming
                     ? direction === "next"
-                      ? { x: SIDE_CONTAINER_W, opacity: 0 }
+                      ? { x: sideContainerW, opacity: 0 }
                       : { x: travelX, opacity: 0 }
                     : false;
 
@@ -394,7 +506,7 @@ export default function TestimonialSection({
                     key={item.uid}
                     initial={initialAnim}
                     animate={{
-                      x: index * SIDE_CARD_STEP,
+                      x: index * sideCardStep,
                       opacity: isIncomingPrev ? [0, 0, 1] : 1,
                       scale: 1,
                     }}
@@ -404,7 +516,7 @@ export default function TestimonialSection({
                       opacity: isIncomingPrev ? { times: [0, 0.75, 1] } : undefined,
                     }}
                     className="absolute top-0 rounded bg-[#f1f1f1]"
-                    style={{ width: SIDE_CARD_W, height: SIDE_CARD_H }}
+                    style={{ width: sideCardW, height: sideCardH }}
                   >
                     <SideCardInner card={card} />
                   </motion.div>
@@ -426,7 +538,7 @@ export default function TestimonialSection({
                     ease: "easeInOut",
                   }}
                   className="absolute top-0 z-50 bg-[#e9e9e9] shadow-lg"
-                  style={{ width: SIDE_CARD_W, height: SIDE_CARD_H }}
+                  style={{ width: sideCardW, height: sideCardH }}
                 >
                   <SideCardInner
                     card={testimonials[movingItem.testimonialIndex]}

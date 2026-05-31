@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import GradientButton from "@/components/ui/gradient-button";
 import RotatingDots from "@/components/ui/rotating-dots";
 import SiteContainer from "@/components/layout/site-container";
 import { useIsMobile } from "@/hooks/use-is-mobile";
@@ -142,9 +143,9 @@ export default function ContactSection() {
                       </span>
                     </div>
 
-                    <button className="body-medium rounded bg-animated-gradient px-6 py-2 text-white">
-                      Submit
-                    </button>
+                    <GradientButton>
+                    Submit
+                  </GradientButton>
                   </div>
                 </div>
               ) : (
@@ -205,9 +206,9 @@ export default function ContactSection() {
                       </span>
                     </div>
 
-                    <button className="body-medium rounded bg-animated-gradient px-6 py-2 text-white">
-                      Submit
-                    </button>
+                    <GradientButton>
+                    Submit
+                  </GradientButton>
                   </div>
                 </div>
               )}
