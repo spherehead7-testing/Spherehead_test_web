@@ -147,16 +147,17 @@ export default function FAQSection() {
               })}
             </div>
 
-            {/* CONTACT CTA */}
+           {/* CONTACT CTA */}
             <div className="pt-6 flex flex-row-reverse items-center justify-between lg:block lg:pt-10">
               <p className="mb-0 body-small text-[#01030B] text-right lg:mb-3 lg:text-left">
                 My question Is not here.
               </p>
 
               <div className="pt-4">
-              <GradientButton href="/contact-us" className="!text-white">
-                Contact Us
-              </GradientButton>
+                <GradientButton href="/contact-us" className="!text-white">
+                  Contact Us
+                </GradientButton>
+              </div>
             </div>
           </div>
         </div>
