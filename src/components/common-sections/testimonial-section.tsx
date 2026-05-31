@@ -556,7 +556,11 @@ export default function TestimonialSection({
             snapToScreen ? "mt-8" : "mt-10",
           )}
         >
-          <div className="relative flex flex-row gap-2" style={{ minHeight: 260 }}>
+          {/* 3-column row: image | quote+name | gray pill */}
+          <div
+            className="relative w-full overflow-hidden"
+            style={{ minHeight: 260 }}
+          >
             {/* Static base */}
             <div
               className={cn(

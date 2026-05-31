@@ -4,10 +4,10 @@ import { useState } from "react";
 import { ArrowDownRight } from "lucide-react";
 import SiteContainer from "@/components/layout/site-container";
 import RotatingDots from "@/components/ui/rotating-dots";
+import GradientButton from "@/components/ui/gradient-button";
 
 type PricingPackage = {
   title: string;
-  price: string;
   description: string;
   icon: "consultation" | "software" | "iot" | "web" | "robotics" | "qa";
   accent: string;
@@ -17,7 +17,6 @@ type PricingPackage = {
 const pricingPackages: PricingPackage[] = [
   {
     title: "IT Consultation",
-    price: "$120",
     description:
       "Get expert advice on optimizing your IT infrastructure, strategy, and technology choices.",
     icon: "consultation",
@@ -31,7 +30,6 @@ const pricingPackages: PricingPackage[] = [
   },
   {
     title: "Software Product Development",
-    price: "$250",
     description:
       "End-to-end custom software solutions that solve real business problems and scale with your growth.",
     icon: "software",
@@ -45,7 +43,6 @@ const pricingPackages: PricingPackage[] = [
   },
   {
     title: "IoT Development",
-    price: "$125",
     description:
       "Smart IoT solutions that connect devices, streamline operations, and deliver real-time insights to drive efficiency and innovation.",
     icon: "iot",
@@ -59,7 +56,6 @@ const pricingPackages: PricingPackage[] = [
   },
   {
     title: "Custom Web Development",
-    price: "$100",
     description:
       "Smart web solutions that combine design and functionality to deliver seamless experiences, strengthen digital presence, and drive growth.",
     icon: "web",
@@ -73,7 +69,6 @@ const pricingPackages: PricingPackage[] = [
   },
   {
     title: "Robotics and Electronics",
-    price: "$250",
     description:
       "Robotics and electronics solutions that automate processes, improve precision, and enhance efficiency",
     icon: "robotics",
@@ -87,7 +82,6 @@ const pricingPackages: PricingPackage[] = [
   },
   {
     title: "Quality Assurance and Testing",
-    price: "$75",
     description:
       "QA and testing services that ensure reliability, boost performance, and deliver flawless digital products.",
     icon: "qa",
@@ -207,39 +201,23 @@ function PricingCard({ item }: { item: PricingPackage }) {
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <article
-      className="
-        overflow-hidden rounded-[3px] bg-white text-[#01030B]
-        lg:grid lg:h-[280px]
-        lg:grid-cols-[minmax(0,1fr)_1px_minmax(0,1fr)]
-      "
-    >
-      {/* TOP SECTION */}
-      <div className="flex flex-col px-5 py-5 lg:px-6 lg:py-6">
-        {/* HEADER */}
+    <article className="overflow-hidden rounded-[3px] bg-white text-[#01030B] lg:h-auto lg:grid lg:grid-cols-[minmax(0,1fr)_1px_minmax(0,1fr)]">
+      <div className="flex flex-col px-5 py-8 lg:p-10">
         <div className="flex items-center gap-4">
           <PackageIcon type={item.icon} color={item.accent} />
-
           <h3 className="heading-3 !text-[#01030B]">{item.title}</h3>
         </div>
 
-        {/* CONTENT */}
-        <div className="mt-12 lg:mt-auto lg:pt-6">
-          <p className="text-[36px] font-[400] leading-none text-[#155ACD] lg:text-[42px]">
-            {item.price}
-          </p>
-
-          <p className="body-extra-small mt-4 max-w-[500px] text-[#8b8b8b]">
+        <div className="mt-14 lg:mt-14 flex flex-col">
+          <p className="body-extra-small max-w-[500px] text-[#8b8b8b]">
             {item.description}
           </p>
 
-          {/* ACTIONS */}
           <div className="mt-6 flex items-end justify-between">
-            <button className="body-small bg-[#155ACD] px-6 py-2 text-white transition-colors hover:bg-[#0A2F76]">
+            <GradientButton href="/contact-us" className="!text-white">
               Let&apos;s Talk
-            </button>
+            </GradientButton>
 
-            {/* MOBILE ONLY */}
             <button
               onClick={() => setExpanded(!expanded)}
               className="body-small text-[#155ACD] underline lg:hidden"
@@ -250,31 +228,26 @@ function PricingCard({ item }: { item: PricingPackage }) {
         </div>
       </div>
 
-      {/* DESKTOP DIVIDER */}
-      <div className="hidden w-px bg-[#E3E3E3] lg:block" />
+      <div className="hidden w-px bg-[#E3E3E3] lg:block lg:my-8" />
+      <div className="h-px bg-[#E3E3E3] mx-5 lg:hidden" />
 
-      {/* MOBILE DIVIDER */}
-      <div className="h-px bg-[#E3E3E3] lg:hidden" />
-
-      {/* INCLUDED SECTION */}
       <div
-        className={`
-          overflow-hidden transition-all duration-300
-          lg:block lg:overflow-visible
-          ${expanded ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0 lg:max-h-none lg:opacity-100"}
-        `}
+        className={`overflow-hidden transition-all duration-300 lg:block lg:overflow-visible ${
+          expanded
+            ? "max-h-[500px] opacity-100"
+            : "max-h-0 opacity-0 lg:max-h-none lg:opacity-100"
+        }`}
       >
-        <div className="px-5 py-5 lg:pl-6 lg:pr-6 lg:pt-6">
+        <div className="px-5 py-8 lg:p-10">
           <p className="body-medium !text-[#01030B]">What&apos;s Included</p>
 
-          <ul className="mt-5 space-y-5">
+          <ul className="mt-6 space-y-5">
             {item.included.map((feature) => (
               <li
                 key={feature}
                 className="body-extra-small flex items-start gap-3 !text-[#01030B]"
               >
                 <ArrowDownRight className="mt-[2px] h-4 w-4 shrink-0 text-[#155ACD]" />
-
                 <span>{feature}</span>
               </li>
             ))}
@@ -288,19 +261,17 @@ function PricingCard({ item }: { item: PricingPackage }) {
 export default function PricingPackages() {
   return (
     <section className="text-white">
-      <SiteContainer className="pt-15 pb-28 lg:pt-32 lg:pb-32">
-        <div className="flex items-center gap-3">
+      <SiteContainer className="pt-12 lg:pt-0 pb-12 lg:pb-20">
+        <div className="flex items-center gap-2">
           <RotatingDots />
           <p className="body-small">Product Pricing</p>
         </div>
-
-        <h2 className="heading-2 mt-7 max-w-[940px]">
+        <h2 className="heading-2 mt-5 max-w-[940px]">
           Delivering Value through
           <br />
           Transparent and Flexible Pricing
         </h2>
-
-        <div className="mt-14 space-y-6 lg:mt-2 lg:space-y-12">
+        <div className="mt-10 space-y-4 lg:mt-12 lg:space-y-8">
           {pricingPackages.map((item) => (
             <PricingCard key={item.title} item={item} />
           ))}
