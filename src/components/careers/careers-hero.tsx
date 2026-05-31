@@ -35,9 +35,9 @@ export default function CareersHero() {
     <section className="relative w-full flex flex-col overflow-hidden snap-start bg-transparent pt-48 lg:pt-85 pb-16 lg:pb-12">
       <SiteContainer className="relative z-10 flex flex-col w-full">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:items-end">
-          
+
           {/* Title Column */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 36 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
@@ -49,7 +49,7 @@ export default function CareersHero() {
           </motion.div>
 
           {/* Button Column */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
@@ -61,7 +61,7 @@ export default function CareersHero() {
               Apply Now
             </CyclicButton>
           </motion.div>
-          
+
         </div>
       </SiteContainer>
     </section>

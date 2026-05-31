@@ -10,8 +10,34 @@ import {
 
 import RotatingDots from "@/components/ui/rotating-dots";
 import SiteContainer from "../layout/site-container";
+import { useIsMobile } from "@/hooks/use-is-mobile";
 
-export default function IndustriesIntro() {
+function IndustriesIntroMobile() {
+  return (
+    <section className="relative z-20 w-full bg-white pt-16 pb-10">
+      <SiteContainer>
+        <div className="flex flex-col gap-6">
+          <h2 className="heading-2 !text-[#01030B]">
+            We serve{" "}
+            <span className="text-[#0D54CA]">diverse industries</span>{" "}
+            with tailored digital solutions powered by{" "}
+            <span className="text-[#0D54CA]">advanced technologies</span>,
+            helping businesses innovate, scale, and succeed in a rapidly
+            evolving world.
+          </h2>
+
+          <p className="body-small !text-[#8A8B8F]">
+            By understanding the unique needs of each industry, we apply
+            the right technologies and strategies to build scalable,
+            efficient, and future-ready digital experiences.
+          </p>
+        </div>
+      </SiteContainer>
+    </section>
+  );
+}
+
+function IndustriesIntroDesktop() {
   const ref = useRef<HTMLElement | null>(null);
   const lastProgress = useRef(0);
   const hasSnapped = useRef(false);
@@ -59,7 +85,7 @@ export default function IndustriesIntro() {
   });
 
   return (
-    <section ref={ref} className="relative z-20 -mt-[48vh] h-[190vh]">
+    <section ref={ref} className="pointer-events-none relative z-20 -mt-[48vh] h-[190vh]">
       <div className="sticky top-0 h-screen overflow-hidden pointer-events-none">
         <motion.div
           style={{
@@ -129,4 +155,14 @@ export default function IndustriesIntro() {
       </div>
     </section>
   );
+}
+
+export default function IndustriesIntro() {
+  const isMobile = useIsMobile();
+
+  if (isMobile) {
+    return <IndustriesIntroMobile />;
+  }
+
+  return <IndustriesIntroDesktop />;
 }

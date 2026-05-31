@@ -1,7 +1,10 @@
 "use client";
 
 import Image from "next/image";
+import { motion } from "framer-motion";
 import RotatingDots from "@/components/ui/rotating-dots";
+import SiteContainer from "../layout/site-container";
+import { useIsMobile } from "@/hooks/use-is-mobile";
 
 const data = [
   {
@@ -41,6 +44,69 @@ const data = [
 ];
 
 export default function IndustriesList() {
+  const isMobile = useIsMobile();
+
+  if (isMobile) {
+    return (
+      <section className="bg-white relative z-10 pb-16">
+        <SiteContainer>
+          {/* Header */}
+          <div className="mb-8">
+            <div className="mb-4 flex items-center gap-3">
+              <RotatingDots variant="light" />
+              <span className="body-small !text-[#01030B]">Industries We Serve</span>
+            </div>
+
+            <h2 className="heading-2 !text-[#01030B]">
+              Our expertise spans multiple industries
+            </h2>
+          </div>
+        </SiteContainer>
+
+        {/* Horizontal scrollable cards */}
+        <div className="overflow-x-auto pb-4 pl-6 pr-6 scrollbar-hide">
+          <div className="flex gap-4 w-max">
+            {data.map((item, idx) => (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: idx * 0.08 }}
+                className="w-[48vw] flex-shrink-0 flex flex-col"
+              >
+                {/* Number */}
+                <span className="text-[20px] text-[#0D54CA] font-medium mb-2">
+                  {item.id}
+                </span>
+
+                {/* Image */}
+                <div className="relative w-full aspect-[4/3] overflow-hidden rounded-[4px] mb-3">
+                  <Image
+                    src={item.img}
+                    alt={item.title}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+
+                {/* Title */}
+                <h3 className="body-medium text-[#01030B] mb-1">
+                  {item.title}
+                </h3>
+
+                {/* Description */}
+                <p className="body-extra-small !text-[#8A8B8F]">
+                  {item.desc}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="bg-animated-gradient relative z-10">
       <div className="flex min-h-screen">

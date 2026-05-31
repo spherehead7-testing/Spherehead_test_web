@@ -63,7 +63,7 @@ export default function LandingServiceGrid() {
                 {services.map((service) => (
                     <div
                         key={service.number}
-                        className="group relative border-l border-[#c9c9c9] pl-4 min-h-[160px]"
+                        className="group relative border-l border-[#c9c9c9] pl-4 min-h-[180px]"
                     >
                         <div className="transition-all duration-500 ease-out group-hover:-translate-x-1 group-hover:-translate-y-1 group-hover:opacity-0">
                             <p className="service-whitecard-number">
@@ -71,7 +71,7 @@ export default function LandingServiceGrid() {
                             </p>
                         </div>
 
-                        <p className="body-small text-black transition-colors duration-500 group-hover:text-white !text-lg !leading-snug relative z-30 pointer-events-none">
+                        <p className="body-small mt-18 text-black transition-colors duration-500 group-hover:text-white !text-lg !leading-snug relative z-30 pointer-events-none">
                             {service.lines[0]}
                             <br />
                             {service.lines[1]}

@@ -9,7 +9,6 @@ export interface TechItem {
   icon: string;
 }
 
-// Your default data
 const defaultTechStack: TechItem[] = [
   {
     name: "PowerBI",
@@ -58,14 +57,13 @@ interface TechStackCarouselProps {
 export default function TechStackCarousel({
   items = defaultTechStack,
   autoScrollSpeed = 40,
-  className = "w-full pt-8 pb-10 flex justify-center overflow-hidden bg-transparent",
+  className = "w-full pt-4 flex justify-center overflow-hidden bg-transparent",
 }: TechStackCarouselProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number | null>(null);
   const lastTimeRef = useRef<number>(0);
 
-  // Removed useSpring to fix the "rewind" reverse loop bug
   const x = useMotionValue(0);
 
   const reducedTrackPadding = "px-2 md:px-3";
@@ -75,7 +73,6 @@ export default function TechStackCarousel({
     const track = trackRef.current;
     if (!container || !track) return;
 
-    // By duplicating the array, half the track width is the perfect seamless loop point
     const trackWidth = track.scrollWidth;
     const maxScroll = trackWidth / 2;
 
@@ -85,16 +82,15 @@ export default function TechStackCarousel({
       if (!lastTimeRef.current) {
         lastTimeRef.current = timestamp;
       }
-      
+
       const deltaTime = (timestamp - lastTimeRef.current) / 1000;
       lastTimeRef.current = timestamp;
 
       const currentX = x.get();
       let newX = currentX - (autoScrollSpeed * deltaTime);
 
-      // Loop back seamlessly when half the track is scrolled
       if (newX <= -maxScroll) {
-        newX += maxScroll; 
+        newX += maxScroll;
       }
 
       x.set(newX);
@@ -115,10 +111,8 @@ export default function TechStackCarousel({
     <div className={className}>
       <div
         ref={containerRef}
-        // Removed max-w-[1200px] to stretch fully side-to-side
         className="relative w-full flex items-center"
         style={{
-          // Changed from 15% to 5% to reduce the blank padding on the left/right edges
           maskImage:
             "linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%)",
           WebkitMaskImage:
@@ -127,7 +121,6 @@ export default function TechStackCarousel({
       >
         <motion.div
           ref={trackRef}
-          // Use raw 'x' value without the spring physics
           style={{ x }}
           className={`flex items-center gap-10 md:gap-14 ${reducedTrackPadding} w-max`}
 
@@ -142,7 +135,7 @@ export default function TechStackCarousel({
                 alt={tech.name}
                 width={120}
                 height={120}
-                className="object-contain h-[55px] w-auto md:h-[75px] pointer-events-none"
+                className="object-contain h-[65px] w-auto md:h-[75px] pointer-events-none"
               />
             </div>
           ))}

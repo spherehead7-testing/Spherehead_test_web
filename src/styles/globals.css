@@ -98,14 +98,15 @@ select {
   font-weight: 300;
   font-size: clamp(40px, 6vw, 72px);
   line-height: 1.1;
-  letter-spacing: 2px;
+  letter-spacing: 0;
   color: #ffffff;
   text-align: left;
 }
 
 @media (max-width: 767px) {
   .heading-1 {
-    line-height: 1.25;
+    line-height: 1;
+    letter-spacing: 0;
   }
 }
 
@@ -175,7 +176,7 @@ select {
 .body-medium {
   font-family: var(--font-inter-tight), Arial, Helvetica, sans-serif;
   font-size: clamp(16px, 1.6vw, 18px);
-  font-weight: 450;
+  font-weight: 400;
   line-height: 1.6;
   letter-spacing: 0.02em;
 }
@@ -385,6 +386,34 @@ select {
 
 .animate-scrollDown {
   animation: scrollDown 30s linear infinite;
+}
+
+/* Horizontal scroll RIGHT */
+@keyframes scrollRight {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+.animate-scrollRight {
+  animation: scrollRight 25s linear infinite;
+}
+
+/* Horizontal scroll LEFT */
+@keyframes scrollLeft {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scrollLeft {
+  animation: scrollLeft 25s linear infinite;
 }
 
 /* Marquee */

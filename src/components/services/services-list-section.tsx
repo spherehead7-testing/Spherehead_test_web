@@ -174,11 +174,11 @@ export default function ServicesListSection({ data }: { data: ServiceCategoryDat
   if (isMobile) {
     return (
       <section className="relative w-full">
-        <div className="relative z-20 w-full rounded-[6px] flex flex-col bg-white pt-10 pb-10">
+        <div className="relative z-20 w-full flex flex-col bg-white py-16">
           <SiteContainer>
-            <div className="flex items-center gap-4 mb-6">
+            <div className="flex items-center gap-4 mb-4">
               <RotatingDots variant="light" />
-              <span className="body-small tracking-[0.1em] text-[#0D54CA] font-bold">
+              <span className="body-small tracking-[0.1em] text-black font-bold">
                 {data.metaTitle}
               </span>
             </div>
@@ -193,7 +193,7 @@ export default function ServicesListSection({ data }: { data: ServiceCategoryDat
                   index={index}
                   isActive={activeIndex === index}
                   toggleAccordion={toggleAccordion}
-                  currentPlusColor="text-[#0D54CA]"
+                  currentPlusColor={plusIconColors[index % 3]}
                 />
               ))}
             </div>
@@ -299,7 +299,7 @@ function ServiceListItem({
   return (
     <div
       id={`service-${service.slug}`}
-      className="border-b border-[#e8e8e8] py-5 lg:py-6"
+      className="border-b border-black/40 py-5 lg:py-6"
     >
       <div
         className="flex items-center justify-between cursor-pointer group"
@@ -328,7 +328,7 @@ function ServiceListItem({
         transition={{ duration: 0.3, ease: "easeInOut" }}
         className="overflow-hidden"
       >
-        <p className="body-small text-[#55565C] pt-4 pb-2 leading-relaxed max-w-lg ml-16 lg:ml-20">
+        <p className="body-small text-[#55565C] pt-2 pb-2 max-w-[280px] ml-9 lg:ml-20">
           {service.desc}
         </p>
       </motion.div>

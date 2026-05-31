@@ -309,16 +309,15 @@ export default function ServicesApproachSection() {
   const renderCard = (item: (typeof approaches)[0], idx: number) => (
     <div
       key={item.num}
-      className={`flex flex-col gap-1 py-12 ${
-        idx === 0
-          ? "md:pr-8 lg:pr-12 md:border-r border-white/20"
-          : idx === 1
-            ? "md:px-8 lg:px-12 md:border-r border-white/20"
-            : "md:pl-8 lg:pl-12"
-      }`}
+      className={`flex flex-col gap-1 py-12 ${idx === 0
+        ? "md:pr-8 lg:pr-12 md:border-r border-white/20"
+        : idx === 1
+          ? "md:px-8 lg:px-12 md:border-r border-white/20"
+          : "md:pl-8 lg:pl-12"
+        }`}
     >
       <span
-        className="text-[48px] lg:text-[64px] font-light text-white/90 leading-none mb-3"
+        className="text-[48px] lg:text-[64px] font-light text-white leading-none mb-3"
         style={{ fontFamily: "var(--font-archivo)" }}
       >
         {item.num}
@@ -334,24 +333,24 @@ export default function ServicesApproachSection() {
 
   if (isMobile) {
     return (
-      <section className="relative z-10 w-full bg-transparent text-white py-10">
-        <SiteContainer className="flex flex-col gap-12 pt-8 items-center">
+      <section className="relative z-10 w-full bg-transparent text-white py-16">
+        <SiteContainer className="flex flex-col gap-16 pt-4 pb-4 items-center">
           <div className="flex flex-col items-center text-center">
-            <div className="flex items-center gap-4 mb-6">
+            <div className="flex items-center gap-3 mb-5">
               <RotatingDots />
               <span className="body-small tracking-[0.1em] text-white/90 font-bold">
                 Strategic Approach
               </span>
             </div>
-            <h2 className="heading-2 !text-center max-w-[320px]">
+            <h2 className="heading-2 !text-center max-w-[280px]">
               Powering Business Transformation through Precision Engineering
             </h2>
           </div>
-          <div className="grid grid-cols-2 gap-x-8 gap-y-12">
+          <div className="grid grid-cols-2 gap-x-6 gap-y-14 px-2">
             {approaches.map((item) => (
-              <div key={item.num} className="flex flex-col items-center text-center gap-2">
+              <div key={item.num} className="flex flex-col items-center text-center gap-3">
                 <span
-                  className="text-[48px] font-light text-white/90 leading-none"
+                  className="text-[48px] font-light text-white leading-none pb-1"
                   style={{ fontFamily: "var(--font-archivo)" }}
                 >
                   {item.num}

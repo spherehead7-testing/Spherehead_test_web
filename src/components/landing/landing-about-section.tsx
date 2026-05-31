@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { ChevronsDown } from "lucide-react";
 import { motion, MotionValue } from "motion/react";
 import SiteContainer from "@/components/layout/site-container";
+import GradientButton from "@/components/ui/gradient-button";
 import RotatingDots from "@/components/ui/rotating-dots";
 
 type Props = {
@@ -49,7 +50,6 @@ export default function LandingAboutSection({
       <section className="relative z-20 flex w-full flex-col">
         <div className="flex flex-col items-center bg-white px-6 pb-12 pt-8 text-center">
           <div className="mb-8 scale-[1.3]">
-            <RotatingDots variant="light" />
           </div>
           {/* Applied heading-2 here */}
           <h2 className="heading-2 mb-6 max-w-[400px] !text-[#01030B] !text-center">
@@ -92,23 +92,19 @@ export default function LandingAboutSection({
               alt="Team member 3"
             />
           </div>
-          <button
-            type="button"
-            onClick={() => router.push("/about-us")}
-            className="rounded bg-animated-gradient px-10 py-3 body-small text-white"
-          >
+          <GradientButton type="button" onClick={() => router.push("/about-us")}>
             About Us
-          </button>
+          </GradientButton>
         </div>
 
-        <div className="px-6 py-16">
+        <div className="px-6 py-20">
           <div className="mx-auto grid max-w-[400px] grid-cols-2 gap-x-4 gap-y-14 text-center">
             {statsData.map((stat) => (
               <div key={stat.id} className="flex flex-col items-center">
-                <span className="heading-1 mb-3 !leading-none text-white">
+                <span className="heading-1 mb-3 !leading-none text-white !tracking-none">
                   {stat.value}
                 </span>
-                <span className="body-small text-[#e8e8e8] !tracking-[0.08em]">
+                <span className="body-small text-white">
                   {stat.label}
                 </span>
               </div>
@@ -128,16 +124,14 @@ export default function LandingAboutSection({
         y: cardY,
         height: barHeight,
         width: barWidth,
-        borderTopLeftRadius: 4,
-        borderTopRightRadius: 4,
+        borderRadius: 4,
       }}
       className="absolute bottom-0 left-1/2 z-20 -translate-x-1/2 overflow-hidden"
     >
       <motion.div
         style={{
           bottom: cutHeight,
-          borderTopLeftRadius: barRadius,
-          borderTopRightRadius: barRadius,
+          borderRadius: barRadius,
         }}
         className="absolute inset-x-0 top-0 bg-[#ffffff]"
       />
@@ -147,6 +141,7 @@ export default function LandingAboutSection({
           width: rightPanelWidth,
           height: rightPanelHeight,
           clipPath: rightPanelClipPath,
+          borderRadius: 4,
         }}
         className="absolute bottom-0 right-0 bg-[#ffffff]"
       />
@@ -195,24 +190,24 @@ export default function LandingAboutSection({
           width: leftPanelWidth,
           height: cutHeight,
           opacity: aboutContentOpacity,
+          borderRadius: 4,
         }}
         className="absolute bottom-0 left-0 z-[3] overflow-hidden"
       >
         <div className="flex h-full items-center px-4 lg:px-8 xl:px-16 xl:pl-24 w-full">
-          <div className="flex w-full max-w-[912px] items-start justify-between xl:justify-start gap-2 lg:gap-4 xl:gap-12">           
+          <div className="flex w-full max-w-[912px] items-start justify-between xl:justify-start gap-2 lg:gap-4 xl:gap-12">
             {statsData.map((stat) => (
-              <div key={stat.id} className="flex flex-col items-center text-center xl:items-start xl:text-left flex-1 xl:flex-none">            
+              <div key={stat.id} className="flex flex-col items-center text-center xl:items-start xl:text-left flex-1 xl:flex-none">
                 {/* Replaced the messy Tailwind classes with your custom CSS class */}
                 <span className="about-stat-number">
                   {stat.value}
                 </span>
-                {/* You can also use your pre-existing about-stat-label here if you want! */}
                 <span className="body-small !text-[#e8e8e8] mt-2 xl:mt-3 leading-snug tracking-normal xl:tracking-[1.2px] xl:whitespace-nowrap">
                   {stat.label}
                 </span>
               </div>
             ))}
-            
+
           </div>
         </div>
       </motion.div>
@@ -224,11 +219,12 @@ export default function LandingAboutSection({
           height: rightPanelHeight,
           clipPath: rightPanelClipPath,
           opacity: aboutContentOpacity,
+          borderRadius: 4,
         }}
         className="absolute bottom-0 right-0 z-[4] overflow-hidden"
       >
-        <div className="flex h-full flex-col items-start bg-[#ffffff] px-6 pl-6 pt-10 pb-8 sm:px-8 lg:px-14 lg:pl-14">
-          <p className="body-small text-[#55565C] max-w-[420px] !leading-[1.4]">
+        <div className="flex h-full flex-col items-start rounded-tl bg-[#ffffff] px-6 pl-6 pt-10 pb-8 sm:px-8 lg:px-14 lg:pl-14">
+          <p className="body-small text-[#55565C] max-w-[420px]">
             Driven by client satisfaction and continuous feedback, we deliver
             tailored digital solutions that empower businesses worldwide,
             building lasting partnerships through trust, innovation, and
@@ -262,23 +258,13 @@ export default function LandingAboutSection({
               />
             </div>
 
-            <button
+            <GradientButton
               type="button"
               onClick={() => router.push("/about-us")}
-              className="group relative flex h-[70px] cursor-pointer items-center justify-center overflow-hidden rounded-md bg-animated-gradient px-10 text-white scale-[0.75] origin-left transition-colors duration-300"
+              animated
             >
-              <span className="invisible body-large">
-                About Us
-              </span>
-              <div className="absolute top-0 left-0 flex w-full flex-col transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-1/2">
-                <span className="flex h-[70px] w-full items-center justify-center body-large !text-3xl font-medium">
-                  About Us
-                </span>
-                <span className="flex h-[70px] w-full items-center justify-center body-large !text-3xl font-medium">
-                  About Us
-                </span>
-              </div>
-            </button>
+              About Us
+            </GradientButton>
           </div>
         </div>
       </motion.div>
