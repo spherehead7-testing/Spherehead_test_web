@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import GradientButton from "@/components/ui/gradient-button";
 import RotatingDots from "@/components/ui/rotating-dots";
 
 export default function ContactSection() {
@@ -119,9 +120,9 @@ export default function ContactSection() {
                     </span>
                   </div>
 
-                  <button className="body-medium rounded bg-animated-gradient px-6 py-2 text-white">
+                  <GradientButton>
                     Submit
-                  </button>
+                  </GradientButton>
                 </div>
               </div>
             ) : (
@@ -159,9 +160,9 @@ export default function ContactSection() {
                     </span>
                   </div>
 
-                  <button className="body-medium rounded bg-animated-gradient px-6 py-2 text-white">
+                  <GradientButton>
                     Submit
-                  </button>
+                  </GradientButton>
                 </div>
               </div>
             )}

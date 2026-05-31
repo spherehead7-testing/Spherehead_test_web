@@ -85,7 +85,7 @@ function IndustriesIntroDesktop() {
   });
 
   return (
-    <section ref={ref} className="relative z-20 -mt-[48vh] h-[190vh]">
+    <section ref={ref} className="pointer-events-none relative z-20 -mt-[48vh] h-[190vh]">
       <div className="sticky top-0 h-screen overflow-hidden pointer-events-none">
         <motion.div
           style={{

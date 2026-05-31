@@ -62,7 +62,6 @@ export default function LandingIndustryCarousel() {
     return (
         <div className={outerClassName}>
             <motion.div
-                // Removed px-6 lg:px-10 so the cards flow directly from the 0px edge
                 className={`flex w-max gap-4 ${isMobile ? "py-2" : ""}`}
                 animate={
                     shouldAutoScroll
