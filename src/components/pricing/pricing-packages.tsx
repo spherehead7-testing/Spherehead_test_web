@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ArrowDownRight } from "lucide-react";
 import SiteContainer from "@/components/layout/site-container";
 import RotatingDots from "@/components/ui/rotating-dots";
+import GradientButton from "@/components/ui/gradient-button";
 
 type PricingPackage = {
   title: string;
@@ -213,9 +214,9 @@ function PricingCard({ item }: { item: PricingPackage }) {
           </p>
 
           <div className="mt-6 flex items-end justify-between">
-            <button className="body-small bg-animated-gradient px-8 py-3 text-white rounded-[4px] transition-colors hover:bg-[#0A2F76]">
+            <GradientButton href="/contact-us" className="!text-white">
               Let&apos;s Talk
-            </button>
+            </GradientButton>
 
             <button
               onClick={() => setExpanded(!expanded)}
