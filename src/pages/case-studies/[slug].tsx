@@ -739,7 +739,7 @@ function SidebarLink({
       className={`body-medium py-3 pl-6 border-l-2 transition-colors duration-300 leading-tight ${
         isActive
           ? "border-[#0D54CA] !text-[#0D54CA] body-medium"
-          : "border-gray-200 text-gray-500 hover:text-gray-900"
+          : "border-gray-300 hover:text-gray-900"
       }`}
     >
       {label}
