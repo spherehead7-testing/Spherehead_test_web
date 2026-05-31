@@ -211,9 +211,7 @@ export default function CaseStudyDetail() {
   if (!study) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4">
-        <h1 className="text-3xl font-bold text-[#0A2F76]">
-          Case Study Not Found
-        </h1>
+        <h1 className="heading-2 text-[#0A2F76]">Case Study Not Found</h1>
         <Link href="/case-studies" className="text-[#0D54CA] hover:underline">
           Return to Case Studies
         </Link>
@@ -227,12 +225,12 @@ export default function CaseStudyDetail() {
         <title>{study.title} | Spherehead</title>
       </Head>
 
-      <main className="w-full bg-white font-sans min-h-screen">
+      <main className="w-full bg-white min-h-screen">
         {isMobile ? (
           <div key="page-content" className="w-full">
             {/* ── 1. BLUE HERO SECTION ── */}
             <section
-              className={`w-full bg-[#0A2F76] px-6 lg:px-16 text-white relative z-0 flex flex-col justify-end lg:justify-start lg:block h-[80svh] pb-28 pt-24`}
+              className={`w-full bg-[#0A2F76] px-6 lg:px-16 text-white relative z-0 flex flex-col justify-end lg:justify-start lg:block h-[88svh] pb-28 pt-24`}
             >
               <div className="max-w-[1400px] mx-auto w-full flex flex-col">
                 <div className="w-full h-[1px] bg-white mb-8 block lg:hidden order-1" />
@@ -256,7 +254,7 @@ export default function CaseStudyDetail() {
                   className="w-full relative pointer-events-auto"
                   style={{ transformOrigin: "left top" }}
                 >
-                  <div className="absolute top-6 right-6 bg-white px-4 py-1.5 body-extra-small text-[#0A2F76] rounded-sm z-20">
+                  <div className="absolute top-6 right-6 bg-white px-4 py-1.5 body-extra-small !text-[#0A2F76] rounded-sm z-20">
                     {study.category}
                   </div>
 
@@ -272,14 +270,14 @@ export default function CaseStudyDetail() {
                       href="/contact-us"
                       className="group relative inline-flex h-[44px] items-center justify-center overflow-hidden rounded-sm bg-animated-gradient px-6 !text-white transition duration-300"
                     >
-                      <span className="invisible font-medium whitespace-nowrap">
+                      <span className="invisible body-medium whitespace-nowrap">
                         Contact Us
                       </span>
                       <div className="absolute top-0 left-0 flex w-full flex-col transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-1/2">
-                        <span className="flex h-[44px] w-full items-center justify-center font-medium whitespace-nowrap">
+                        <span className="flex h-[44px] w-full items-center justify-center body-medium whitespace-nowrap">
                           Contact Us
                         </span>
-                        <span className="flex h-[44px] w-full items-center justify-center font-medium whitespace-nowrap">
+                        <span className="flex h-[44px] w-full items-center justify-center body-medium whitespace-nowrap">
                           Contact Us
                         </span>
                       </div>
@@ -297,7 +295,7 @@ export default function CaseStudyDetail() {
                     <div className="w-5 h-5">
                       <RotatingDots variant="light" />
                     </div>
-                    <span className="body-small font-semibold text-[#01030B] tracking-wider">
+                    <span className="body-small font-semibold !text-[#01030B] tracking-wider">
                       Project Key Information
                     </span>
                   </div>
@@ -393,7 +391,9 @@ export default function CaseStudyDetail() {
                   </div>
 
                   <div id="implementation" className="scroll-mt-32">
-                    <p className="mb-6 text-[#01030B]">{study.implementationIntro}</p>
+                    <p className="mb-6 text-[#01030B]">
+                      {study.implementationIntro}
+                    </p>
                     <ul className="flex flex-col gap-4">
                       {study.implementationPoints?.map((point, i) => (
                         <li
@@ -427,7 +427,7 @@ export default function CaseStudyDetail() {
                       {study.technologies?.map((tech, i) => (
                         <span
                           key={i}
-                          className="px-4 py-2 bg-gray-100 text-gray-700 rounded-sm text-sm font-medium"
+                          className="body-small px-4 py-2 bg-gray-100 text-gray-800 rounded-sm"
                         >
                           {tech}
                         </span>
@@ -459,11 +459,13 @@ export default function CaseStudyDetail() {
                 transition: { duration: isMobile ? 0 : 0.6, ease: EASE },
               }}
               className={`w-full bg-[#0A2F76] px-6 lg:px-16 text-white relative z-0 flex flex-col justify-end lg:justify-start lg:block ${
-                isMobile ? "h-[80svh] pb-28 pt-24" : "pt-32 pb-48 lg:pb-64"
+                isMobile ? "h-[88svh] pb-28 pt-24" : "pt-32 pb-48 lg:pb-64"
               }`}
             >
               <motion.div
-                initial={isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
+                initial={
+                  isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }
+                }
                 animate={{
                   opacity: 1,
                   y: 0,
@@ -506,7 +508,9 @@ export default function CaseStudyDetail() {
               <section className="max-w-[1400px] mx-auto px-6 lg:px-16">
                 <motion.div
                   layout={!isMobile}
-                  layoutId={!isMobile ? `shared-slide-${studyIndex}` : undefined}
+                  layoutId={
+                    !isMobile ? `shared-slide-${studyIndex}` : undefined
+                  }
                   initial={false}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 1 }}
@@ -523,7 +527,7 @@ export default function CaseStudyDetail() {
                   }}
                   className="w-full relative pointer-events-auto"
                 >
-                  <div className="absolute top-6 right-6 bg-white px-4 py-1.5 body-extra-small text-[#0A2F76] rounded-sm z-20">
+                  <div className="absolute top-6 right-6 bg-white px-4 py-1.5 body-extra-small !text-[#0A2F76] rounded-sm z-20">
                     {study.category}
                   </div>
 
@@ -539,14 +543,14 @@ export default function CaseStudyDetail() {
                       href="/contact-us"
                       className="group relative inline-flex h-[44px] items-center justify-center overflow-hidden rounded-sm bg-animated-gradient px-6 !text-white transition duration-300"
                     >
-                      <span className="invisible font-medium whitespace-nowrap">
+                      <span className="invisible body-medium whitespace-nowrap">
                         Contact Us
                       </span>
                       <div className="absolute top-0 left-0 flex w-full flex-col transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-1/2">
-                        <span className="flex h-[44px] w-full items-center justify-center font-medium whitespace-nowrap">
+                        <span className="flex h-[44px] w-full items-center justify-center body-medium whitespace-nowrap">
                           Contact Us
                         </span>
-                        <span className="flex h-[44px] w-full items-center justify-center font-medium whitespace-nowrap">
+                        <span className="flex h-[44px] w-full items-center justify-center body-medium whitespace-nowrap">
                           Contact Us
                         </span>
                       </div>
@@ -564,7 +568,7 @@ export default function CaseStudyDetail() {
                     <div className="w-5 h-5">
                       <RotatingDots variant="light" />
                     </div>
-                    <span className="body-small font-semibold text-[#01030B] tracking-wider">
+                    <span className="body-small font-semibold !text-[#01030B] tracking-wider">
                       Project Key Information
                     </span>
                   </div>
@@ -660,7 +664,9 @@ export default function CaseStudyDetail() {
                   </div>
 
                   <div id="implementation" className="scroll-mt-32">
-                    <p className="mb-6 text-[#01030B]">{study.implementationIntro}</p>
+                    <p className="mb-6 text-[#01030B]">
+                      {study.implementationIntro}
+                    </p>
                     <ul className="flex flex-col gap-4">
                       {study.implementationPoints?.map((point, i) => (
                         <li
@@ -694,7 +700,7 @@ export default function CaseStudyDetail() {
                       {study.technologies?.map((tech, i) => (
                         <span
                           key={i}
-                          className="px-4 py-2 bg-gray-100 text-gray-700 rounded-sm text-sm font-medium"
+                          className="px-4 py-2 bg-gray-100 text-gray-700 rounded-sm body-medium"
                         >
                           {tech}
                         </span>
@@ -732,7 +738,7 @@ function SidebarLink({
       href={href}
       className={`body-medium py-3 pl-6 border-l-2 transition-colors duration-300 leading-tight ${
         isActive
-          ? "border-[#0D54CA] !text-[#0D54CA] font-medium"
+          ? "border-[#0D54CA] !text-[#0D54CA] body-medium"
           : "border-gray-200 text-gray-500 hover:text-gray-900"
       }`}
     >

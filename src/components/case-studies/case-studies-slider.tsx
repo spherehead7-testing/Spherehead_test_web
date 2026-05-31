@@ -181,7 +181,7 @@ export default function CaseStudiesSlider() {
                 <div className="flex justify-between items-center">
                   <span
                     suppressHydrationWarning
-                    className="bg-[#F0F5FF] text-[#0D54CA] px-3 py-1 text-sm rounded-sm"
+                    className="body-extra-small bg-[#F0F5FF] text-[#0D54CA] px-3 py-1 rounded-sm"
                   >
                     {activeStudy.category}
                   </span>
@@ -202,22 +202,22 @@ export default function CaseStudiesSlider() {
                 </div>
 
                 <div className="flex items-stretch justify-between gap-6">
-                  <h3
+                  <h2
                     suppressHydrationWarning
-                    className="text-[22px] sm:text-[28px] font-medium leading-snug text-[#01030B] flex-1"
+                    className="heading-2 !text-[#01030B] w-full max-w-[700px]"
                   >
                     {activeStudy.title}
-                  </h3>
+                  </h2>
 
                   <div className="flex items-start pl-6 border-l border-gray-200">
                     <div className="flex items-baseline">
                       <span
                         suppressHydrationWarning
-                        className="text-[32px] sm:text-[40px] font-medium text-[#0D54CA] leading-none"
+                        className="heading-1 !text-[#0D54CA] leading-none"
                       >
                         {activeStudy.id}
                       </span>
-                      <span className="text-sm sm:text-base font-medium text-gray-400 ml-[2px]">
+                      <span className="body-small text-gray-400 ml-[2px]">
                         /0{totalSlides}
                       </span>
                     </div>
@@ -287,7 +287,7 @@ export default function CaseStudiesSlider() {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.4 }}
-                        className="px-3 py-1 bg-blue-50 text-[#0D54CA] text-xs font-semibold uppercase tracking-wider rounded-sm whitespace-nowrap"
+                        className="px-3 py-1 bg-blue-50 !text-[#0D54CA] body-extra-small uppercase tracking-wider rounded-sm whitespace-nowrap"
                         suppressHydrationWarning
                       >
                         {activeStudy.category}
@@ -325,7 +325,7 @@ export default function CaseStudiesSlider() {
                         >
                           <h2
                             suppressHydrationWarning
-                            className="heading-2 !text-[#01030B] mb-6"
+                            className="heading-2 !text-[#01030B] max-w-[700px] mb-6"
                           >
                             {activeStudy.title}
                           </h2>
@@ -410,7 +410,7 @@ export default function CaseStudiesSlider() {
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0 }}
                           transition={{ duration: 0.4, ease: "easeInOut" }}
-                          className="absolute left-0 bottom-0 text-7xl font-light text-[#0D54CA] leading-none"
+                          className="absolute left-0 bottom-0 heading-1 !text-[#0D54CA] leading-none !font-light"
                           suppressHydrationWarning
                         >
                           {activeStudy.id}
@@ -418,7 +418,7 @@ export default function CaseStudiesSlider() {
                       </AnimatePresence>
                     </div>
 
-                    <span className="text-2xl font-light text-gray-400">
+                    <span className="body-large text-gray-400">
                       /0{totalSlides}
                     </span>
                   </div>
