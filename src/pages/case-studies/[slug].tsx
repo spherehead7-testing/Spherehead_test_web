@@ -8,11 +8,7 @@ import { FiArrowLeft } from "react-icons/fi";
 import Footer from "@/components/layout/footer";
 import RotatingDots from "@/components/ui/rotating-dots";
 import { useIsMobile } from "@/hooks/use-is-mobile";
-import {
-  motion,
-  useScroll,
-  useTransform,
-} from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 const CASE_STUDY_DETAILS = [
   {
@@ -153,6 +149,7 @@ export default function CaseStudyDetail() {
   const router = useRouter();
   const { slug } = router.query;
   const [activeSection, setActiveSection] = useState("overview");
+  const [isExiting, setIsExiting] = useState(false);
 
   const { scrollY } = useScroll();
   const isMobile = useIsMobile();
@@ -196,10 +193,14 @@ export default function CaseStudyDetail() {
 
   const handleBackClick = (e: React.MouseEvent) => {
     e.preventDefault();
+    if (isExiting) return;
+    setIsExiting(true);
+
     if (studyIndex >= 0) {
       sessionStorage.setItem("spherehead_slider_page", studyIndex.toString());
     }
-    
+
+    // Go immediately back so layout transition fires instantly
     if (window.history.length > 1) {
       router.back();
     } else {
@@ -207,15 +208,10 @@ export default function CaseStudyDetail() {
     }
   };
 
-  // Ensure we never render below in an invalid JSX state.
-  // (This file previously had a broken JSX structure / missing tag.)
-
   if (!study) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4">
-        <h1 className="text-3xl font-bold text-[#0A2F76]">
-          Case Study Not Found
-        </h1>
+        <h1 className="heading-2 text-[#0A2F76]">Case Study Not Found</h1>
         <Link href="/case-studies" className="text-[#0D54CA] hover:underline">
           Return to Case Studies
         </Link>
@@ -229,18 +225,15 @@ export default function CaseStudyDetail() {
         <title>{study.title} | Spherehead</title>
       </Head>
 
-      <main className="w-full bg-white font-sans min-h-screen">
+      <main className="w-full bg-white min-h-screen">
         {isMobile ? (
-              <div key="page-content" className="w-full">
+          <div key="page-content" className="w-full">
             {/* ── 1. BLUE HERO SECTION ── */}
             <section
-              className={`w-full bg-[#0A2F76] px-6 lg:px-16 text-white relative z-0 flex flex-col justify-end lg:justify-start lg:block h-[80svh] pb-28 pt-24`}
+              className={`w-full bg-[#0A2F76] px-6 lg:px-16 text-white relative z-0 flex flex-col justify-end lg:justify-start lg:block h-[88svh] pb-28 pt-24`}
             >
               <div className="max-w-[1400px] mx-auto w-full flex flex-col">
-                {/* Horizontal line applied on mobile */}
                 <div className="w-full h-[1px] bg-white mb-8 block lg:hidden order-1" />
-
-                {/* Flex ordering pushes back button below title on mobile */}
                 <button
                   onClick={handleBackClick}
                   className="flex items-center gap-2 text-white hover:text-white transition-colors w-fit mt-8 lg:mt-0 mb-0 lg:mb-12 cursor-pointer order-3 lg:order-1"
@@ -261,7 +254,7 @@ export default function CaseStudyDetail() {
                   className="w-full relative pointer-events-auto"
                   style={{ transformOrigin: "left top" }}
                 >
-                  <div className="absolute top-6 right-6 bg-white px-4 py-1.5 body-extra-small text-[#0A2F76] rounded-sm z-20">
+                  <div className="absolute top-6 right-6 bg-white px-4 py-1.5 body-extra-small !text-[#0A2F76] rounded-sm z-20">
                     {study.category}
                   </div>
 
@@ -272,20 +265,19 @@ export default function CaseStudyDetail() {
                     className="w-full h-[300px] lg:h-[600px] object-cover rounded-[4px]"
                   />
 
-                  {/* Hidden on mobile, block on lg */}
                   <div className="hidden lg:block absolute bottom-0 right-0 bg-white pt-6 pl-8 pr-6 rounded-tl-[0.50rem] z-20 border-0 shadow-none outline-none ring-0">
                     <Link
                       href="/contact-us"
                       className="group relative inline-flex h-[44px] items-center justify-center overflow-hidden rounded-sm bg-animated-gradient px-6 !text-white transition duration-300"
                     >
-                      <span className="invisible font-medium whitespace-nowrap">
+                      <span className="invisible body-medium whitespace-nowrap">
                         Contact Us
                       </span>
                       <div className="absolute top-0 left-0 flex w-full flex-col transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-1/2">
-                        <span className="flex h-[44px] w-full items-center justify-center font-medium whitespace-nowrap">
+                        <span className="flex h-[44px] w-full items-center justify-center body-medium whitespace-nowrap">
                           Contact Us
                         </span>
-                        <span className="flex h-[44px] w-full items-center justify-center font-medium whitespace-nowrap">
+                        <span className="flex h-[44px] w-full items-center justify-center body-medium whitespace-nowrap">
                           Contact Us
                         </span>
                       </div>
@@ -298,13 +290,12 @@ export default function CaseStudyDetail() {
             {/* ── 3. CONTENT GRID ── */}
             <div className="relative z-20 bg-white max-w-[1400px] mx-auto px-6 lg:px-16 pb-12 lg:pb-32 pt-12 lg:pt-24">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-start">
-                {/* LEFT: STICKY SIDEBAR */}
                 <div className="hidden lg:block lg:col-span-3 sticky top-32 self-start">
                   <div className="flex items-center gap-8 mb-10">
                     <div className="w-5 h-5">
                       <RotatingDots variant="light" />
                     </div>
-                    <span className="body-small font-semibold text-[#01030B] tracking-wider">
+                    <span className="body-small font-semibold !text-[#01030B] tracking-wider">
                       Project Key Information
                     </span>
                   </div>
@@ -348,7 +339,6 @@ export default function CaseStudyDetail() {
                   </div>
                 </div>
 
-                {/* RIGHT: TEXT CONTENT */}
                 <div className="lg:col-span-9 flex flex-col gap-16 text-[#333]">
                   <div id="overview" className="scroll-mt-32">
                     <p className="whitespace-pre-wrap leading-relaxed text-[#55565C] mb-10">
@@ -401,7 +391,9 @@ export default function CaseStudyDetail() {
                   </div>
 
                   <div id="implementation" className="scroll-mt-32">
-                    <p className="mb-6 text-[#01030B]">{study.implementationIntro}</p>
+                    <p className="mb-6 text-[#01030B]">
+                      {study.implementationIntro}
+                    </p>
                     <ul className="flex flex-col gap-4">
                       {study.implementationPoints?.map((point, i) => (
                         <li
@@ -435,7 +427,7 @@ export default function CaseStudyDetail() {
                       {study.technologies?.map((tech, i) => (
                         <span
                           key={i}
-                          className="px-4 py-2 bg-gray-100 text-gray-700 rounded-sm text-sm font-medium"
+                          className="body-small px-4 py-2 bg-gray-100 text-gray-800 rounded-sm"
                         >
                           {tech}
                         </span>
@@ -453,7 +445,7 @@ export default function CaseStudyDetail() {
             </div>
           </div>
         ) : (
-        <div className="w-full">
+          <div className="w-full">
             {/* ── 1. BLUE HERO SECTION ── */}
             <motion.section
               style={{ y: blueBarY }}
@@ -467,11 +459,13 @@ export default function CaseStudyDetail() {
                 transition: { duration: isMobile ? 0 : 0.6, ease: EASE },
               }}
               className={`w-full bg-[#0A2F76] px-6 lg:px-16 text-white relative z-0 flex flex-col justify-end lg:justify-start lg:block ${
-                isMobile ? "h-[80svh] pb-28 pt-24" : "pt-32 pb-48 lg:pb-64"
+                isMobile ? "h-[88svh] pb-28 pt-24" : "pt-32 pb-48 lg:pb-64"
               }`}
             >
               <motion.div
-                initial={isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
+                initial={
+                  isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }
+                }
                 animate={{
                   opacity: 1,
                   y: 0,
@@ -492,17 +486,16 @@ export default function CaseStudyDetail() {
                 }
                 className="max-w-[1400px] mx-auto w-full flex flex-col"
               >
-                {/* Horizontal line applied on mobile */}
                 <div className="w-full h-[1px] bg-white/30 mb-8 block lg:hidden order-1" />
-
-                {/* Flex ordering pushes back button below title on mobile */}
                 <button
                   onClick={handleBackClick}
                   className="flex items-center gap-2 text-white hover:text-white transition-colors w-fit mt-8 lg:mt-0 mb-0 lg:mb-12 cursor-pointer order-3 lg:order-1"
                 >
                   <FiArrowLeft /> Back to Case Studies
                 </button>
-                <h1 className="heading-2 max-w-4xl border-none outline-none order-2 lg:order-2">{study.title}</h1>
+                <h1 className="heading-2 max-w-4xl border-none outline-none order-2 lg:order-2">
+                  {study.title}
+                </h1>
               </motion.div>
             </motion.section>
 
@@ -514,24 +507,27 @@ export default function CaseStudyDetail() {
             >
               <section className="max-w-[1400px] mx-auto px-6 lg:px-16">
                 <motion.div
-                  layout={isMobile ? false : true}
-                  layoutId={isMobile ? undefined : `shared-slide-${studyIndex}`}
-                  initial={isMobile ? { opacity: 1 } : false}
+                  layout={!isMobile}
+                  layoutId={
+                    !isMobile ? `shared-slide-${studyIndex}` : undefined
+                  }
+                  initial={false}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 1 }}
-                  transition={
-                    isMobile
-                      ? { duration: 0 }
-                      : {
-                          duration: 1.0,
-                          ease: EASE,
-                          layout: { duration: 1.0, ease: EASE },
-                        }
-                  }
-                  style={{ transformOrigin: "left top" }}
+                  transition={{
+                    layout: {
+                      type: "tween",
+                      ease: [0.76, 0, 0.24, 1],
+                      duration: 1.2,
+                    },
+                  }}
+                  style={{
+                    transformOrigin: "left top",
+                    zIndex: isExiting ? 50 : 1,
+                  }}
                   className="w-full relative pointer-events-auto"
                 >
-                  <div className="absolute top-6 right-6 bg-white px-4 py-1.5 body-extra-small text-[#0A2F76] rounded-sm z-20">
+                  <div className="absolute top-6 right-6 bg-white px-4 py-1.5 body-extra-small !text-[#0A2F76] rounded-sm z-20">
                     {study.category}
                   </div>
 
@@ -542,20 +538,19 @@ export default function CaseStudyDetail() {
                     className="w-full h-[300px] lg:h-[600px] object-cover rounded-[4px]"
                   />
 
-                  {/* Hidden on mobile, block on lg */}
                   <div className="hidden lg:block absolute bottom-0 right-0 bg-white pt-6 pl-8 pr-6 rounded-tl-[0.50rem] z-20 border-0 shadow-none outline-none ring-0">
                     <Link
                       href="/contact-us"
                       className="group relative inline-flex h-[44px] items-center justify-center overflow-hidden rounded-sm bg-animated-gradient px-6 !text-white transition duration-300"
                     >
-                      <span className="invisible font-medium whitespace-nowrap">
+                      <span className="invisible body-medium whitespace-nowrap">
                         Contact Us
                       </span>
                       <div className="absolute top-0 left-0 flex w-full flex-col transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-1/2">
-                        <span className="flex h-[44px] w-full items-center justify-center font-medium whitespace-nowrap">
+                        <span className="flex h-[44px] w-full items-center justify-center body-medium whitespace-nowrap">
                           Contact Us
                         </span>
-                        <span className="flex h-[44px] w-full items-center justify-center font-medium whitespace-nowrap">
+                        <span className="flex h-[44px] w-full items-center justify-center body-medium whitespace-nowrap">
                           Contact Us
                         </span>
                       </div>
@@ -568,13 +563,12 @@ export default function CaseStudyDetail() {
             {/* ── 3. CONTENT GRID ── */}
             <div className="relative z-20 bg-white max-w-[1400px] mx-auto px-6 lg:px-16 pb-12 lg:pb-32 pt-12 lg:pt-24">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-start">
-                {/* LEFT: STICKY SIDEBAR */}
                 <div className="hidden lg:block lg:col-span-3 sticky top-32 self-start">
                   <div className="flex items-center gap-8 mb-10">
                     <div className="w-5 h-5">
                       <RotatingDots variant="light" />
                     </div>
-                    <span className="body-small font-semibold text-[#01030B] tracking-wider">
+                    <span className="body-small font-semibold !text-[#01030B] tracking-wider">
                       Project Key Information
                     </span>
                   </div>
@@ -618,7 +612,6 @@ export default function CaseStudyDetail() {
                   </div>
                 </div>
 
-                {/* RIGHT: TEXT CONTENT */}
                 <div className="lg:col-span-9 flex flex-col gap-16 text-[#333]">
                   <div id="overview" className="scroll-mt-32">
                     <p className="whitespace-pre-wrap leading-relaxed text-[#55565C] mb-10">
@@ -671,7 +664,9 @@ export default function CaseStudyDetail() {
                   </div>
 
                   <div id="implementation" className="scroll-mt-32">
-                    <p className="mb-6 text-[#01030B]">{study.implementationIntro}</p>
+                    <p className="mb-6 text-[#01030B]">
+                      {study.implementationIntro}
+                    </p>
                     <ul className="flex flex-col gap-4">
                       {study.implementationPoints?.map((point, i) => (
                         <li
@@ -705,7 +700,7 @@ export default function CaseStudyDetail() {
                       {study.technologies?.map((tech, i) => (
                         <span
                           key={i}
-                          className="px-4 py-2 bg-gray-100 text-gray-700 rounded-sm text-sm font-medium"
+                          className="px-4 py-2 bg-gray-100 text-gray-700 rounded-sm body-medium"
                         >
                           {tech}
                         </span>
@@ -743,8 +738,8 @@ function SidebarLink({
       href={href}
       className={`body-medium py-3 pl-6 border-l-2 transition-colors duration-300 leading-tight ${
         isActive
-          ? "border-[#0D54CA] !text-[#0D54CA] font-medium"
-          : "border-gray-200 text-gray-500 hover:text-gray-900"
+          ? "border-[#0D54CA] !text-[#0D54CA] body-medium"
+          : "border-gray-300 hover:text-gray-900"
       }`}
     >
       {label}
